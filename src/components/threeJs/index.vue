@@ -47,6 +47,7 @@ function initThree() {
     texture.mapping = THREE.EquirectangularReflectionMapping
     scene.background = texture
     scene.environment = texture
+    render()
   })
 
   controls = new OrbitControls(camera, renderer.domElement)
@@ -70,6 +71,7 @@ function initThree() {
   gltfLoader.load(`${import.meta.env.BASE_URL}/glb/groundFloorOfficeBuilding.glb`, (gltf) => {
     const model = gltf.scene
     scene.add(model)
+    render()
   })
 
   window.addEventListener('resize', onWindowResize)
