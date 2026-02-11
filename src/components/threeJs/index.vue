@@ -3,13 +3,15 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, onBeforeUnmount } from 'vue'
+import { onMounted, ref, onBeforeUnmount, watchEffect } from 'vue'
 import * as THREE from 'three'
+import { useWindowSize } from '@vueuse/core'
 import { RGBELoader } from 'three-stdlib'
 import { OrbitControls } from 'three-stdlib'
 import { GLTFLoader } from 'three-stdlib'
 import { DRACOLoader } from 'three-stdlib'
 
+const { width, height } = useWindowSize() // 获取窗口宽度和高度
 const threeJsContainer = ref<HTMLDivElement>()
 let scene: THREE.Scene
 let camera: THREE.PerspectiveCamera
@@ -26,17 +28,14 @@ onBeforeUnmount(() => {
   }
 })
 
-function initThree() {
-  const width = window.innerWidth
-  const height = window.innerHeight
-
+const initThree = () => {
   scene = new THREE.Scene()
 
-  camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
+  camera = new THREE.PerspectiveCamera(75, width.value / height.value, 0.1, 1000)
   camera.position.set(0, 5, 10)
 
   renderer = new THREE.WebGLRenderer({ antialias: true })
-  renderer.setSize(width, height)
+  renderer.setSize(width.value, height.value)
   renderer.setPixelRatio(window.devicePixelRatio)
   renderer.toneMapping = THREE.ACESFilmicToneMapping
   renderer.toneMappingExposure = 1
@@ -74,18 +73,22 @@ function initThree() {
     render()
   })
 
-  window.addEventListener('resize', onWindowResize)
+  // 响应式更新
+  watchEffect(() => {
+    onWindowResize();
+  })
+
   render()
 }
 
-function render() {
+const render = () => {
   renderer.render(scene, camera)
 }
 
-function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight
+const onWindowResize = () => {
+  camera.aspect = width.value / height.value
   camera.updateProjectionMatrix()
-  renderer.setSize(window.innerWidth, window.innerHeight)
+  renderer.setSize(width.value, height.value)
   render()
 }
 </script>
