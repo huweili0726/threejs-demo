@@ -54,8 +54,7 @@ function initThree() {
   })
 
   controls = new OrbitControls(camera, renderer.domElement)
-  controls.enableDamping = true
-  controls.dampingFactor = 0.05
+  controls.enableDamping = false // 移除阻尼效果
   controls.minDistance = 1
   controls.maxDistance = 100
   controls.maxPolarAngle = Math.PI / 2
