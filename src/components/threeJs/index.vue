@@ -8,6 +8,7 @@ import * as THREE from 'three'
 import { RGBELoader } from 'three-stdlib'
 import { OrbitControls } from 'three-stdlib'
 import { GLTFLoader } from 'three-stdlib'
+import { DRACOLoader } from 'three-stdlib'
 
 const threeJsContainer = ref<HTMLDivElement>()
 let scene: THREE.Scene
@@ -67,6 +68,9 @@ function initThree() {
   scene.add(directionalLight)
 
   const gltfLoader = new GLTFLoader()
+  const dracoLoader = new DRACOLoader()
+  dracoLoader.setDecoderPath(`${import.meta.env.BASE_URL}/draco/`)
+  gltfLoader.setDRACOLoader(dracoLoader)
   gltfLoader.load(`${import.meta.env.BASE_URL}/glb/groundFloorOfficeBuilding.glb`, (gltf) => {
     const model = gltf.scene
     scene.add(model)
