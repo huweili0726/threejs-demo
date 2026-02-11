@@ -15,16 +15,12 @@ let scene: THREE.Scene
 let camera: THREE.PerspectiveCamera
 let renderer: THREE.WebGLRenderer
 let controls: OrbitControls
-let animationId: number
 
 onMounted(() => {
   initThree()
 })
 
 onBeforeUnmount(() => {
-  if (animationId) {
-    cancelAnimationFrame(animationId)
-  }
   if (renderer) {
     renderer.dispose()
   }
@@ -54,10 +50,11 @@ function initThree() {
   })
 
   controls = new OrbitControls(camera, renderer.domElement)
-  controls.enableDamping = false // 移除阻尼效果
+  controls.enableDamping = false
   controls.minDistance = 1
   controls.maxDistance = 100
   controls.maxPolarAngle = Math.PI / 2
+  controls.addEventListener('change', render)
 
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
   scene.add(ambientLight)
@@ -76,12 +73,10 @@ function initThree() {
   })
 
   window.addEventListener('resize', onWindowResize)
-  animate()
+  render()
 }
 
-function animate() {
-  animationId = requestAnimationFrame(animate)
-  controls.update()
+function render() {
   renderer.render(scene, camera)
 }
 
@@ -89,6 +84,7 @@ function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight
   camera.updateProjectionMatrix()
   renderer.setSize(window.innerWidth, window.innerHeight)
+  render()
 }
 </script>
 
