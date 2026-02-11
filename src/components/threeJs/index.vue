@@ -18,25 +18,14 @@ let camera: THREE.PerspectiveCamera
 let renderer: THREE.WebGLRenderer
 let controls: OrbitControls
 
-const render = () => {
-  renderer.render(scene, camera)
-}
-
-const onWindowResize = () => {
-  camera.aspect = width.value / height.value
-  camera.updateProjectionMatrix()
-  renderer.setSize(width.value, height.value)
-  render()
-}
-
-watchEffect(() => {
-  if (renderer && camera) {
-    onWindowResize()
-  }
-})
-
 onMounted(() => {
   initThree()
+})
+
+onBeforeUnmount(() => {
+  if (renderer) {
+    renderer.dispose()
+  }
 })
 
 const initThree = () => {
@@ -83,13 +72,25 @@ const initThree = () => {
     scene.add(model)
     render()
   })
+
+  // 响应式更新
+  watchEffect(() => {
+    onWindowResize();
+  })
+
+  render()
 }
 
-onBeforeUnmount(() => {
-  if (renderer) {
-    renderer.dispose()
-  }
-})
+const render = () => {
+  renderer.render(scene, camera)
+}
+
+const onWindowResize = () => {
+  camera.aspect = width.value / height.value
+  camera.updateProjectionMatrix()
+  renderer.setSize(width.value, height.value)
+  render()
+}
 </script>
 
 <style scoped lang="less">
