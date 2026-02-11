@@ -1,24 +1,20 @@
 <template>
   <div class="home-container">
-    <h1>Hello World</h1>
+    <ThreeJs />
   </div>
 </template>
 
 <script setup lang="ts">
-// 最简单的Vue 3组件
+import ThreeJs from '@/components/threeJs/index.vue'
+
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .home-container {
+  position: relative;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  text-align: center;
-}
-
-h1 {
-  font-size: 2.5rem;
-  color: #333;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 </style>
