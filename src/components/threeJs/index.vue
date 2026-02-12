@@ -27,21 +27,22 @@ let modelLoadStartTime: number = 0
 
 const props = withDefaults(
   defineProps<{
-    modelConfig?: string  // 模型配置文件路径
+    skyBoxUrl?: string  // 天空盒路径
+    modelUrl?: string  // 模型路径
   }>(),
   {
-    modelConfig: undefined
+    skyBoxUrl: undefined,
+    modelUrl: undefined
   }
 )
 
-onMounted(async () => {
-  if (props.modelConfig) {
+// 监听 props 变化
+watchEffect(() => {
+  if (props.modelUrl && props.skyBoxUrl) {
     isLoading.value = true
     loadingText.value = '正在加载配置文件...'
-    let mapOptions: any = await getJsonFile(props.modelConfig)
-    let modelUrl: string = mapOptions.models.find((item: any) => item.homeShow === true)?.url
-    let skyBoxUrl: string = mapOptions.skybox?.url
-    initThree({ modelUrl: modelUrl, skyBoxUrl: skyBoxUrl })
+    initThree(props.skyBoxUrl)
+    loadModel(props.modelUrl).catch(console.error)
   }
 })
 
@@ -53,125 +54,124 @@ onBeforeUnmount(() => {
 
 /**
  * 初始化Three.js场景
- * @param options 初始化选项
- * @param options.modelUrl 模型路径
- * @param options.skyBoxUrl 天空盒路径
+ * @param skyBoxUrl 天空盒路径
  */
-const initThree = (options: { modelUrl: string, skyBoxUrl: string }) => {
-  const { modelUrl, skyBoxUrl } = options
-  scene = new THREE.Scene()
-
-  camera = new THREE.PerspectiveCamera(45, width.value / height.value, 0.1, 90000)
-  camera.position.set(-9, 5, -15)
-
-  renderer = new THREE.WebGLRenderer({ 
-    antialias: true,
-    alpha: true,
-    powerPreference: 'high-performance'
-  })
-  renderer.setSize(width.value, height.value)
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-  renderer.toneMapping = THREE.ACESFilmicToneMapping
-  renderer.toneMappingExposure = 1
-  renderer.shadowMap.enabled = false
-  renderer.outputColorSpace = THREE.SRGBColorSpace
-  threeJsContainer.value?.appendChild(renderer.domElement)
-
-  loadingText.value = '正在加载环境贴图...'
-  const rgbeLoader = new RGBELoader()
-  rgbeLoader.load(`${import.meta.env.BASE_URL}/${skyBoxUrl}`, (texture) => {
-    texture.mapping = THREE.EquirectangularReflectionMapping
-    texture.colorSpace = THREE.SRGBColorSpace
-    scene.background = texture
-    scene.environment = texture
-    render()
-  }, (xhr) => {
-    const progress = Math.round((xhr.loaded / xhr.total) * 100)
-    loadingText.value = `正在加载环境贴图... ${progress}%`
-  })
-
-  controls = new OrbitControls(camera, renderer.domElement)
-  controls.enableDamping = false // 移除阻尼效果
-  controls.dampingFactor = 0.05
-  controls.autoRotate = false
-  controls.autoRotateSpeed = 2
-  controls.enablePan = true
-  controls.minDistance = 1
-  controls.maxDistance = 100
-  controls.maxPolarAngle = Math.PI / 2
-  controls.update()
-  controls.addEventListener('change', render)
-
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
-  scene.add(ambientLight)
-
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
-  directionalLight.position.set(5, 10, 7)
-  scene.add(directionalLight)
-
-  loadingText.value = '正在加载3D模型...'
-  // 关键修改：使用performance.now()记录高精度开始时间
-  modelLoadStartTime = performance.now()
+const initThree = (skyBoxUrl: string) => {
   
-  // 创建标准加载器
-  const loader = new GLTFLoader()
-  loader.setPath(`${import.meta.env.BASE_URL}/`)
-  
-  // 配置DRACO解码器
-  const dracoLoader = new DRACOLoader()
-  dracoLoader.setDecoderPath(`${import.meta.env.BASE_URL}/draco/`)
-  dracoLoader.setDecoderConfig({ type: 'wasm' }) // 使用WASM解码器（比JS快2-3倍）
-  dracoLoader.setWorkerLimit(4) // 多线程解码
-  dracoLoader.preload() // 预加载解码器
-  loader.setDRACOLoader(dracoLoader)
-  
-  // 开始加载
-  loader.load(
-    modelUrl,
-    (gltf) => {
-      console.log('✅ 模型加载完成！')
-      
-      // 处理加载完成的模型
-      const group = gltf.scene
-      scene.add(group)
-      
-      // 立即移除加载界面，让用户看到模型
-      isLoading.value = false
-      
-      // 关键修改：使用performance.now()计算高精度耗时
-      const modelLoadEndTime = performance.now()
-      const totalLoadTime = modelLoadEndTime - modelLoadStartTime
-      // 输出高精度耗时（保留3位小数，体现微秒级精度）
-      console.log(`🚀 模型加载并渲染完成总耗时：${totalLoadTime.toFixed(3)} 毫秒 (${(totalLoadTime / 1000).toFixed(3)} 秒)`)
-      
-      // 渲染一次
+  // 只有在场景未初始化时才创建
+  if (!scene) {
+    scene = new THREE.Scene()
+
+    camera = new THREE.PerspectiveCamera(45, width.value / height.value, 0.1, 90000)
+    camera.position.set(-9, 5, -15)
+
+    renderer = new THREE.WebGLRenderer({ 
+      antialias: true,
+      alpha: true,
+      powerPreference: 'high-performance'
+    })
+    renderer.setSize(width.value, height.value)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    renderer.toneMapping = THREE.ACESFilmicToneMapping
+    renderer.toneMappingExposure = 1
+    renderer.shadowMap.enabled = false
+    renderer.outputColorSpace = THREE.SRGBColorSpace
+    threeJsContainer.value?.appendChild(renderer.domElement)
+
+    loadingText.value = '正在加载环境贴图...'
+    const rgbeLoader = new RGBELoader()
+    rgbeLoader.load(`${import.meta.env.BASE_URL}/${skyBoxUrl}`, (texture) => {
+      texture.mapping = THREE.EquirectangularReflectionMapping
+      texture.colorSpace = THREE.SRGBColorSpace
+      scene.background = texture
+      scene.environment = texture
       render()
-    },
-    (xhr) => {
-      const percent = Math.round((xhr.loaded / xhr.total) * 100)
-      loadingText.value = `正在加载3D模型... ${percent}%`
-      
-      // 每5%进度渲染一次，提升用户体验
-      if (percent % 5 === 0) {
-        render()
-      }
-    },
-    (error) => {
-      console.error('模型加载失败:', error)
-      loadingText.value = '模型加载失败'
-      setTimeout(() => {
+    }, (xhr) => {
+      const progress = Math.round((xhr.loaded / xhr.total) * 100)
+      loadingText.value = `正在加载环境贴图... ${progress}%`
+    })
+
+    controls = new OrbitControls(camera, renderer.domElement)
+    controls.enableDamping = false // 移除阻尼效果
+    controls.dampingFactor = 0.05
+    controls.autoRotate = false
+    controls.autoRotateSpeed = 2
+    controls.enablePan = true
+    controls.minDistance = 1
+    controls.maxDistance = 100
+    controls.maxPolarAngle = Math.PI / 2
+    controls.update()
+    controls.addEventListener('change', render)
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
+    scene.add(ambientLight)
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
+    directionalLight.position.set(5, 10, 7)
+    scene.add(directionalLight)
+
+    // 响应式更新
+    watchEffect(() => {
+      onWindowResize();
+    })
+
+    // 渲染场景
+    render()
+  }
+  
+  // 加载模型
+  loadingText.value = '正在加载3D模型...'
+  modelLoadStartTime = performance.now()
+}
+
+// 加载3D模型
+const loadModel = (modelUrl: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    const loader = new GLTFLoader()
+    loader.setPath(`${import.meta.env.BASE_URL}/`)
+    
+    const dracoLoader = new DRACOLoader()
+    dracoLoader.setDecoderPath(`${import.meta.env.BASE_URL}/draco/`)
+    dracoLoader.setDecoderConfig({ type: 'wasm' })
+    dracoLoader.setWorkerLimit(4)
+    dracoLoader.preload()
+    loader.setDRACOLoader(dracoLoader)
+    
+    loader.load(
+      modelUrl,
+      (gltf) => {
+        console.log('✅ 模型加载完成！')
+        
+        const group = gltf.scene
+        scene.add(group)
+        
         isLoading.value = false
-      }, 2000)
-    }
-  )
-
-  // 响应式更新
-  watchEffect(() => {
-    onWindowResize();
+        
+        const modelLoadEndTime = performance.now()
+        const totalLoadTime = modelLoadEndTime - modelLoadStartTime
+        console.log(`🚀 模型加载并渲染完成总耗时：${totalLoadTime.toFixed(3)} 毫秒 (${(totalLoadTime / 1000).toFixed(3)} 秒)`)
+        
+        render()
+        resolve()
+      },
+      (xhr) => {
+        const percent = Math.round((xhr.loaded / xhr.total) * 100)
+        loadingText.value = `正在加载3D模型... ${percent}%`
+        
+        if (percent % 5 === 0) {
+          render()
+        }
+      },
+      (error) => {
+        console.error('模型加载失败:', error)
+        loadingText.value = '模型加载失败'
+        setTimeout(() => {
+          isLoading.value = false
+        }, 2000)
+        reject(error)
+      }
+    )
   })
-
-  // 渲染场景
-  render()
 }
 
 const render = () => {

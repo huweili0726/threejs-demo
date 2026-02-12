@@ -9,7 +9,8 @@
           <span class="toggle-icon">{{ isImgPointControlsOpen ? '▼' : '▶' }}</span>
         </div>
         <div v-if="isImgPointControlsOpen" class="controls-content">
-          <button @click="toChangeModel" class="control-btn">切换模型</button>
+          <button @click="toChangeModel(`/glb/groundFloorOfficeBuilding.glb`)" class="control-btn">大楼</button>
+          <button @click="toChangeModel(`/glb/underGround.glb`)" class="control-btn">-1楼</button>
         </div>
       </div>
     </div>
@@ -18,7 +19,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeUnmount } from 'vue'
+import { ref } from 'vue'
+
+// 定义事件
+const emit = defineEmits<{
+  (e: 'changeModel', modelUrl: string): void
+}>()
 
 // 按钮组展开/折叠状态
 const isImgPointControlsOpen = ref(false)
@@ -61,8 +67,8 @@ const toggleControls = (controlType: string) => {
 }
 
 // 切换模型
-const toChangeModel = () => {
-
+const toChangeModel = (modelUrl: string) => {
+  emit('changeModel', modelUrl)
 }
 
 

@@ -1,19 +1,27 @@
 <template>
   <div class="home-container">
-    <ThreeController />
+    <ThreeController @changeModel="handleChangeModel" />
 
     <ThreeJs 
-      :modelConfig="currentModelUrl"
+      :skyBoxUrl="skyBoxUrl"
+      :modelUrl="modelUrl"
     />
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import ThreeJs from '@/components/threeJs/index.vue'
 import ThreeController from '@/views/three/threeController.vue'
 
-// 模型配置文件
-const currentModelUrl = `${process.env.BASE_URL}/config/glbLoad.jsonc?time=${new Date().getTime()}`
+const modelUrl = ref('')
+const skyBoxUrl = ref('')
+
+// 处理模型切换
+const handleChangeModel = (_modelUrl: string) => {
+  modelUrl.value = _modelUrl
+  skyBoxUrl.value = `/hdr/sky.hdr`
+}
 
 </script>
 
