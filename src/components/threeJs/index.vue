@@ -61,8 +61,8 @@ const initThree = (options: { modelUrl: string, skyBoxUrl: string }) => {
   const { modelUrl, skyBoxUrl } = options
   scene = new THREE.Scene()
 
-  camera = new THREE.PerspectiveCamera(75, width.value / height.value, 0.1, 1000)
-  camera.position.set(0, 5, 10)
+  camera = new THREE.PerspectiveCamera(45, width.value / height.value, 0.1, 90000)
+  camera.position.set(-9, 5, -15)
 
   renderer = new THREE.WebGLRenderer({ 
     antialias: true,
@@ -123,18 +123,23 @@ const initThree = (options: { modelUrl: string, skyBoxUrl: string }) => {
     // 修复外部模型导入后因视锥体剔除、法线 / 材质设置异常导致的渲染消失或面显示异常问题
     model.traverse((child) => {
       if (child instanceof THREE.Mesh) {
-        child.frustumCulled = false
+        child.frustumCulled = false // 禁用视锥体剔除
+        // 强制更新边界球，提高剔除判断的准确性（可选）
+        child.geometry.computeBoundingSphere();
+
         if (child.material) {
           if (Array.isArray(child.material)) {
             child.material.forEach((mat) => {
               if (mat instanceof THREE.Material) {
-                mat.side = THREE.FrontSide
-                mat.needsUpdate = true
+                // 改为双面渲染
+                mat.side = THREE.DoubleSide;
+                mat.needsUpdate = true;
               }
             })
           } else if (child.material instanceof THREE.Material) {
-            child.material.side = THREE.FrontSide
-            child.material.needsUpdate = true
+            // 启用双面渲染，从内部也能看到模型
+            child.material.side = THREE.DoubleSide;
+            child.material.needsUpdate = true;
           }
         }
       }
