@@ -9,35 +9,33 @@
 
 <script setup lang="ts">
 import { onMounted, ref, watchEffect } from 'vue'
-import { useThreeScene } from '@/composables/useThreeScene'
-import { useModelLoader } from '@/composables/useModelLoader'
-import { useEnvironmentLoader } from '@/composables/useEnvironmentLoader'
+import { useThreeScene } from '@/composables/threeJs/useThreeScene'
+import { useModelLoader } from '@/composables/threeJs/useModelLoader'
+import { useEnvironmentLoader } from '@/composables/threeJs/useEnvironmentLoader'
 
 const threeJsContainer = ref<HTMLDivElement>()
+
+// 使用three自定义 Hooks
+const { scene, initScene, render, onWindowResize } = useThreeScene(threeJsContainer)
+const { isLoading, loadingText, loadModels } = useModelLoader(scene, render)
+const { loadEnvironment } = useEnvironmentLoader(scene)
 
 const props = withDefaults(
   defineProps<{
     skyBoxUrl?: string  // 天空盒路径
-    modelUrl?: string  // 模型路径
   }>(),
   {
     skyBoxUrl: undefined,
-    modelUrl: undefined
   }
 )
-
-// 使用自定义 Hooks
-const { scene, initScene, render, onWindowResize } = useThreeScene(threeJsContainer)
-const { isLoading, loadingText, loadModels } = useModelLoader(scene, render)
-const { loadEnvironment } = useEnvironmentLoader(scene)
 
 onMounted(() => {
   if (!props.skyBoxUrl) {
     return
   }
   
-  initScene()
-  loadEnvironment(props.skyBoxUrl, render)
+  initScene() // 初始化场景
+  loadEnvironment(props.skyBoxUrl, render) // 加载天空盒
 })
 
 // 监听窗口大小变化

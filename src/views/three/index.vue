@@ -4,8 +4,7 @@
 
     <ThreeJs 
       ref="threeJsRef"
-      :skyBoxUrl="skyBoxUrl"
-      :modelUrl="modelUrl" />
+      :skyBoxUrl="skyBoxUrl" />
   </div>
 </template>
 
@@ -15,7 +14,6 @@ import ThreeJs from '@/components/threeJs/index.vue'
 import ThreeController from '@/views/three/threeController.vue'
 
 const threeJsRef = ref<InstanceType<typeof ThreeJs> | null>(null)
-const modelUrl = ref('')
 const skyBoxUrl = ref('/hdr/sky.hdr')
 
 onMounted(() => {
@@ -26,7 +24,7 @@ onMounted(() => {
     'glb/9th_floor.glb',
   ]
   if (threeJsRef.value) {
-    threeJsRef.value.loadModels(modelsToLoad).catch(console.error)
+    threeJsRef.value.loadModels(modelsToLoad).catch(console.error)  // 加载模型
   }
 })
 
