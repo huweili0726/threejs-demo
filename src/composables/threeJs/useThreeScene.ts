@@ -13,10 +13,15 @@ export function useThreeScene(container: any) {
 
   /**
    * 初始化场景
+   * @description 初始化场景，包括场景、相机、渲染器、轨道控制器、坐标轴辅助器、环境光、方向光
+   * @param options.coordinateAxis 是否添加坐标轴辅助器
    * @returns 场景实例
    */
-  const initScene = () => {
+  const initScene = (options: {
+    coordinateAxis?: boolean
+  }) => {
     if (!container.value) return
+    const { coordinateAxis } = options
 
     scene.value = new THREE.Scene()
     
@@ -48,6 +53,12 @@ export function useThreeScene(container: any) {
     controls.value.update()
     controls.value.addEventListener('change', render)
 
+    // 添加坐标轴辅助器
+    if(coordinateAxis){
+      const axesHelper = new THREE.AxesHelper(50)
+      scene.value.add(axesHelper)
+    }
+
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
     scene.value.add(ambientLight)
 
@@ -58,6 +69,7 @@ export function useThreeScene(container: any) {
 
   /**
    * 渲染场景
+   * @description 渲染场景，包括场景、相机、渲染器
    */
   const render = () => {
     if (renderer.value && scene.value && camera.value) {
@@ -67,6 +79,7 @@ export function useThreeScene(container: any) {
 
   /**
    * 处理窗口大小变化
+   * @description 处理窗口大小变化，包括相机.aspect、相机.updateProjectionMatrix、渲染器.setSize、渲染场景
    */
   const onWindowResize = () => {
     if (camera.value && renderer.value) {
@@ -79,6 +92,7 @@ export function useThreeScene(container: any) {
 
   /**
    * 相机平滑移动到指定位置
+   * @description 相机平滑移动到指定位置，包括相机.position、控制器.target、渲染场景
    * @param targetPosition 目标位置
    * @param targetTarget 目标观察点
    * @param duration 动画持续时间（毫秒）

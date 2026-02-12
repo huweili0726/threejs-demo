@@ -35,7 +35,7 @@ onMounted(() => {
     return
   }
   
-  initScene() // 初始化场景
+  initScene({ coordinateAxis: true }) // 初始化场景
   loadEnvironment(props.skyBoxUrl, render) // 加载天空盒
 })
 

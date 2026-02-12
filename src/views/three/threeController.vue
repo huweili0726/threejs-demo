@@ -77,7 +77,6 @@ const toFloor = (floor: string) => {
   }
 }
 
-
 </script>
 
 <style scoped lang="less">
