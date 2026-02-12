@@ -32,12 +32,12 @@ onMounted(() => {
   }
 })
 
-const handleFocusModel = (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration?: number) => {
+const handleFocusModel = (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration?: number, modelInitPosition?: {x: number, y: number, z: number}) => {
   if (threeJsRef.value) {
     threeJsRef.value.flyToModel(targetPosition, targetTarget, duration)
 
     if (threeJsRef.value) {
-      threeJsRef.value.loadModel('glb/man.glb', 0.0005, {x: -1.8, y: -1.8, z: 3.06}).catch(console.error)  // 加载模型
+      threeJsRef.value.loadModel('glb/man.glb', 0.0005, modelInitPosition).catch(console.error)  // 加载模型
     }
 
   }
