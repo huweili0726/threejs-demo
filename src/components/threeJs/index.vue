@@ -5,6 +5,7 @@
 <script setup lang="ts">
 import { onMounted, ref, onBeforeUnmount, watchEffect } from 'vue'
 import * as THREE from 'three'
+import { jsonUtils } from '@/utils/json'
 import { useWindowSize } from '@vueuse/core'
 import { RGBELoader } from 'three-stdlib'
 import { OrbitControls } from 'three-stdlib'
@@ -18,8 +19,21 @@ let camera: THREE.PerspectiveCamera
 let renderer: THREE.WebGLRenderer
 let controls: OrbitControls
 
-onMounted(() => {
-  initThree()
+const props = withDefaults(
+  defineProps<{
+    modelConfig?: string  // 模型配置文件路径
+  }>(),
+  {
+    modelConfig: undefined
+  }
+)
+
+onMounted(async () => {
+  if (props.modelConfig) {
+    let mapOptions: any = await getJsonFile(props.modelConfig)
+    let modelUrl: string = mapOptions.models.find((item: any) => item.homeShow === true)?.url
+    initThree(modelUrl)
+  }
 })
 
 onBeforeUnmount(() => {
@@ -28,7 +42,7 @@ onBeforeUnmount(() => {
   }
 })
 
-const initThree = () => {
+const initThree = (modelUrl: string) => {
   scene = new THREE.Scene()
 
   camera = new THREE.PerspectiveCamera(75, width.value / height.value, 0.1, 1000)
@@ -67,7 +81,7 @@ const initThree = () => {
   const dracoLoader = new DRACOLoader()
   dracoLoader.setDecoderPath(`${import.meta.env.BASE_URL}/draco/`)
   gltfLoader.setDRACOLoader(dracoLoader)
-  gltfLoader.load(`${import.meta.env.BASE_URL}/glb/groundFloorOfficeBuilding.glb`, (gltf) => {
+  gltfLoader.load(`${import.meta.env.BASE_URL}/${modelUrl}`, (gltf) => {
     const model = gltf.scene
     scene.add(model)
     render()
@@ -78,6 +92,7 @@ const initThree = () => {
     onWindowResize();
   })
 
+  // 渲染场景
   render()
 }
 
@@ -91,6 +106,8 @@ const onWindowResize = () => {
   renderer.setSize(width.value, height.value)
   render()
 }
+
+const { getJsonFile } = jsonUtils()
 </script>
 
 <style scoped lang="less">
