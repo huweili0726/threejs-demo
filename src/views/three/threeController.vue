@@ -73,7 +73,7 @@ const toFloor = (floor: string) => {
   if(floor === '-1') {
     const targetPosition = new THREE.Vector3(-2, -1.7, 3.06)
     const targetTarget = new THREE.Vector3(0, -1.7, 3.06)
-    const duration = 1000
+    const duration = 2000
     emit('focusModel', targetPosition, targetTarget, duration)
   }
 }
