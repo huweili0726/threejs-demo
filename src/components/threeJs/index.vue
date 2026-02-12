@@ -38,12 +38,18 @@ const props = withDefaults(
 
 // 监听 props 变化
 watchEffect(() => {
-  if (props.modelUrl && props.skyBoxUrl) {
+  if (props.modelUrl) {
     isLoading.value = true
     loadingText.value = '正在加载配置文件...'
-    initThree(props.skyBoxUrl)
     loadModel(props.modelUrl).catch(console.error)
   }
+})
+
+onMounted(() => {
+  if (!props.skyBoxUrl) {
+    return
+  }
+  initThree(props.skyBoxUrl)
 })
 
 onBeforeUnmount(() => {
