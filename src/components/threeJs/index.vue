@@ -7,10 +7,7 @@ import { onMounted, ref, onBeforeUnmount, watchEffect } from 'vue'
 import * as THREE from 'three'
 import { jsonUtils } from '@/utils/json'
 import { useWindowSize } from '@vueuse/core'
-import { RGBELoader } from 'three-stdlib'
-import { OrbitControls } from 'three-stdlib'
-import { GLTFLoader } from 'three-stdlib'
-import { DRACOLoader } from 'three-stdlib'
+import { RGBELoader, OrbitControls, GLTFLoader, DRACOLoader } from 'three-stdlib'
 
 const { width, height } = useWindowSize() // 获取窗口宽度和高度
 const threeJsContainer = ref<HTMLDivElement>()
