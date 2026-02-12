@@ -13,7 +13,6 @@ import * as THREE from 'three'
 import { jsonUtils } from '@/utils/json'
 import { useWindowSize } from '@vueuse/core'
 import { RGBELoader, GLTFLoader, DRACOLoader, OrbitControls } from 'three-stdlib'
-// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 const { width, height } = useWindowSize() // 获取窗口宽度和高度
 const threeJsContainer = ref<HTMLDivElement>()
@@ -23,6 +22,8 @@ let renderer: THREE.WebGLRenderer
 let controls: OrbitControls
 let isLoading = ref(false)
 let loadingText = ref('正在加载场景...')
+// 新增：用于记录加载开始时间（改用performance API）
+let modelLoadStartTime: number = 0
 
 const props = withDefaults(
   defineProps<{
@@ -109,6 +110,9 @@ const initThree = (options: { modelUrl: string, skyBoxUrl: string }) => {
   scene.add(directionalLight)
 
   loadingText.value = '正在加载3D模型...'
+  // 关键修改：使用performance.now()记录高精度开始时间
+  modelLoadStartTime = performance.now()
+  
   const gltfLoader = new GLTFLoader()
   const dracoLoader = new DRACOLoader()
   dracoLoader.setDecoderPath(`${import.meta.env.BASE_URL}/draco/`)
@@ -137,6 +141,13 @@ const initThree = (options: { modelUrl: string, skyBoxUrl: string }) => {
     })
     scene.add(model)
     render()
+    
+    // 关键修改：使用performance.now()计算高精度耗时
+    const modelLoadEndTime = performance.now()
+    const totalLoadTime = modelLoadEndTime - modelLoadStartTime
+    // 输出高精度耗时（保留3位小数，体现微秒级精度）
+    console.log(`模型加载并渲染完成总耗时：${totalLoadTime.toFixed(3)} 毫秒 (${(totalLoadTime / 1000).toFixed(3)} 秒)`)
+    
     isLoading.value = false
   }, (xhr) => {
     const progress = Math.round((xhr.loaded / xhr.total) * 100)
