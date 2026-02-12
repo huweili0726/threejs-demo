@@ -1,11 +1,15 @@
 import { ref } from 'vue'
-import * as THREE from 'three'
 import { GLTFLoader, DRACOLoader } from 'three-stdlib'
 
 export function useModelLoader(scene: any, render?: () => void) {
   const isLoading = ref(false)
   const loadingText = ref('正在加载模型...')
 
+  /**
+   * 加载3D模型
+   * @param modelUrl 模型的 URL
+   * @returns 加载完成后的 Promise
+   */
   const loadModel = (modelUrl: string): Promise<void> => {
     return new Promise((resolve, reject) => {
       if (!scene.value) {
@@ -50,6 +54,11 @@ export function useModelLoader(scene: any, render?: () => void) {
     })
   }
 
+  /**
+   * 并行加载多个3D模型
+   * @param modelUrls 模型 URL 数组
+   * @returns 加载完成后的 Promise
+   */
   const loadModels = (modelUrls: string[]): Promise<void> => {
     return new Promise(async (resolve, reject) => {
       try {

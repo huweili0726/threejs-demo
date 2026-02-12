@@ -10,6 +10,10 @@ export function useThreeScene(container: any) {
   const renderer = shallowRef<THREE.WebGLRenderer>()
   const controls = shallowRef<OrbitControls>()
 
+  /**
+   * 初始化场景
+   * @returns 场景实例
+   */
   const initScene = () => {
     if (!container.value) return
 
@@ -51,12 +55,18 @@ export function useThreeScene(container: any) {
     scene.value.add(directionalLight)
   }
 
+  /**
+   * 渲染场景
+   */
   const render = () => {
     if (renderer.value && scene.value && camera.value) {
       renderer.value.render(scene.value, camera.value)
     }
   }
 
+  /**
+   * 处理窗口大小变化
+   */
   const onWindowResize = () => {
     if (camera.value && renderer.value) {
       camera.value.aspect = width.value / height.value

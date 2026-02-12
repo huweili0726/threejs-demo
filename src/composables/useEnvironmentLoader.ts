@@ -3,6 +3,12 @@ import * as THREE from 'three'
 import { RGBELoader } from 'three-stdlib'
 
 export function useEnvironmentLoader(scene: any) {
+  /**
+   * 加载环境贴图
+   * @param skyBoxUrl - 环境贴图的 URL
+   * @param onLoad - 加载完成后的回调函数
+   * @returns 加载进度文本
+   */
   const loadEnvironment = (skyBoxUrl: string, onLoad?: () => void) => {
     const loadingText = ref('正在加载环境贴图...')
     
