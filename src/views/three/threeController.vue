@@ -9,8 +9,7 @@
           <span class="toggle-icon">{{ isImgPointControlsOpen ? '▼' : '▶' }}</span>
         </div>
         <div v-if="isImgPointControlsOpen" class="controls-content">
-          <button @click="toChangeModel(`/glb/groundFloorOfficeBuilding.glb`)" class="control-btn">大楼</button>
-          <button @click="toChangeModel(`/glb/underGround.glb`)" class="control-btn">-1楼</button>
+          <button @click="toLoadBothModels" class="control-btn">并行加载多个模型</button>
         </div>
       </div>
     </div>
@@ -24,6 +23,7 @@ import { ref } from 'vue'
 // 定义事件
 const emit = defineEmits<{
   (e: 'changeModel', modelUrl: string): void
+  (e: 'loadBothModels'): void
 }>()
 
 // 按钮组展开/折叠状态
@@ -66,12 +66,10 @@ const toggleControls = (controlType: string) => {
   }
 }
 
-// 切换模型
-const toChangeModel = (modelUrl: string) => {
-  emit('changeModel', modelUrl)
+// 并行加载多个模型
+const toLoadBothModels = () => {
+  emit('loadBothModels')
 }
-
-
 
 
 </script>

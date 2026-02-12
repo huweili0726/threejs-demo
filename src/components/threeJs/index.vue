@@ -37,13 +37,11 @@ const props = withDefaults(
 )
 
 // 监听 props 变化
-watchEffect(() => {
-  if (props.modelUrl) {
-    isLoading.value = true
-    loadingText.value = '正在加载配置文件...'
-    loadModel(props.modelUrl).catch(console.error)
-  }
-})
+// watchEffect(() => {
+//   if (props.modelUrl) {
+//     loadModel(props.modelUrl).catch(console.error)
+//   }
+// })
 
 onMounted(() => {
   if (!props.skyBoxUrl) {
@@ -124,10 +122,6 @@ const initThree = (skyBoxUrl: string) => {
     // 渲染场景
     render()
   }
-  
-  // 加载模型
-  loadingText.value = '正在加载3D模型...'
-  modelLoadStartTime = performance.now()
 }
 
 // 加载3D模型
@@ -146,37 +140,52 @@ const loadModel = (modelUrl: string): Promise<void> => {
     loader.load(
       modelUrl,
       (gltf) => {
-        console.log('✅ 模型加载完成！')
         
         const group = gltf.scene
         scene.add(group)
-        
-        isLoading.value = false
-        
-        const modelLoadEndTime = performance.now()
-        const totalLoadTime = modelLoadEndTime - modelLoadStartTime
-        console.log(`🚀 模型加载并渲染完成总耗时：${totalLoadTime.toFixed(3)} 毫秒 (${(totalLoadTime / 1000).toFixed(3)} 秒)`)
         
         render()
         resolve()
       },
       (xhr) => {
         const percent = Math.round((xhr.loaded / xhr.total) * 100)
-        loadingText.value = `正在加载3D模型... ${percent}%`
         
         if (percent % 5 === 0) {
           render()
         }
       },
       (error) => {
-        console.error('模型加载失败:', error)
-        loadingText.value = '模型加载失败'
-        setTimeout(() => {
-          isLoading.value = false
-        }, 2000)
+        console.error(`❌ ${modelUrl}模型加载失败:`, error)
         reject(error)
       }
     )
+  })
+}
+
+// 并行加载多个3D模型
+const loadModels = (modelUrls: string[]): Promise<void> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      isLoading.value = true
+      loadingText.value = '正在并行加载3D模型...'
+      modelLoadStartTime = performance.now()
+      
+      // 并行加载所有模型
+      const loadPromises = modelUrls.map(url => loadModel(url))
+      await Promise.all(loadPromises)
+      
+      isLoading.value = false
+      const modelLoadEndTime = performance.now()
+      const totalLoadTime = modelLoadEndTime - modelLoadStartTime
+      console.log(`🚀 所有模型并行加载完成总耗时：${totalLoadTime.toFixed(3)} 毫秒 (${(totalLoadTime / 1000).toFixed(3)} 秒)`)
+      
+      resolve()
+    } catch (error) {
+      console.error('模型加载失败:', error)
+      loadingText.value = '模型加载失败'
+      isLoading.value = false
+      reject(error)
+    }
   })
 }
 
@@ -191,7 +200,11 @@ const onWindowResize = () => {
   render()
 }
 
-const { getJsonFile } = jsonUtils()
+// 暴露方法给父组件
+defineExpose({
+  loadModel,
+  loadModels
+})
 </script>
 
 <style scoped lang="less">
@@ -206,7 +219,7 @@ const { getJsonFile } = jsonUtils()
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -225,7 +238,7 @@ const { getJsonFile } = jsonUtils()
     }
 
     .loading-text {
-      color: #64ffda;
+      color: #333333;
       font-size: 16px;
       font-weight: 500;
       text-align: center;

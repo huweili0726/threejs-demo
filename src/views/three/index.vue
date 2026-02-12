@@ -1,11 +1,12 @@
 <template>
   <div class="home-container">
-    <ThreeController @changeModel="handleChangeModel" />
+    <ThreeController
+      @loadBothModels="loadBothModels" />
 
     <ThreeJs 
+      ref="threeJsRef"
       :skyBoxUrl="skyBoxUrl"
-      :modelUrl="modelUrl"
-    />
+      :modelUrl="modelUrl" />
   </div>
 </template>
 
@@ -14,12 +15,21 @@ import { ref } from 'vue'
 import ThreeJs from '@/components/threeJs/index.vue'
 import ThreeController from '@/views/three/threeController.vue'
 
+const threeJsRef = ref<InstanceType<typeof ThreeJs> | null>(null)
 const modelUrl = ref('')
 const skyBoxUrl = ref('/hdr/sky.hdr')
 
-// 处理模型切换
-const handleChangeModel = (_modelUrl: string) => {
-  modelUrl.value = _modelUrl
+// 并行加载两个指定模型
+const loadBothModels = () => {
+  const modelsToLoad = [
+    'glb/groundFloorOfficeBuilding.glb',
+    'glb/underGround.glb',
+    'glb/8th_floor.glb',
+    'glb/9th_floor.glb',
+  ]
+  if (threeJsRef.value) {
+    threeJsRef.value.loadModels(modelsToLoad).catch(console.error)
+  }
 }
 
 </script>
