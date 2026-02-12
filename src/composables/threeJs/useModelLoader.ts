@@ -20,7 +20,7 @@ export function useModelLoader(scene: any, render?: () => void) {
     modelInitPosition?: { x: number; y: number; z: number }
     onLookAt?: { x: number; y: number; z: number }
   }): Promise<void> => {
-    const { modelUrl, scale, modelInitPosition = { x: 0, y: 0, z: 0 }, onLookAt } = options
+    const { modelUrl, scale, modelInitPosition = { x: 0, y: 0, z: 0 }, onLookAt = { x: 0, y: 0, z: 0 } } = options
     return new Promise((resolve, reject) => {
       if (!scene.value) {
         reject(new Error('Scene not initialized'))
@@ -43,6 +43,7 @@ export function useModelLoader(scene: any, render?: () => void) {
           const group = gltf.scene
           group.scale.set(scale, scale, scale)
           group.position.set(modelInitPosition.x, modelInitPosition.y, modelInitPosition.z)
+          group.lookAt(onLookAt.x, onLookAt.y, onLookAt.z)
           scene.value!.add(group)
           if (render) {
             render()
