@@ -28,7 +28,10 @@ onMounted(() => {
     'glb/消防给水.glb',
   ]
   if (threeJsRef.value) {
-    threeJsRef.value.loadModels(modelsToLoad, 1).catch(console.error)  // 加载模型
+    threeJsRef.value.loadModels({
+      modelUrls: modelsToLoad,
+      scale: 1
+    }).catch(console.error)  // 加载模型
   }
 })
 
@@ -37,7 +40,11 @@ const handleFocusModel = (targetPosition: THREE.Vector3, targetTarget: THREE.Vec
     threeJsRef.value.flyToModel(targetPosition, targetTarget, duration)
 
     if (threeJsRef.value) {
-      threeJsRef.value.loadModel('glb/man.glb', 0.0005, modelInitPosition).catch(console.error)  // 加载模型
+      threeJsRef.value.loadModel({
+        modelUrl: 'glb/man.glb',
+        scale: 0.0005,
+        modelInitPosition: modelInitPosition || { x: 0, y: 0, z: 0 },
+      }).catch(console.error)  // 加载模型
     }
 
   }

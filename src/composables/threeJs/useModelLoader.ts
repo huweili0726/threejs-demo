@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import * as THREE from 'three'
 import { GLTFLoader, DRACOLoader } from 'three-stdlib'
 
 export function useModelLoader(scene: any, render?: () => void) {
@@ -7,12 +8,19 @@ export function useModelLoader(scene: any, render?: () => void) {
 
   /**
    * 加载3D模型
-   * @param modelUrl 模型的 URL
-   * @param scale 模型缩放比例
-   * @param position 模型初始位置
+   * @param options.modelUrl 模型的 URL
+   * @param options.scale 模型缩放比例
+   * @param options.modelInitPosition 模型初始位置
+   * @param options.onLookAt 模型初始朝向
    * @returns 加载完成后的 Promise
    */
-  const loadModel = (modelUrl: string, scale: number = 1, position: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 }): Promise<void> => {
+  const loadModel = (options: {
+    modelUrl: string
+    scale: number
+    modelInitPosition?: { x: number; y: number; z: number }
+    onLookAt?: { x: number; y: number; z: number }
+  }): Promise<void> => {
+    const { modelUrl, scale, modelInitPosition = { x: 0, y: 0, z: 0 }, onLookAt } = options
     return new Promise((resolve, reject) => {
       if (!scene.value) {
         reject(new Error('Scene not initialized'))
@@ -34,7 +42,7 @@ export function useModelLoader(scene: any, render?: () => void) {
         (gltf) => {
           const group = gltf.scene
           group.scale.set(scale, scale, scale)
-          group.position.set(position.x, position.y, position.z)
+          group.position.set(modelInitPosition.x, modelInitPosition.y, modelInitPosition.z)
           scene.value!.add(group)
           if (render) {
             render()
@@ -60,19 +68,31 @@ export function useModelLoader(scene: any, render?: () => void) {
 
   /**
    * 并行加载多个3D模型
-   * @param modelUrls 模型 URL 数组
-   * @param scale 模型缩放比例
-   * @param position 模型初始位置
+   * @param options.modelUrls 模型 URL 数组
+   * @param options.scale 模型缩放比例
+   * @param options.modelInitPosition 模型初始位置
+   * @param options.onLookAt 模型初始朝向
    * @returns 加载完成后的 Promise
    */
-  const loadModels = (modelUrls: string[], scale: number = 1, position: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 }): Promise<void> => {
+  const loadModels = (options: {
+    modelUrls: string[]
+    scale: number
+    modelInitPosition?: { x: number; y: number; z: number }
+    onLookAt?: { x: number; y: number; z: number }
+  }): Promise<void> => {
+    const { modelUrls, scale, modelInitPosition, onLookAt } = options
     return new Promise(async (resolve, reject) => {
       try {
         isLoading.value = true
         loadingText.value = '正在并行加载3D模型...'
         const modelLoadStartTime = performance.now()
         
-        const loadPromises = modelUrls.map(url => loadModel(url, scale, position))
+        const loadPromises = modelUrls.map(url => loadModel({
+          modelUrl: url,
+          scale,
+          modelInitPosition,
+          onLookAt
+        }))
         await Promise.all(loadPromises)
         
         isLoading.value = false
