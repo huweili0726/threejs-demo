@@ -5,6 +5,7 @@ import { GLTFLoader, DRACOLoader } from 'three-stdlib'
 export function useModelLoader(scene: any, render?: () => void) {
   const isLoading = ref(false)
   const loadingText = ref('正在加载模型...')
+  const modelMixers = ref<Map<string, THREE.AnimationMixer>>(new Map())
 
   /**
    * 加载3D模型
@@ -12,6 +13,7 @@ export function useModelLoader(scene: any, render?: () => void) {
    * @param options.scale 模型缩放比例
    * @param options.modelInitPosition 模型初始位置
    * @param options.onLookAt 模型初始朝向
+   * @param options.enableAnimation 是否启用动画
    * @returns 加载完成后的 Promise
    */
   const loadModel = (options: {
@@ -19,8 +21,9 @@ export function useModelLoader(scene: any, render?: () => void) {
     scale: number
     modelInitPosition?: { x: number; y: number; z: number }
     onLookAt?: { x: number; y: number; z: number }
+    enableAnimation?: boolean
   }): Promise<void> => {
-    const { modelUrl, scale, modelInitPosition = { x: 0, y: 0, z: 0 }, onLookAt = { x: 0, y: 0, z: 0 } } = options
+    const { modelUrl, scale, modelInitPosition = { x: 0, y: 0, z: 0 }, onLookAt = { x: 0, y: 0, z: 0 }, enableAnimation = true } = options
     return new Promise((resolve, reject) => {
       if (!scene.value) {
         reject(new Error('Scene not initialized'))
@@ -44,6 +47,20 @@ export function useModelLoader(scene: any, render?: () => void) {
           group.scale.set(scale, scale, scale)
           group.position.set(modelInitPosition.x, modelInitPosition.y, modelInitPosition.z)
           group.lookAt(onLookAt.x, onLookAt.y, onLookAt.z)
+          
+          if (enableAnimation && gltf.animations && gltf.animations.length > 0) {
+            const mixer = new THREE.AnimationMixer(group)
+            modelMixers.value.set(modelUrl, mixer)
+            
+            gltf.animations.forEach((clip) => {
+              const action = mixer.clipAction(clip)
+              action.setLoop(THREE.LoopRepeat, Infinity)
+              action.play()
+            })
+            
+            console.log(`✅ ${modelUrl} 包含 ${gltf.animations.length} 个动画`)
+          }
+          
           scene.value!.add(group)
           if (render) {
             render()
@@ -73,6 +90,7 @@ export function useModelLoader(scene: any, render?: () => void) {
    * @param options.scale 模型缩放比例
    * @param options.modelInitPosition 模型初始位置
    * @param options.onLookAt 模型初始朝向
+   * @param options.enableAnimation 是否启用动画
    * @returns 加载完成后的 Promise
    */
   const loadModels = (options: {
@@ -80,8 +98,9 @@ export function useModelLoader(scene: any, render?: () => void) {
     scale: number
     modelInitPosition?: { x: number; y: number; z: number }
     onLookAt?: { x: number; y: number; z: number }
+    enableAnimation?: boolean
   }): Promise<void> => {
-    const { modelUrls, scale, modelInitPosition, onLookAt } = options
+    const { modelUrls, scale, modelInitPosition, onLookAt, enableAnimation } = options
     return new Promise(async (resolve, reject) => {
       try {
         isLoading.value = true
@@ -92,7 +111,8 @@ export function useModelLoader(scene: any, render?: () => void) {
           modelUrl: url,
           scale,
           modelInitPosition,
-          onLookAt
+          onLookAt,
+          enableAnimation
         }))
         await Promise.all(loadPromises)
         
@@ -111,10 +131,22 @@ export function useModelLoader(scene: any, render?: () => void) {
     })
   }
 
+  /**
+   * 更新所有动画
+   * @param deltaTime 时间增量（秒）
+   */
+  const updateAnimations = (deltaTime: number) => {
+    modelMixers.value.forEach((mixer) => {
+      mixer.update(deltaTime)
+    })
+  }
+
   return {
     isLoading,
     loadingText,
+    modelMixers,
     loadModel,
-    loadModels
+    loadModels,
+    updateAnimations
   }
 }
