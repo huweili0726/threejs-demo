@@ -10,7 +10,6 @@
 <script setup lang="ts">
 import { onMounted, ref, onBeforeUnmount, watchEffect } from 'vue'
 import * as THREE from 'three'
-import { jsonUtils } from '@/utils/json'
 import { useWindowSize } from '@vueuse/core'
 import { RGBELoader, DRACOLoader, OrbitControls, GLTFLoader } from 'three-stdlib'
 
@@ -35,13 +34,6 @@ const props = withDefaults(
     modelUrl: undefined
   }
 )
-
-// 监听 props 变化
-// watchEffect(() => {
-//   if (props.modelUrl) {
-//     loadModel(props.modelUrl).catch(console.error)
-//   }
-// })
 
 onMounted(() => {
   if (!props.skyBoxUrl) {
@@ -215,34 +207,36 @@ defineExpose({
 
   .loading-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.1);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.4);
+    padding: 20px 30px;
+    border-radius: 8px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 1000;
     backdrop-filter: blur(5px);
+    border: 1px solid rgba(100, 255, 218, 0.3);
 
     .loading-spinner {
-      width: 60px;
-      height: 60px;
-      border: 5px solid rgba(100, 255, 218, 0.3);
-      border-top: 5px solid #64ffda;
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(100, 255, 218, 0.3);
+      border-top: 3px solid #64ffda;
       border-radius: 50%;
       animation: spin 1s linear infinite;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
 
     .loading-text {
-      color: #333333;
-      font-size: 16px;
+      color: #64ffda;
+      font-size: 14px;
       font-weight: 500;
       text-align: center;
-      max-width: 80%;
+      max-width: 300px;
     }
   }
 }
