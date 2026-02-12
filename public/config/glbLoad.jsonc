@@ -9,13 +9,13 @@
       "id": "1", // 模型ID
       "name": "模型1", // 模型名称
       "url": "glb/groundFloorOfficeBuilding.glb", // 模型路径
-      "homeShow": true // 是否在首页显示
+      "homeShow": false // 是否在首页显示
     },
     {
       "id": "2",
       "name": "模型2",
       "url": "glb/underGround.glb",
-      "homeShow": false
+      "homeShow": true
     }
   ]
 }
