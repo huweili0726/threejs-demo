@@ -35,7 +35,7 @@ onMounted(() => {
   }
 })
 
-const handleFocusModel = (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration?: number, modelInitPosition?: {x: number, y: number, z: number}) => {
+const handleFocusModel = (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration?: number, modelInitPosition?: {x: number, y: number, z: number}, onLookAt?: {x: number, y: number, z: number}) => {
   if (threeJsRef.value) {
     threeJsRef.value.flyToModel(targetPosition, targetTarget, duration)
 
@@ -44,7 +44,7 @@ const handleFocusModel = (targetPosition: THREE.Vector3, targetTarget: THREE.Vec
         modelUrl: 'glb/man.glb',
         scale: 0.0005,
         modelInitPosition: modelInitPosition || { x: 0, y: 0, z: 0 },
-        onLookAt: { x: 0, y: -1.8, z: 3.06 },
+        onLookAt: onLookAt || { x: 0, y: 0, z: 0 },
       }).catch(console.error)  // 加载模型
     }
 

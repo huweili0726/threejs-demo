@@ -25,7 +25,7 @@ import { ref } from 'vue'
 const emit = defineEmits<{
   (e: 'changeModel', modelUrl: string): void
   (e: 'loadBothModels'): void
-  (e: 'focusModel', targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration?: number, modelInitPosition?: {x: number, y: number, z: number}): void
+  (e: 'focusModel', targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration?: number, modelInitPosition?: {x: number, y: number, z: number}, onLookAt?: {x: number, y: number, z: number}): void
 }>()
 
 // 按钮组展开/折叠状态
@@ -75,7 +75,8 @@ const toFloor = (floor: string) => {
     const targetTarget = new THREE.Vector3(0, -1.7, 3.06)
     const duration = 2000
     const modelInitPosition = {x: -1.8, y: -1.8, z: 3.06}
-    emit('focusModel', targetPosition, targetTarget, duration, modelInitPosition)
+    const onLookAt = { x: 0, y: -1.8, z: 3.06 }
+    emit('focusModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   }
 }
 
