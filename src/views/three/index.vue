@@ -1,7 +1,6 @@
 <template>
   <div class="home-container">
-    <ThreeController
-      @loadBothModels="loadBothModels" />
+    <ThreeController />
 
     <ThreeJs 
       ref="threeJsRef"
@@ -11,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import ThreeJs from '@/components/threeJs/index.vue'
 import ThreeController from '@/views/three/threeController.vue'
 
@@ -19,8 +18,7 @@ const threeJsRef = ref<InstanceType<typeof ThreeJs> | null>(null)
 const modelUrl = ref('')
 const skyBoxUrl = ref('/hdr/sky.hdr')
 
-// 并行加载两个指定模型
-const loadBothModels = () => {
+onMounted(() => {
   const modelsToLoad = [
     'glb/groundFloorOfficeBuilding.glb',
     'glb/underGround.glb',
@@ -30,7 +28,7 @@ const loadBothModels = () => {
   if (threeJsRef.value) {
     threeJsRef.value.loadModels(modelsToLoad).catch(console.error)
   }
-}
+})
 
 </script>
 

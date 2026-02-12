@@ -9,7 +9,7 @@
           <span class="toggle-icon">{{ isImgPointControlsOpen ? '▼' : '▶' }}</span>
         </div>
         <div v-if="isImgPointControlsOpen" class="controls-content">
-          <button @click="toLoadBothModels" class="control-btn">并行加载多个模型</button>
+          <button @click="toFloor('-1')" class="control-btn">-1楼</button>
         </div>
       </div>
     </div>
@@ -66,9 +66,11 @@ const toggleControls = (controlType: string) => {
   }
 }
 
-// 并行加载多个模型
-const toLoadBothModels = () => {
-  emit('loadBothModels')
+// 切换楼层
+const toFloor = (floor: string) => {
+  if(floor === '-1') {
+    // emit('changeModel', 'glb/groundFloorOfficeBuilding.glb')
+  }
 }
 
 
