@@ -10,7 +10,7 @@ export function useModelLoader(scene: any, render?: () => void) {
    * @param modelUrl 模型的 URL
    * @returns 加载完成后的 Promise
    */
-  const loadModel = (modelUrl: string): Promise<void> => {
+  const loadModel = (modelUrl: string, scale: number = 1): Promise<void> => {
     return new Promise((resolve, reject) => {
       if (!scene.value) {
         reject(new Error('Scene not initialized'))
@@ -31,6 +31,7 @@ export function useModelLoader(scene: any, render?: () => void) {
         modelUrl,
         (gltf) => {
           const group = gltf.scene
+          group.scale.set(scale, scale, scale)
           scene.value!.add(group)
           if (render) {
             render()
@@ -57,16 +58,17 @@ export function useModelLoader(scene: any, render?: () => void) {
   /**
    * 并行加载多个3D模型
    * @param modelUrls 模型 URL 数组
+   * @param scale 模型缩放比例
    * @returns 加载完成后的 Promise
    */
-  const loadModels = (modelUrls: string[]): Promise<void> => {
+  const loadModels = (modelUrls: string[], scale: number = 1): Promise<void> => {
     return new Promise(async (resolve, reject) => {
       try {
         isLoading.value = true
         loadingText.value = '正在并行加载3D模型...'
         const modelLoadStartTime = performance.now()
         
-        const loadPromises = modelUrls.map(url => loadModel(url))
+        const loadPromises = modelUrls.map(url => loadModel(url, scale))
         await Promise.all(loadPromises)
         
         isLoading.value = false

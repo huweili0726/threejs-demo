@@ -18,7 +18,7 @@ const threeJsContainer = ref<HTMLDivElement>()
 
 // 使用three自定义 Hooks
 const { scene, initScene, render, onWindowResize, camera, controls, flyTo } = useThreeScene(threeJsContainer)
-const { isLoading, loadingText, loadModels } = useModelLoader(scene, render)
+const { isLoading, loadingText, loadModel, loadModels } = useModelLoader(scene, render)
 const { loadEnvironment } = useEnvironmentLoader(scene)
 
 const props = withDefaults(
@@ -60,6 +60,7 @@ const flyToModel = async (targetPosition: THREE.Vector3, targetTarget: THREE.Vec
 
 // 暴露方法给父组件
 defineExpose({
+  loadModel,
   loadModels,
   flyToModel
 })
