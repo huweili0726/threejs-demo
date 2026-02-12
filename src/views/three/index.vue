@@ -22,6 +22,9 @@ onMounted(() => {
     'glb/underGround.glb',
     'glb/8th_floor.glb',
     'glb/9th_floor.glb',
+    'glb/空调送、回风、排烟.glb',
+    'glb/配电干线.glb',
+    'glb/消防给水.glb',
   ]
   if (threeJsRef.value) {
     threeJsRef.value.loadModels(modelsToLoad).catch(console.error)  // 加载模型
