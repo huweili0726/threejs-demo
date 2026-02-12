@@ -1,4 +1,9 @@
 {
+  "skybox": {
+    "id": "skybox",
+    "name": "天空盒",
+    "url": "hdr/sky.hdr"
+  },
   "models": [
     {
       "id": "1", // 模型ID

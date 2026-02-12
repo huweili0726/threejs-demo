@@ -32,7 +32,8 @@ onMounted(async () => {
   if (props.modelConfig) {
     let mapOptions: any = await getJsonFile(props.modelConfig)
     let modelUrl: string = mapOptions.models.find((item: any) => item.homeShow === true)?.url
-    initThree(modelUrl)
+    let skyBoxUrl: string = mapOptions.skybox?.url
+    initThree({ modelUrl: modelUrl, skyBoxUrl: skyBoxUrl })
   }
 })
 
@@ -42,7 +43,14 @@ onBeforeUnmount(() => {
   }
 })
 
-const initThree = (modelUrl: string) => {
+/**
+ * 初始化Three.js场景
+ * @param options 初始化选项
+ * @param options.modelUrl 模型路径
+ * @param options.skyBoxUrl 天空盒路径
+ */
+const initThree = (options: { modelUrl: string, skyBoxUrl: string }) => {
+  const { modelUrl, skyBoxUrl } = options
   scene = new THREE.Scene()
 
   camera = new THREE.PerspectiveCamera(75, width.value / height.value, 0.1, 1000)
@@ -56,7 +64,7 @@ const initThree = (modelUrl: string) => {
   threeJsContainer.value?.appendChild(renderer.domElement)
 
   const rgbeLoader = new RGBELoader()
-  rgbeLoader.load(`${import.meta.env.BASE_URL}/hdr/sky.hdr`, (texture) => {
+  rgbeLoader.load(`${import.meta.env.BASE_URL}/${skyBoxUrl}`, (texture) => {
     texture.mapping = THREE.EquirectangularReflectionMapping
     scene.background = texture
     scene.environment = texture
