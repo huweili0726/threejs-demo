@@ -12,7 +12,7 @@ import { onMounted, ref, onBeforeUnmount, watchEffect } from 'vue'
 import * as THREE from 'three'
 import { jsonUtils } from '@/utils/json'
 import { useWindowSize } from '@vueuse/core'
-import { RGBELoader, GLTFLoader, DRACOLoader, OrbitControls } from 'three-stdlib'
+import { RGBELoader, DRACOLoader, OrbitControls, GLTFLoader } from 'three-stdlib'
 
 const { width, height } = useWindowSize() // 获取窗口宽度和高度
 const threeJsContainer = ref<HTMLDivElement>()
@@ -113,57 +113,57 @@ const initThree = (options: { modelUrl: string, skyBoxUrl: string }) => {
   // 关键修改：使用performance.now()记录高精度开始时间
   modelLoadStartTime = performance.now()
   
-  const gltfLoader = new GLTFLoader()
+  // 创建标准加载器
+  const loader = new GLTFLoader()
+  loader.setPath(`${import.meta.env.BASE_URL}/`)
+  
+  // 配置DRACO解码器
   const dracoLoader = new DRACOLoader()
   dracoLoader.setDecoderPath(`${import.meta.env.BASE_URL}/draco/`)
-  gltfLoader.setDRACOLoader(dracoLoader)
-  gltfLoader.load(`${import.meta.env.BASE_URL}/${modelUrl}`, (gltf) => {
-    const model = gltf.scene
-    // 强制 Three.js 模型的所有网格始终渲染且仅渲染正面，
-    // 修复外部模型导入后因视锥体剔除、法线 / 材质设置异常导致的渲染消失或面显示异常问题
-    model.traverse((child) => {
-      if (child instanceof THREE.Mesh) {
-        child.frustumCulled = false // 禁用视锥体剔除
-        // 强制更新边界球，提高剔除判断的准确性（可选）
-        child.geometry.computeBoundingSphere();
-
-        if (child.material) {
-          if (Array.isArray(child.material)) {
-            child.material.forEach((mat) => {
-              if (mat instanceof THREE.Material) {
-                // 改为双面渲染
-                mat.side = THREE.DoubleSide;
-                mat.needsUpdate = true;
-              }
-            })
-          } else if (child.material instanceof THREE.Material) {
-            // 启用双面渲染，从内部也能看到模型
-            child.material.side = THREE.DoubleSide;
-            child.material.needsUpdate = true;
-          }
-        }
-      }
-    })
-    scene.add(model)
-    render()
-    
-    // 关键修改：使用performance.now()计算高精度耗时
-    const modelLoadEndTime = performance.now()
-    const totalLoadTime = modelLoadEndTime - modelLoadStartTime
-    // 输出高精度耗时（保留3位小数，体现微秒级精度）
-    console.log(`模型加载并渲染完成总耗时：${totalLoadTime.toFixed(3)} 毫秒 (${(totalLoadTime / 1000).toFixed(3)} 秒)`)
-    
-    isLoading.value = false
-  }, (xhr) => {
-    const progress = Math.round((xhr.loaded / xhr.total) * 100)
-    loadingText.value = `正在加载3D模型... ${progress}%`
-  }, (error) => {
-    console.error('模型加载失败:', error)
-    loadingText.value = '模型加载失败'
-    setTimeout(() => {
+  dracoLoader.setDecoderConfig({ type: 'wasm' }) // 使用WASM解码器（比JS快2-3倍）
+  dracoLoader.setWorkerLimit(4) // 多线程解码
+  dracoLoader.preload() // 预加载解码器
+  loader.setDRACOLoader(dracoLoader)
+  
+  // 开始加载
+  loader.load(
+    modelUrl,
+    (gltf) => {
+      console.log('✅ 模型加载完成！')
+      
+      // 处理加载完成的模型
+      const group = gltf.scene
+      scene.add(group)
+      
+      // 立即移除加载界面，让用户看到模型
       isLoading.value = false
-    }, 2000)
-  })
+      
+      // 关键修改：使用performance.now()计算高精度耗时
+      const modelLoadEndTime = performance.now()
+      const totalLoadTime = modelLoadEndTime - modelLoadStartTime
+      // 输出高精度耗时（保留3位小数，体现微秒级精度）
+      console.log(`🚀 模型加载并渲染完成总耗时：${totalLoadTime.toFixed(3)} 毫秒 (${(totalLoadTime / 1000).toFixed(3)} 秒)`)
+      
+      // 渲染一次
+      render()
+    },
+    (xhr) => {
+      const percent = Math.round((xhr.loaded / xhr.total) * 100)
+      loadingText.value = `正在加载3D模型... ${percent}%`
+      
+      // 每5%进度渲染一次，提升用户体验
+      if (percent % 5 === 0) {
+        render()
+      }
+    },
+    (error) => {
+      console.error('模型加载失败:', error)
+      loadingText.value = '模型加载失败'
+      setTimeout(() => {
+        isLoading.value = false
+      }, 2000)
+    }
+  )
 
   // 响应式更新
   watchEffect(() => {
