@@ -9,6 +9,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, watchEffect } from 'vue'
+import * as THREE from 'three'
 import { useThreeScene } from '@/composables/threeJs/useThreeScene'
 import { useModelLoader } from '@/composables/threeJs/useModelLoader'
 import { useEnvironmentLoader } from '@/composables/threeJs/useEnvironmentLoader'
@@ -16,7 +17,7 @@ import { useEnvironmentLoader } from '@/composables/threeJs/useEnvironmentLoader
 const threeJsContainer = ref<HTMLDivElement>()
 
 // 使用three自定义 Hooks
-const { scene, initScene, render, onWindowResize } = useThreeScene(threeJsContainer)
+const { scene, initScene, render, onWindowResize, camera, controls, flyTo } = useThreeScene(threeJsContainer)
 const { isLoading, loadingText, loadModels } = useModelLoader(scene, render)
 const { loadEnvironment } = useEnvironmentLoader(scene)
 
@@ -43,9 +44,24 @@ watchEffect(() => {
   onWindowResize()
 })
 
+/**
+ * 视角平滑飞行到指定模型
+ * @param targetPosition 目标位置
+ * @param targetTarget 目标朝向
+ * @param duration 动画持续时间（毫秒）
+ */
+const flyToModel = async (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number = 2000) => {
+  if (!scene.value || !camera.value || !controls.value) {
+    console.error('场景scene、相机camera、控制器controls未初始化')
+    return
+  }
+  await flyTo(targetPosition, targetTarget, duration)
+}
+
 // 暴露方法给父组件
 defineExpose({
-  loadModels
+  loadModels,
+  flyToModel
 })
 </script>
 

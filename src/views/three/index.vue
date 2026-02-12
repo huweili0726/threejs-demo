@@ -1,6 +1,6 @@
 <template>
   <div class="home-container">
-    <ThreeController />
+    <ThreeController @focusModel="handleFocusModel" />
 
     <ThreeJs 
       ref="threeJsRef"
@@ -9,6 +9,7 @@
 </template>
 
 <script setup lang="ts">
+import * as THREE from 'three'
 import { ref, onMounted } from 'vue'
 import ThreeJs from '@/components/threeJs/index.vue'
 import ThreeController from '@/views/three/threeController.vue'
@@ -31,6 +32,11 @@ onMounted(() => {
   }
 })
 
+const handleFocusModel = (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3) => {
+  if (threeJsRef.value) {
+    threeJsRef.value.flyToModel(targetPosition, targetTarget)
+  }
+}
 </script>
 
 <style scoped lang="less">

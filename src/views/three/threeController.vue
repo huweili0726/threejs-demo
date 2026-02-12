@@ -18,12 +18,14 @@
 </template>
 
 <script setup lang="ts">
+import * as THREE from 'three'
 import { ref } from 'vue'
 
 // 定义事件
 const emit = defineEmits<{
   (e: 'changeModel', modelUrl: string): void
   (e: 'loadBothModels'): void
+  (e: 'focusModel', targetPosition: THREE.Vector3, targetTarget: THREE.Vector3): void
 }>()
 
 // 按钮组展开/折叠状态
@@ -69,7 +71,9 @@ const toggleControls = (controlType: string) => {
 // 切换楼层
 const toFloor = (floor: string) => {
   if(floor === '-1') {
-    // emit('changeModel', 'glb/groundFloorOfficeBuilding.glb')
+    const targetPosition = new THREE.Vector3(-20, 0, 0)
+    const targetTarget = new THREE.Vector3(0, 0, 0)
+    emit('focusModel', targetPosition, targetTarget)
   }
 }
 

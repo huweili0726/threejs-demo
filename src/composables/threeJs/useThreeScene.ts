@@ -9,6 +9,7 @@ export function useThreeScene(container: any) {
   const camera = shallowRef<THREE.PerspectiveCamera>()
   const renderer = shallowRef<THREE.WebGLRenderer>()
   const controls = shallowRef<OrbitControls>()
+  let animationId: number | null = null
 
   /**
    * 初始化场景
@@ -76,7 +77,58 @@ export function useThreeScene(container: any) {
     }
   }
 
+  /**
+   * 相机平滑移动到指定位置
+   * @param targetPosition 目标位置
+   * @param targetTarget 目标观察点
+   * @param duration 动画持续时间（毫秒）
+   * @returns 动画完成的Promise
+   */
+  const flyTo = (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number = 2000): Promise<void> => {
+    return new Promise((resolve) => {
+      if (!camera.value || !controls.value) {
+        resolve()
+        return
+      }
+
+      const startPosition = camera.value.position.clone()
+      const startTarget = controls.value.target.clone()
+      const startTime = performance.now()
+
+      const animate = (currentTime: number) => {
+        const elapsed = currentTime - startTime
+        const progress = Math.min(elapsed / duration, 1)
+
+        // 使用缓动函数
+        const easedProgress = 1 - Math.pow(1 - progress, 3)
+
+        // 更新相机位置
+        camera.value!.position.lerpVectors(startPosition, targetPosition, easedProgress)
+        // 更新控制器目标
+        controls.value!.target.lerpVectors(startTarget, targetTarget, easedProgress)
+
+        controls.value!.update()
+        render()
+
+        if (progress < 1) {
+          animationId = requestAnimationFrame(animate)
+        } else {
+          if (animationId) {
+            cancelAnimationFrame(animationId)
+            animationId = null
+          }
+          resolve()
+        }
+      }
+
+      animationId = requestAnimationFrame(animate)
+    })
+  }
+
   onBeforeUnmount(() => {
+    if (animationId) {
+      cancelAnimationFrame(animationId)
+    }
     if (renderer.value) {
       renderer.value.dispose()
     }
@@ -89,6 +141,7 @@ export function useThreeScene(container: any) {
     controls,
     initScene,
     render,
-    onWindowResize
+    onWindowResize,
+    flyTo
   }
 }
