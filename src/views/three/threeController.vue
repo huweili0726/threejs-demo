@@ -25,7 +25,7 @@ import { ref } from 'vue'
 const emit = defineEmits<{
   (e: 'changeModel', modelUrl: string): void
   (e: 'loadBothModels'): void
-  (e: 'focusModel', targetPosition: THREE.Vector3, targetTarget: THREE.Vector3): void
+  (e: 'focusModel', targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration?: number): void
 }>()
 
 // 按钮组展开/折叠状态
@@ -71,9 +71,10 @@ const toggleControls = (controlType: string) => {
 // 切换楼层
 const toFloor = (floor: string) => {
   if(floor === '-1') {
-    const targetPosition = new THREE.Vector3(-20, 0, 0)
-    const targetTarget = new THREE.Vector3(0, 0, 0)
-    emit('focusModel', targetPosition, targetTarget)
+    const targetPosition = new THREE.Vector3(-2, -1.7, 3.06)
+    const targetTarget = new THREE.Vector3(0, -1.7, 3.06)
+    const duration = 1000
+    emit('focusModel', targetPosition, targetTarget, duration)
   }
 }
 

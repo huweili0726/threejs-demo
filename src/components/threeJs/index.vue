@@ -50,7 +50,7 @@ watchEffect(() => {
  * @param targetTarget 目标朝向
  * @param duration 动画持续时间（毫秒）
  */
-const flyToModel = async (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number = 2000) => {
+const flyToModel = async (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number = 1000) => {
   if (!scene.value || !camera.value || !controls.value) {
     console.error('场景scene、相机camera、控制器controls未初始化')
     return

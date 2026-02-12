@@ -14,7 +14,7 @@ export function useThreeScene(container: any) {
   /**
    * 初始化场景
    * @description 初始化场景，包括场景、相机、渲染器、轨道控制器、坐标轴辅助器、环境光、方向光
-   * @param options.coordinateAxis 是否添加坐标轴辅助器
+   * @param options.coordinateAxis 是否添加坐标轴辅助器 【红色 对应 X 轴，绿色 对应 Y 轴，蓝色 对应 Z 轴】
    * @returns 场景实例
    */
   const initScene = (options: {

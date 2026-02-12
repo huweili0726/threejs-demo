@@ -32,9 +32,10 @@ onMounted(() => {
   }
 })
 
-const handleFocusModel = (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3) => {
+const handleFocusModel = (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration?: number) => {
+  debugger
   if (threeJsRef.value) {
-    threeJsRef.value.flyToModel(targetPosition, targetTarget)
+    threeJsRef.value.flyToModel(targetPosition, targetTarget, duration)
   }
 }
 </script>
