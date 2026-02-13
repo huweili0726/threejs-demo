@@ -138,6 +138,7 @@ export function useModelLoader(scene: any, render?: () => void) {
   const updateAnimations = (deltaTime: number) => {
     modelMixers.value.forEach((mixer) => {
       mixer.update(deltaTime)
+      console.log(`动画更新` + mixer + deltaTime)
     })
   }
 

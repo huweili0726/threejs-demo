@@ -10,6 +10,8 @@ export function useThreeScene(container: any) {
   const renderer = shallowRef<THREE.WebGLRenderer>()
   const controls = shallowRef<OrbitControls>()
   let animationId: number | null = null
+  const clock = new THREE.Clock()
+  let animationUpdateCallback: ((deltaTime: number) => void) | null = null
 
   /**
    * 初始化场景
@@ -127,10 +129,10 @@ export function useThreeScene(container: any) {
         if (progress < 1) {
           animationId = requestAnimationFrame(animate)
         } else {
-          if (animationId) {
-            cancelAnimationFrame(animationId)
-            animationId = null
-          }
+          // if (animationId) {
+          //   cancelAnimationFrame(animationId)
+          //   animationId = null
+          // }
           resolve()
         }
       }
@@ -139,10 +141,51 @@ export function useThreeScene(container: any) {
     })
   }
 
-  onBeforeUnmount(() => {
-    if (animationId) {
-      cancelAnimationFrame(animationId)
+  /**
+   * 设置动画更新回调
+   * @param callback 动画更新回调函数，接收deltaTime参数
+   */
+  const setAnimationUpdateCallback = (callback: (deltaTime: number) => void) => {
+    animationUpdateCallback = callback
+  }
+
+  /**
+   * 启动动画循环
+   */
+  const startAnimationLoop = () => {
+    // 防止重复启动
+    if (animationId !== null) {
+      return
     }
+
+    const animate = () => {
+      console.log(`animate更新`)
+      animationId = requestAnimationFrame(animate)
+      
+      const deltaTime = clock.getDelta()
+      
+      if (animationUpdateCallback) {
+        animationUpdateCallback(deltaTime)
+      }
+      
+      render()
+    }
+    
+    animate()
+  }
+
+  /**
+   * 停止动画循环
+   */
+  const stopAnimationLoop = () => {
+    // if (animationId !== null) {
+    //   cancelAnimationFrame(animationId)
+    //   animationId = null
+    // }
+  }
+
+  onBeforeUnmount(() => {
+    stopAnimationLoop()
     if (renderer.value) {
       renderer.value.dispose()
     }
@@ -156,6 +199,9 @@ export function useThreeScene(container: any) {
     initScene,
     render,
     onWindowResize,
-    flyTo
+    flyTo,
+    setAnimationUpdateCallback,
+    startAnimationLoop,
+    stopAnimationLoop
   }
 }

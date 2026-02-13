@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watchEffect } from 'vue'
+import { onMounted, onBeforeUnmount, ref, watchEffect } from 'vue'
 import * as THREE from 'three'
 import { useThreeScene } from '@/composables/threeJs/useThreeScene'
 import { useModelLoader } from '@/composables/threeJs/useModelLoader'
@@ -17,7 +17,7 @@ import { useEnvironmentLoader } from '@/composables/threeJs/useEnvironmentLoader
 const threeJsContainer = ref<HTMLDivElement>()
 
 // 使用three自定义 Hooks
-const { scene, initScene, render, onWindowResize, camera, controls, flyTo } = useThreeScene(threeJsContainer)
+const { scene, initScene, render, onWindowResize, camera, controls, flyTo, setAnimationUpdateCallback, startAnimationLoop, stopAnimationLoop } = useThreeScene(threeJsContainer)
 const { isLoading, loadingText, loadModel, loadModels, updateAnimations } = useModelLoader(scene, render)
 const { loadEnvironment } = useEnvironmentLoader(scene)
 
@@ -30,25 +30,6 @@ const props = withDefaults(
   }
 )
 
-// 渲染循环
-let animationId: number | null = null
-const clock = new THREE.Clock()
-
-function renderLoop() {
-  // 获取两帧之间的时间增量（秒），这是动画持续播放的核心
-  const deltaTime = clock.getDelta()
-  
-  // 调用动画更新方法，传入时间增量
-  updateAnimations(deltaTime)
-  // updateTweens()
-  
-  // 渲染场景
-  render()
-  
-  // 持续请求下一帧
-  animationId = requestAnimationFrame(renderLoop)
-}
-
 onMounted(() => {
   if (!props.skyBoxUrl) {
     return
@@ -57,12 +38,24 @@ onMounted(() => {
   initScene({ coordinateAxis: true }) // 初始化场景
   loadEnvironment(props.skyBoxUrl, render) // 加载天空盒
 
-  renderLoop()
+  // 设置动画更新回调
+  setAnimationUpdateCallback((deltaTime: number) => {
+    updateAnimations(deltaTime)
+    console.log(`updateAnimations更新` + updateAnimations)
+  })
+  
+  // 启动动画循环
+  startAnimationLoop()
 })
 
 // 监听窗口大小变化
 watchEffect(() => {
   onWindowResize()
+})
+
+// 组件卸载时停止动画循环
+onBeforeUnmount(() => {
+  stopAnimationLoop()
 })
 
 /**
@@ -80,7 +73,7 @@ const flyToModel = async (targetPosition: THREE.Vector3, targetTarget: THREE.Vec
 }
 
 /**
- * 加载模型并启动渲染循环
+ * 加载模型并确保动画循环已启动
  * @param options 模型加载选项
  */
 const loadModelAndStartRender = async (options: {
@@ -92,15 +85,15 @@ const loadModelAndStartRender = async (options: {
 }) => {
   try {
     await loadModel(options)
-    // 模型加载完毕后启动渲染循环
-    renderLoop()
+    // 确保动画循环已启动
+    startAnimationLoop()
   } catch (error) {
     console.error('模型加载失败:', error)
   }
 }
 
 /**
- * 加载多个模型并启动渲染循环
+ * 加载多个模型并确保动画循环已启动
  * @param options 模型加载选项
  */
 const loadModelsAndStartRender = async (options: {
@@ -112,8 +105,8 @@ const loadModelsAndStartRender = async (options: {
 }) => {
   try {
     await loadModels(options)
-    // 所有模型加载完毕后启动渲染循环
-    renderLoop()
+    // 确保动画循环已启动
+    startAnimationLoop()
   } catch (error) {
     console.error('模型加载失败:', error)
   }
