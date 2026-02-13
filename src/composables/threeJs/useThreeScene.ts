@@ -110,6 +110,7 @@ export function useThreeScene(container: any) {
       const startPosition = camera.value.position.clone()
       const startTarget = controls.value.target.clone()
       const startTime = performance.now()
+      let flyAnimationId: number | null = null
 
       const animate = (currentTime: number) => {
         const elapsed = currentTime - startTime
@@ -127,17 +128,17 @@ export function useThreeScene(container: any) {
         render()
 
         if (progress < 1) {
-          animationId = requestAnimationFrame(animate)
+          flyAnimationId = requestAnimationFrame(animate)
         } else {
-          // if (animationId) {
-          //   cancelAnimationFrame(animationId)
-          //   animationId = null
-          // }
+          if (flyAnimationId) {
+            cancelAnimationFrame(flyAnimationId)
+            flyAnimationId = null
+          }
           resolve()
         }
       }
 
-      animationId = requestAnimationFrame(animate)
+      flyAnimationId = requestAnimationFrame(animate)
     })
   }
 
