@@ -6,6 +6,7 @@ export function useModelLoader(scene: any, render?: () => void) {
   const isLoading = ref(false)
   const loadingText = ref('正在加载模型...')
   const modelMixers = ref<Map<string, THREE.AnimationMixer>>(new Map())
+  const loadedModels = ref<Map<string, THREE.Group>>(new Map())
 
   /**
    * 加载3D模型
@@ -61,6 +62,7 @@ export function useModelLoader(scene: any, render?: () => void) {
             console.log(`✅ ${modelUrl} 包含 ${gltf.animations.length} 个动画`)
           }
           
+          loadedModels.value.set(modelUrl, group)
           scene.value!.add(group)
           if (render) {
             render()
@@ -141,12 +143,100 @@ export function useModelLoader(scene: any, render?: () => void) {
     })
   }
 
+  /**
+   * 移动模型
+   * @param modelUrl 模型URL
+   * @param direction 移动方向向量
+   * @param speed 移动速度
+   */
+  const moveModel = (modelUrl: string, direction: THREE.Vector3, speed: number) => {
+    console.log(`移动模型 ${modelUrl} 方向 ${direction.toArray()} 速度 ${speed}`)
+    const model = loadedModels.value.get(modelUrl)
+    if (model) {
+      model.position.add(direction.multiplyScalar(speed))
+      if (render) {
+        render()
+      }
+    }
+  }
+
+  /**
+   * 获取模型位置
+   * @param modelUrl 模型URL
+   * @returns 模型位置向量
+   */
+  const getModelPosition = (modelUrl: string): THREE.Vector3 | null => {
+    const model = loadedModels.value.get(modelUrl)
+    return model ? model.position.clone() : null
+  }
+
+  /**
+   * 固定相机在人物头顶
+   * @param modelUrl 模型URL
+   * @param camera 相机对象
+   * @param offset 相机偏移量
+   */
+  const attachCameraToModel = (modelUrl: string, camera: THREE.PerspectiveCamera | null, offset: THREE.Vector3 = new THREE.Vector3(0, 2, -5)) => {
+    const model = loadedModels.value.get(modelUrl)
+    if (model && camera) {
+      // 计算相机目标位置（人物头顶）
+      const targetPosition = new THREE.Vector3()
+      targetPosition.copy(model.position)
+      targetPosition.y += offset.y
+      targetPosition.x += offset.x
+      targetPosition.z += offset.z
+      
+      // 设置相机位置
+      camera.position.copy(targetPosition)
+      
+      // 让相机看向人物
+      camera.lookAt(model.position)
+      
+      if (render) {
+        render()
+      }
+    }
+  }
+
+  /**
+   * 相机跟随模型移动
+   * @param modelUrl 模型URL
+   * @param camera 相机对象
+   * @param offset 相机偏移量
+   */
+  const cameraFollowModel = (modelUrl: string, camera: THREE.PerspectiveCamera | null, offset: THREE.Vector3 = new THREE.Vector3(0, 2, -5)) => {
+    const model = loadedModels.value.get(modelUrl)
+    if (model && camera) {
+      // 计算相机目标位置（人物头顶）
+      const targetPosition = new THREE.Vector3()
+      targetPosition.copy(model.position)
+      targetPosition.y += offset.y
+      targetPosition.x += offset.x
+      targetPosition.z += offset.z
+      
+      // 平滑移动相机到目标位置
+      camera.position.lerp(targetPosition, 0.1) // 0.1是平滑因子
+      
+      // 让相机看向人物
+      camera.lookAt(model.position)
+      
+      if (render) {
+        render()
+      }
+    }
+  }
+
   return {
     isLoading,
     loadingText,
     modelMixers,
+    loadedModels,
     loadModel,
     loadModels,
-    updateAnimations
+    updateAnimations,
+    moveModel,
+    getModelPosition,
+    attachCameraToModel,
+    cameraFollowModel
   }
 }

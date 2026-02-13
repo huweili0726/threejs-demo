@@ -18,8 +18,13 @@ const threeJsContainer = ref<HTMLDivElement>()
 
 // 使用three自定义 Hooks
 const { scene, initScene, render, onWindowResize, camera, controls, flyTo, setAnimationUpdateCallback, startAnimationLoop, stopAnimationLoop } = useThreeScene(threeJsContainer)
-const { isLoading, loadingText, loadModel, loadModels, updateAnimations } = useModelLoader(scene, render)
+const { isLoading, loadingText, loadModel, loadModels, updateAnimations, moveModel, attachCameraToModel, cameraFollowModel } = useModelLoader(scene, render)
 const { loadEnvironment } = useEnvironmentLoader(scene)
+
+// 控制变量
+const keysPressed = ref<Set<string>>(new Set())
+const currentModelUrl = ref<string>('glb/man.glb')
+const cameraOffset = new THREE.Vector3(-1.8, -1.8, 3.06) // 相机偏移量（人物头顶上方2，后方5）
 
 const props = withDefaults(
   defineProps<{
@@ -38,9 +43,18 @@ onMounted(() => {
   initScene({ coordinateAxis: true }) // 初始化场景
   loadEnvironment(props.skyBoxUrl, render) // 加载天空盒
 
+  // 添加键盘事件监听
+  window.addEventListener('keydown', handleKeyDown)
+  window.addEventListener('keyup', handleKeyUp)
+
   // 设置动画更新回调
   setAnimationUpdateCallback((deltaTime: number) => {
     updateAnimations(deltaTime)
+    updateCharacterMovement(deltaTime)
+    // 相机跟随人物
+    if (currentModelUrl.value && camera.value) {
+      cameraFollowModel(currentModelUrl.value, camera.value, cameraOffset)
+    }
   })
   
   // 启动动画循环
@@ -52,9 +66,53 @@ watchEffect(() => {
   onWindowResize()
 })
 
-// 组件卸载时停止动画循环
+// 键盘按下事件
+const handleKeyDown = (event: KeyboardEvent) => {
+  console.log(`键盘按下 ${event.key}`)
+  keysPressed.value.add(event.key.toLowerCase())
+}
+
+// 键盘释放事件
+const handleKeyUp = (event: KeyboardEvent) => {
+  keysPressed.value.delete(event.key.toLowerCase())
+}
+
+// 更新人物移动
+const updateCharacterMovement = (deltaTime: number) => {
+  if (!currentModelUrl.value) return
+  
+  const speed = 5 * deltaTime // 移动速度
+  const direction = new THREE.Vector3()
+  
+  // 方向键控制
+  if (keysPressed.value.has('w') || keysPressed.value.has('arrowup')) {
+    console.log(`键盘按下 w 或 上箭头`)
+    direction.z -= 1
+  }
+  if (keysPressed.value.has('s') || keysPressed.value.has('arrowdown')) {
+    direction.z += 1
+  }
+  if (keysPressed.value.has('a') || keysPressed.value.has('arrowleft')) {
+    direction.x -= 1
+  }
+  if (keysPressed.value.has('d') || keysPressed.value.has('arrowright')) {
+    direction.x += 1
+  }
+
+  console.log(`方向键控制 ${direction.toArray()}`)
+  
+  // 归一化方向向量，确保斜向移动速度一致
+  if (direction.length() > 0) {
+    direction.normalize()
+    moveModel(currentModelUrl.value, direction, speed)
+  }
+}
+
+// 组件卸载时清理
 onBeforeUnmount(() => {
   stopAnimationLoop()
+  window.removeEventListener('keydown', handleKeyDown)
+  window.removeEventListener('keyup', handleKeyUp)
 })
 
 /**
@@ -71,53 +129,11 @@ const flyToModel = async (targetPosition: THREE.Vector3, targetTarget: THREE.Vec
   await flyTo(targetPosition, targetTarget, duration)
 }
 
-/**
- * 加载模型并确保动画循环已启动
- * @param options 模型加载选项
- */
-const loadModelAndStartRender = async (options: {
-  modelUrl: string
-  scale: number
-  modelInitPosition?: { x: number; y: number; z: number }
-  onLookAt?: { x: number; y: number; z: number }
-  enableAnimation?: boolean
-}) => {
-  try {
-    await loadModel(options)
-    // 确保动画循环已启动
-    startAnimationLoop()
-  } catch (error) {
-    console.error('模型加载失败:', error)
-  }
-}
-
-/**
- * 加载多个模型并确保动画循环已启动
- * @param options 模型加载选项
- */
-const loadModelsAndStartRender = async (options: {
-  modelUrls: string[]
-  scale: number
-  modelInitPosition?: { x: number; y: number; z: number }
-  onLookAt?: { x: number; y: number; z: number }
-  enableAnimation?: boolean
-}) => {
-  try {
-    await loadModels(options)
-    // 确保动画循环已启动
-    startAnimationLoop()
-  } catch (error) {
-    console.error('模型加载失败:', error)
-  }
-}
-
 // 暴露方法给父组件
 defineExpose({
   loadModel,
   loadModels,
-  flyToModel,
-  loadModelAndStartRender,
-  loadModelsAndStartRender
+  flyToModel
 })
 </script>
 
