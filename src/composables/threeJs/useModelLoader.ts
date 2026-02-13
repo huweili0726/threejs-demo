@@ -189,8 +189,17 @@ export function useModelLoader(scene: any, render?: () => void) {
       // 设置相机位置
       camera.position.copy(targetPosition)
       
-      // 让相机看向人物
-      camera.lookAt(model.position)
+      // 获取模型朝向向量
+      const direction = new THREE.Vector3(0, 0, 1)
+      direction.applyQuaternion(model.quaternion)
+      
+      // 计算相机应该看向的目标点（人物前方某个点）
+      const lookAtTarget = new THREE.Vector3()
+      lookAtTarget.copy(model.position)
+      lookAtTarget.add(direction)
+      
+      // 让相机看向人物所朝向的方向
+      camera.lookAt(lookAtTarget)
       
       if (render) {
         render()
@@ -217,8 +226,17 @@ export function useModelLoader(scene: any, render?: () => void) {
       // 平滑移动相机到目标位置
       camera.position.lerp(targetPosition, 0.1) // 0.1是平滑因子
       
-      // 让相机看向人物
-      camera.lookAt(model.position)
+      // 获取模型朝向向量
+      const direction = new THREE.Vector3(0, 0, 1)
+      direction.applyQuaternion(model.quaternion)
+      
+      // 计算相机应该看向的目标点（人物前方某个点）
+      const lookAtTarget = new THREE.Vector3()
+      lookAtTarget.copy(model.position)
+      lookAtTarget.add(direction)
+      
+      // 让相机看向人物所朝向的方向
+      camera.lookAt(lookAtTarget)
       
       if (render) {
         render()

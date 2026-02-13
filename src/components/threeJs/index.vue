@@ -24,7 +24,7 @@ const { loadEnvironment } = useEnvironmentLoader(scene)
 // 控制变量
 const keysPressed = ref<Set<string>>(new Set())
 const currentModelUrl = ref<string>('glb/man.glb')
-const cameraOffset = new THREE.Vector3(-1.8, -1.8, 3.06) // 相机偏移量（人物头顶上方2，后方5）
+const cameraOffset = new THREE.Vector3(-.2, .1, 0) // 相机偏移量
 
 const props = withDefaults(
   defineProps<{
