@@ -24,7 +24,7 @@ const { loadEnvironment } = useEnvironmentLoader(scene)
 // 控制变量
 const keysPressed = ref<Set<string>>(new Set())
 const currentModelUrl = ref<string>('glb/man.glb')
-const cameraOffset = new THREE.Vector3(-.2, .1, 0) // 相机偏移量
+const cameraOffset = new THREE.Vector3(0, 0.1, -.2) // 相机偏移量（在模型后方，稍微上方）
 
 const props = withDefaults(
   defineProps<{
@@ -89,32 +89,40 @@ const updateCharacterMovement = (deltaTime: number) => {
   const model = loadedModels.value.get(currentModelUrl.value)
   if (!model) return
   
-  // 基础前方向量（x轴正方向）
-  const front = new THREE.Vector3(1, 0, 0)
+  // 基础前方向量（z轴正方向，因为lookAt方法使z轴指向目标）
+  const front = new THREE.Vector3(0, 0, 1)
   front.applyQuaternion(model.quaternion)
   
-  // 基础右侧向量（z轴负方向，与x轴正方向垂直）
-  const right = new THREE.Vector3(0, 0, -1)
+  // 基础右侧向量（x轴正方向，与z轴正方向垂直）
+  const right = new THREE.Vector3(1, 0, 0)
   right.applyQuaternion(model.quaternion)
   
   // 根据按键更新移动方向
   if (keysPressed.value.has('w') || keysPressed.value.has('arrowup')) {
-    moveDirection.sub(right)
+    moveDirection.add(front)
   }
   if (keysPressed.value.has('s') || keysPressed.value.has('arrowdown')) {
-    moveDirection.add(right)
+    moveDirection.sub(front)
   }
   if (keysPressed.value.has('a') || keysPressed.value.has('arrowleft')) {
-    model.rotation.y += rotationSpeed
+    moveDirection.sub(right)
   }
   if (keysPressed.value.has('d') || keysPressed.value.has('arrowright')) {
-    model.rotation.y -= rotationSpeed
+    moveDirection.add(right)
   }
   
   // 归一化方向向量，确保斜向移动速度一致
   if (moveDirection.length() > 0) {
     moveDirection.normalize()
     moveModel(currentModelUrl.value, moveDirection, speed)
+  }
+  
+  // 左右转向
+  if (keysPressed.value.has('q')) {
+    model.rotation.y += rotationSpeed
+  }
+  if (keysPressed.value.has('e')) {
+    model.rotation.y -= rotationSpeed
   }
 }
 

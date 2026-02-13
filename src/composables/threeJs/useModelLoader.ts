@@ -225,8 +225,8 @@ export function useModelLoader(scene: any, render?: () => void) {
       // 平滑移动相机到目标位置
       camera.position.lerp(targetPosition, 0.2) // 0.2是平滑因子，值越大跟随越紧密
       
-      // 获取模型朝向向量（x轴正方向）
-      const direction = new THREE.Vector3(1, 0, 0)
+      // 获取模型朝向向量（z轴正方向，因为lookAt方法使z轴指向目标）
+      const direction = new THREE.Vector3(0, 0, 1)
       direction.applyQuaternion(model.quaternion)
       
       // 计算相机应该看向的目标点（人物前方某个点）
