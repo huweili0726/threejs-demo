@@ -105,10 +105,12 @@ const updateCharacterMovement = (deltaTime: number) => {
     moveDirection.sub(front)
   }
   if (keysPressed.value.has('a') || keysPressed.value.has('arrowleft')) {
-    moveDirection.sub(right)
+    // moveDirection.sub(right)
+    model.rotation.y += rotationSpeed
   }
   if (keysPressed.value.has('d') || keysPressed.value.has('arrowright')) {
-    moveDirection.add(right)
+    // moveDirection.add(right)
+    model.rotation.y -= rotationSpeed
   }
   
   // 归一化方向向量，确保斜向移动速度一致
@@ -118,12 +120,12 @@ const updateCharacterMovement = (deltaTime: number) => {
   }
   
   // 左右转向
-  if (keysPressed.value.has('q')) {
-    model.rotation.y += rotationSpeed
-  }
-  if (keysPressed.value.has('e')) {
-    model.rotation.y -= rotationSpeed
-  }
+  // if (keysPressed.value.has('q')) {
+  //   model.rotation.y += rotationSpeed
+  // }
+  // if (keysPressed.value.has('e')) {
+  //   model.rotation.y -= rotationSpeed
+  // }
 }
 
 // 组件卸载时清理
