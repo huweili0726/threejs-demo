@@ -83,31 +83,46 @@ const updateCharacterMovement = (deltaTime: number) => {
   
   const speed = .1 * deltaTime // 移动速度（基于时间增量，确保不同帧率下速度一致）
   const rotationSpeed = 2 * deltaTime // 旋转速度（基于时间增量）
-  const direction = new THREE.Vector3()
+  const moveDirection = new THREE.Vector3()
   
-  // 方向键控制
+  // 获取模型的世界旋转状态
+  const model = loadedModels.value.get(currentModelUrl.value)
+  if (!model) return
+  
+  // 基础前方向量（x轴正方向）
+  const front = new THREE.Vector3(1, 0, 0)
+  front.applyQuaternion(model.quaternion)
+  
+  // 基础右侧向量（z轴负方向，与x轴正方向垂直）
+  const right = new THREE.Vector3(0, 0, -1)
+  right.applyQuaternion(model.quaternion)
+  
+  // 根据按键更新移动方向
   if (keysPressed.value.has('w') || keysPressed.value.has('arrowup')) {
-    direction.x += .1
+    moveDirection.add(front)
   }
   if (keysPressed.value.has('s') || keysPressed.value.has('arrowdown')) {
-    direction.x -= .1
+    moveDirection.sub(front)
+  }
+  if (keysPressed.value.has('a') || keysPressed.value.has('arrowleft')) {
+    moveDirection.add(right)
+  }
+  if (keysPressed.value.has('d') || keysPressed.value.has('arrowright')) {
+    moveDirection.sub(right)
   }
   
   // 归一化方向向量，确保斜向移动速度一致
-  if (direction.length() > 0) {
-    direction.normalize()
-    moveModel(currentModelUrl.value, direction, speed)
+  if (moveDirection.length() > 0) {
+    moveDirection.normalize()
+    moveModel(currentModelUrl.value, moveDirection, speed)
   }
   
   // 左右转向控制
-  const model = loadedModels.value.get(currentModelUrl.value)
-  if (model) {
-    if (keysPressed.value.has('a') || keysPressed.value.has('arrowleft')) {
-      model.rotation.y += rotationSpeed
-    }
-    if (keysPressed.value.has('d') || keysPressed.value.has('arrowright')) {
-      model.rotation.y -= rotationSpeed
-    }
+  if (keysPressed.value.has('q')) {
+    model.rotation.y += rotationSpeed
+  }
+  if (keysPressed.value.has('e')) {
+    model.rotation.y -= rotationSpeed
   }
 }
 
