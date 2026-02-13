@@ -91,6 +91,11 @@ npm run preview
 - **视角飞行**：平滑的相机飞行动画效果
 - **坐标轴显示**：可选的 XYZ 坐标轴辅助器
 - **性能优化**：使用 shallowRef 避免 Three.js 对象的深度响应式
+- **人物移动控制**：支持 WASD/方向键控制人物移动和转向
+- **相机跟随**：智能相机跟随系统，确保相机始终在人物后方
+- **平滑移动**：使用线性插值实现相机和人物的平滑移动
+- **模块化设计**：将核心逻辑封装为独立的 hook，提高代码可维护性
+- **键盘事件管理**：自动清理键盘事件监听器，避免内存泄漏
 
 ## 开发说明
 
@@ -114,11 +119,52 @@ npm run preview
 
 ## Three.js Hooks 说明
 
-项目提供了三个主要的 Three.js 组合式函数：
+项目提供了四个主要的 Three.js 组合式函数，实现了核心功能的模块化和可复用性：
 
-- **useThreeScene**：场景初始化、相机、渲染器、控制器管理
-- **useModelLoader**：3D 模型加载、DRACO 压缩支持、并行加载
-- **useEnvironmentLoader**：环境贴图加载
+### useThreeScene
+- **功能**：场景初始化、相机、渲染器、控制器管理
+- **主要方法**：
+  - `initScene`：初始化 Three.js 场景、相机和渲染器
+  - `render`：执行渲染操作
+  - `onWindowResize`：处理窗口大小变化
+  - `setAnimationUpdateCallback`：设置动画更新回调
+  - `startAnimationLoop`：启动动画循环
+  - `stopAnimationLoop`：停止动画循环
+  - `flyTo`：平滑相机飞行动画
+
+### useModelLoader
+- **功能**：3D 模型加载、DRACO 压缩支持、并行加载、相机跟随逻辑
+- **主要方法**：
+  - `loadModel`：加载单个 3D 模型
+  - `loadModels`：并行加载多个 3D 模型
+  - `updateAnimations`：更新模型动画
+  - `moveModel`：移动模型位置
+  - `cameraFollowModel`：相机跟随模型移动
+
+### useEnvironmentLoader
+- **功能**：环境贴图加载
+- **主要方法**：
+  - `loadEnvironment`：加载 HDR 环境贴图
+
+### useCharacterMovement
+- **功能**：人物移动控制、键盘事件管理、方向向量计算
+- **主要方法**：
+  - `initKeyboardEvents`：初始化键盘事件监听，返回清理函数
+  - `updateCharacterMovement`：更新人物移动和旋转状态
+
+## 人物移动控制
+
+### 控制方式
+- **W/↑**：向前移动
+- **S/↓**：向后移动
+- **A/←**：向左转向
+- **D/→**：向右转向
+
+### 技术实现
+- 使用 `useCharacterMovement` hook 管理移动逻辑
+- 基于模型局部坐标系计算移动方向
+- 使用四元数处理旋转，避免万向锁问题
+- 自动清理键盘事件监听器，防止内存泄漏
 
 ## 性能优化建议
 
@@ -127,3 +173,6 @@ npm run preview
 3. 使用 shallowRef 避免 Three.js 对象的深度响应式
 4. 合理设置渲染器的像素比限制
 5. 使用环境贴图替代复杂的光照计算
+6. 使用线性插值（lerp）实现平滑移动，避免相机抖动
+7. 基于时间增量（deltaTime）控制移动速度，确保不同帧率下速度一致
+8. 模块化设计，将复杂逻辑分离到独立的 hook 中，提高代码可维护性
