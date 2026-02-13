@@ -24,7 +24,7 @@ const { loadEnvironment } = useEnvironmentLoader(scene)
 // 控制变量
 const keysPressed = ref<Set<string>>(new Set())
 const currentModelUrl = ref<string>('glb/man.glb')
-const cameraOffset = new THREE.Vector3(0, 0.1, -.2) // 相机偏移量（在模型后方，稍微上方）
+const cameraOffset = new THREE.Vector3(0, 0.1, -0.12) // 相机偏移量（在模型后方，稍微上方）
 
 const props = withDefaults(
   defineProps<{
@@ -82,7 +82,7 @@ const updateCharacterMovement = (deltaTime: number) => {
   if (!currentModelUrl.value) return
   
   const speed = .1 * deltaTime // 移动速度（基于时间增量，确保不同帧率下速度一致）
-  const rotationSpeed = .5 * deltaTime // 旋转速度（基于时间增量）
+  const rotationSpeed = .8 * deltaTime // 旋转速度（基于时间增量）
   const moveDirection = new THREE.Vector3()
   
   // 获取模型的世界旋转状态
