@@ -18,7 +18,7 @@ const threeJsContainer = ref<HTMLDivElement>()
 
 // 使用three自定义 Hooks
 const { scene, initScene, render, onWindowResize, camera, controls, flyTo, setAnimationUpdateCallback, startAnimationLoop, stopAnimationLoop } = useThreeScene(threeJsContainer)
-const { isLoading, loadingText, loadModel, loadModels, updateAnimations, moveModel, attachCameraToModel, cameraFollowModel } = useModelLoader(scene, render)
+const { isLoading, loadingText, loadModel, loadModels, updateAnimations, moveModel, attachCameraToModel, cameraFollowModel, loadedModels } = useModelLoader(scene, render)
 const { loadEnvironment } = useEnvironmentLoader(scene)
 
 // 控制变量
@@ -81,30 +81,33 @@ const handleKeyUp = (event: KeyboardEvent) => {
 const updateCharacterMovement = (deltaTime: number) => {
   if (!currentModelUrl.value) return
   
-  const speed = 5 * deltaTime // 移动速度
+  const speed = .1 // 移动速度
+  const rotationSpeed = .05 // 旋转速度
   const direction = new THREE.Vector3()
   
   // 方向键控制
   if (keysPressed.value.has('w') || keysPressed.value.has('arrowup')) {
-    console.log(`键盘按下 w 或 上箭头`)
-    direction.z -= 1
-  }
-  if (keysPressed.value.has('s') || keysPressed.value.has('arrowdown')) {
-    direction.z += 1
-  }
-  if (keysPressed.value.has('a') || keysPressed.value.has('arrowleft')) {
-    direction.x -= 1
-  }
-  if (keysPressed.value.has('d') || keysPressed.value.has('arrowright')) {
     direction.x += 1
   }
-
-  console.log(`方向键控制 ${direction.toArray()}`)
+  if (keysPressed.value.has('s') || keysPressed.value.has('arrowdown')) {
+    direction.x -= 1
+  }
   
   // 归一化方向向量，确保斜向移动速度一致
   if (direction.length() > 0) {
     direction.normalize()
     moveModel(currentModelUrl.value, direction, speed)
+  }
+  
+  // 左右转向控制
+  const model = loadedModels.value.get(currentModelUrl.value)
+  if (model) {
+    if (keysPressed.value.has('a') || keysPressed.value.has('arrowleft')) {
+      model.rotation.y += rotationSpeed
+    }
+    if (keysPressed.value.has('d') || keysPressed.value.has('arrowright')) {
+      model.rotation.y -= rotationSpeed
+    }
   }
 }
 
