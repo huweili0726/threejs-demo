@@ -81,16 +81,16 @@ const handleKeyUp = (event: KeyboardEvent) => {
 const updateCharacterMovement = (deltaTime: number) => {
   if (!currentModelUrl.value) return
   
-  const speed = .1 // 移动速度
-  const rotationSpeed = .05 // 旋转速度
+  const speed = .1 * deltaTime // 移动速度（基于时间增量，确保不同帧率下速度一致）
+  const rotationSpeed = 2 * deltaTime // 旋转速度（基于时间增量）
   const direction = new THREE.Vector3()
   
   // 方向键控制
   if (keysPressed.value.has('w') || keysPressed.value.has('arrowup')) {
-    direction.x += 1
+    direction.x += .1
   }
   if (keysPressed.value.has('s') || keysPressed.value.has('arrowdown')) {
-    direction.x -= 1
+    direction.x -= .1
   }
   
   // 归一化方向向量，确保斜向移动速度一致
