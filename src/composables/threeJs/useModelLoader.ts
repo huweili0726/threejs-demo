@@ -211,23 +211,22 @@ export function useModelLoader(scene: any, render?: () => void) {
    * 相机跟随模型移动
    * @param modelUrl 模型URL
    * @param camera 相机对象
-   * @param offset 相机偏移量
+   * @param offset 相机偏移量（基于模型局部坐标系）
    */
   const cameraFollowModel = (modelUrl: string, camera: THREE.PerspectiveCamera | null, offset: THREE.Vector3 = new THREE.Vector3(0, 2, -5)) => {
     const model = loadedModels.value.get(modelUrl)
     if (model && camera) {
-      // 计算相机目标位置（人物头顶）
+      // 计算相机目标位置（基于模型局部坐标系）
       const targetPosition = new THREE.Vector3()
-      targetPosition.copy(model.position)
-      targetPosition.y += offset.y
-      targetPosition.x += offset.x
-      targetPosition.z += offset.z
+      targetPosition.copy(offset)
+      targetPosition.applyQuaternion(model.quaternion)
+      targetPosition.add(model.position)
       
       // 平滑移动相机到目标位置
-      camera.position.lerp(targetPosition, 0.1) // 0.1是平滑因子
+      camera.position.lerp(targetPosition, 0.2) // 0.2是平滑因子，值越大跟随越紧密
       
-      // 获取模型朝向向量
-      const direction = new THREE.Vector3(0, 0, 1)
+      // 获取模型朝向向量（x轴正方向）
+      const direction = new THREE.Vector3(1, 0, 0)
       direction.applyQuaternion(model.quaternion)
       
       // 计算相机应该看向的目标点（人物前方某个点）
