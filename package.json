@@ -13,6 +13,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@tweenjs/tween.js": "^25.0.0",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vueuse/core": "^14.2.1",
     "jsonc-parser": "^3.3.1",
