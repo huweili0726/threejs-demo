@@ -177,10 +177,10 @@ export function useThreeScene(container: any) {
    * 停止动画循环
    */
   const stopAnimationLoop = () => {
-    // if (animationId !== null) {
-    //   cancelAnimationFrame(animationId)
-    //   animationId = null
-    // }
+    if (animationId !== null) {
+      cancelAnimationFrame(animationId)
+      animationId = null
+    }
   }
 
   onBeforeUnmount(() => {
