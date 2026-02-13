@@ -18,7 +18,7 @@ const threeJsContainer = ref<HTMLDivElement>()
 
 // 使用three自定义 Hooks
 const { scene, initScene, render, onWindowResize, camera, controls, flyTo } = useThreeScene(threeJsContainer)
-const { isLoading, loadingText, loadModel, loadModels } = useModelLoader(scene, render)
+const { isLoading, loadingText, loadModel, loadModels, updateAnimations } = useModelLoader(scene, render)
 const { loadEnvironment } = useEnvironmentLoader(scene)
 
 const props = withDefaults(
@@ -30,6 +30,25 @@ const props = withDefaults(
   }
 )
 
+// 渲染循环
+let animationId: number | null = null
+const clock = new THREE.Clock()
+
+function renderLoop() {
+  // 获取两帧之间的时间增量（秒），这是动画持续播放的核心
+  const deltaTime = clock.getDelta()
+  
+  // 调用动画更新方法，传入时间增量
+  updateAnimations(deltaTime)
+  // updateTweens()
+  
+  // 渲染场景
+  render()
+  
+  // 持续请求下一帧
+  animationId = requestAnimationFrame(renderLoop)
+}
+
 onMounted(() => {
   if (!props.skyBoxUrl) {
     return
@@ -37,6 +56,8 @@ onMounted(() => {
   
   initScene({ coordinateAxis: true }) // 初始化场景
   loadEnvironment(props.skyBoxUrl, render) // 加载天空盒
+
+  renderLoop()
 })
 
 // 监听窗口大小变化
@@ -58,11 +79,53 @@ const flyToModel = async (targetPosition: THREE.Vector3, targetTarget: THREE.Vec
   await flyTo(targetPosition, targetTarget, duration)
 }
 
+/**
+ * 加载模型并启动渲染循环
+ * @param options 模型加载选项
+ */
+const loadModelAndStartRender = async (options: {
+  modelUrl: string
+  scale: number
+  modelInitPosition?: { x: number; y: number; z: number }
+  onLookAt?: { x: number; y: number; z: number }
+  enableAnimation?: boolean
+}) => {
+  try {
+    await loadModel(options)
+    // 模型加载完毕后启动渲染循环
+    renderLoop()
+  } catch (error) {
+    console.error('模型加载失败:', error)
+  }
+}
+
+/**
+ * 加载多个模型并启动渲染循环
+ * @param options 模型加载选项
+ */
+const loadModelsAndStartRender = async (options: {
+  modelUrls: string[]
+  scale: number
+  modelInitPosition?: { x: number; y: number; z: number }
+  onLookAt?: { x: number; y: number; z: number }
+  enableAnimation?: boolean
+}) => {
+  try {
+    await loadModels(options)
+    // 所有模型加载完毕后启动渲染循环
+    renderLoop()
+  } catch (error) {
+    console.error('模型加载失败:', error)
+  }
+}
+
 // 暴露方法给父组件
 defineExpose({
   loadModel,
   loadModels,
-  flyToModel
+  flyToModel,
+  loadModelAndStartRender,
+  loadModelsAndStartRender
 })
 </script>
 
