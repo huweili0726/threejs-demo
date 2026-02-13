@@ -159,9 +159,7 @@ export function useThreeScene(container: any) {
     }
 
     const animate = () => {
-      console.log(`animate更新`)
       animationId = requestAnimationFrame(animate)
-      
       const deltaTime = clock.getDelta()
       
       if (animationUpdateCallback) {

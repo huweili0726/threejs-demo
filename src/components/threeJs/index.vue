@@ -41,7 +41,6 @@ onMounted(() => {
   // 设置动画更新回调
   setAnimationUpdateCallback((deltaTime: number) => {
     updateAnimations(deltaTime)
-    console.log(`updateAnimations更新` + updateAnimations)
   })
   
   // 启动动画循环
