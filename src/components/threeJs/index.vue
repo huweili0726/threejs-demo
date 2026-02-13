@@ -13,6 +13,7 @@ import * as THREE from 'three'
 import { useThreeScene } from '@/composables/threeJs/useThreeScene'
 import { useModelLoader } from '@/composables/threeJs/useModelLoader'
 import { useEnvironmentLoader } from '@/composables/threeJs/useEnvironmentLoader'
+import { useCharacterMovement } from '@/composables/threeJs/useCharacterMovement'
 
 const threeJsContainer = ref<HTMLDivElement>()
 
@@ -20,11 +21,12 @@ const threeJsContainer = ref<HTMLDivElement>()
 const { scene, initScene, render, onWindowResize, camera, controls, flyTo, setAnimationUpdateCallback, startAnimationLoop, stopAnimationLoop } = useThreeScene(threeJsContainer)
 const { isLoading, loadingText, loadModel, loadModels, updateAnimations, moveModel, attachCameraToModel, cameraFollowModel, loadedModels } = useModelLoader(scene, render)
 const { loadEnvironment } = useEnvironmentLoader(scene)
+const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement()
 
 // 控制变量
-const keysPressed = ref<Set<string>>(new Set())
 const currentModelUrl = ref<string>('glb/man.glb')
 const cameraOffset = new THREE.Vector3(0, 0.1, -0.12) // 相机偏移量（在模型后方，稍微上方）
+let cleanupKeyboardEvents: (() => void) | null = null
 
 const props = withDefaults(
   defineProps<{
@@ -43,14 +45,13 @@ onMounted(() => {
   initScene({ coordinateAxis: true }) // 初始化场景
   loadEnvironment(props.skyBoxUrl, render) // 加载天空盒
 
-  // 添加键盘事件监听
-  window.addEventListener('keydown', handleKeyDown)
-  window.addEventListener('keyup', handleKeyUp)
-
+  // 初始化键盘事件监听
+  cleanupKeyboardEvents = initKeyboardEvents()
+  
   // 设置动画更新回调
   setAnimationUpdateCallback((deltaTime: number) => {
     updateAnimations(deltaTime)
-    updateCharacterMovement(deltaTime)
+    updateCharacterMovement(deltaTime, currentModelUrl.value, moveModel, loadedModels.value)
     // 相机跟随人物
     if (currentModelUrl.value && camera.value) {
       cameraFollowModel(currentModelUrl.value, camera.value, cameraOffset)
@@ -66,73 +67,12 @@ watchEffect(() => {
   onWindowResize()
 })
 
-// 键盘按下事件
-const handleKeyDown = (event: KeyboardEvent) => {
-  console.log(`键盘按下 ${event.key}`)
-  keysPressed.value.add(event.key.toLowerCase())
-}
-
-// 键盘释放事件
-const handleKeyUp = (event: KeyboardEvent) => {
-  keysPressed.value.delete(event.key.toLowerCase())
-}
-
-// 更新人物移动
-const updateCharacterMovement = (deltaTime: number) => {
-  if (!currentModelUrl.value) return
-  
-  const speed = .1 * deltaTime // 移动速度（基于时间增量，确保不同帧率下速度一致）
-  const rotationSpeed = .8 * deltaTime // 旋转速度（基于时间增量）
-  const moveDirection = new THREE.Vector3()
-  
-  // 获取模型的世界旋转状态
-  const model = loadedModels.value.get(currentModelUrl.value)
-  if (!model) return
-  
-  // 基础前方向量（z轴正方向，因为lookAt方法使z轴指向目标）
-  const front = new THREE.Vector3(0, 0, 1)
-  front.applyQuaternion(model.quaternion)
-  
-  // 基础右侧向量（x轴正方向，与z轴正方向垂直）
-  const right = new THREE.Vector3(1, 0, 0)
-  right.applyQuaternion(model.quaternion)
-  
-  // 根据按键更新移动方向
-  if (keysPressed.value.has('w') || keysPressed.value.has('arrowup')) {
-    moveDirection.add(front)
-  }
-  if (keysPressed.value.has('s') || keysPressed.value.has('arrowdown')) {
-    moveDirection.sub(front)
-  }
-  if (keysPressed.value.has('a') || keysPressed.value.has('arrowleft')) {
-    // moveDirection.sub(right)
-    model.rotation.y += rotationSpeed
-  }
-  if (keysPressed.value.has('d') || keysPressed.value.has('arrowright')) {
-    // moveDirection.add(right)
-    model.rotation.y -= rotationSpeed
-  }
-  
-  // 归一化方向向量，确保斜向移动速度一致
-  if (moveDirection.length() > 0) {
-    moveDirection.normalize()
-    moveModel(currentModelUrl.value, moveDirection, speed)
-  }
-  
-  // 左右转向
-  // if (keysPressed.value.has('q')) {
-  //   model.rotation.y += rotationSpeed
-  // }
-  // if (keysPressed.value.has('e')) {
-  //   model.rotation.y -= rotationSpeed
-  // }
-}
-
 // 组件卸载时清理
 onBeforeUnmount(() => {
   stopAnimationLoop()
-  window.removeEventListener('keydown', handleKeyDown)
-  window.removeEventListener('keyup', handleKeyUp)
+  if (cleanupKeyboardEvents) {
+    cleanupKeyboardEvents()
+  }
 })
 
 /**
