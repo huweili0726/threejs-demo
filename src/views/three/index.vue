@@ -45,6 +45,7 @@ const handleFocusModel = (targetPosition: THREE.Vector3, targetTarget: THREE.Vec
         scale: 0.0005,
         modelInitPosition: modelInitPosition || { x: 0, y: 0, z: 0 },
         onLookAt: onLookAt || { x: 0, y: 0, z: 0 },
+        frontAxis: new THREE.Vector3(0, 0, 1),
       }).catch(console.error)  // 加载模型
     }
 

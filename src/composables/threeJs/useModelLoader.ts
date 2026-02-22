@@ -14,6 +14,7 @@ export function useModelLoader(scene: any, render?: () => void) {
    * @param options.scale 模型缩放比例
    * @param options.modelInitPosition 模型初始位置
    * @param options.onLookAt 模型初始朝向
+   * @param options.frontAxis 模型前方向量（默认：0,0,1，可根据不同模型自定义）
    * @param options.enableAnimation 是否启用动画
    * @returns 加载完成后的 Promise
    */
@@ -22,6 +23,7 @@ export function useModelLoader(scene: any, render?: () => void) {
     scale: number
     modelInitPosition?: { x: number; y: number; z: number }
     onLookAt?: { x: number; y: number; z: number }
+    frontAxis?: THREE.Vector3
     enableAnimation?: boolean
   }): Promise<void> => {
     const { modelUrl, scale, modelInitPosition = { x: 0, y: 0, z: 0 }, onLookAt = { x: 0, y: 0, z: 0 }, enableAnimation = true } = options
@@ -61,6 +63,10 @@ export function useModelLoader(scene: any, render?: () => void) {
             
             console.log(`✅ ${modelUrl} 包含 ${gltf.animations.length} 个动画`)
           }
+          
+          // 存储模型配置到userData
+          group.userData.frontAxis = options.frontAxis || new THREE.Vector3(0, 0, 1)
+          group.userData.config = options
           
           loadedModels.value.set(modelUrl, group)
           scene.value!.add(group)
@@ -189,8 +195,8 @@ export function useModelLoader(scene: any, render?: () => void) {
       // 设置相机位置
       camera.position.copy(targetPosition)
       
-      // 获取模型朝向向量
-      const direction = new THREE.Vector3(0, 0, 1)
+      // 获取模型前方向量（优先使用模型自定义的frontAxis，默认0,0,1）
+      const direction = model.userData.frontAxis ? model.userData.frontAxis.clone() : new THREE.Vector3(0, 0, 1)
       direction.applyQuaternion(model.quaternion)
       
       // 计算相机应该看向的目标点（人物前方某个点）
@@ -225,8 +231,8 @@ export function useModelLoader(scene: any, render?: () => void) {
       // 平滑移动相机到目标位置
       camera.position.lerp(targetPosition, 0.2) // 0.2是平滑因子，值越大跟随越紧密
       
-      // 获取模型朝向向量（z轴正方向，因为lookAt方法使z轴指向目标）
-      const direction = new THREE.Vector3(0, 0, 1)
+      // 获取模型前方向量（优先使用模型自定义的frontAxis，默认0,0,1）
+      const direction = model.userData.frontAxis ? model.userData.frontAxis.clone() : new THREE.Vector3(0, 0, 1)
       direction.applyQuaternion(model.quaternion)
       
       // 计算相机应该看向的目标点（人物前方某个点）

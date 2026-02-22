@@ -42,13 +42,14 @@ export function useCharacterMovement() {
     const model = loadedModels.get(modelUrl)
     if (!model) return
     
-    // 基础前方向量（z轴正方向，因为lookAt方法使z轴指向目标）
-    const front = new THREE.Vector3(0, 0, 1)
+    // 获取模型自定义的前方向量（默认0,0,1）
+    const front = model.userData.frontAxis ? model.userData.frontAxis.clone() : new THREE.Vector3(0, 0, 1)
     front.applyQuaternion(model.quaternion)
     
-    // 基础右侧向量（x轴正方向，与z轴正方向垂直）
-    const right = new THREE.Vector3(1, 0, 0)
-    right.applyQuaternion(model.quaternion)
+    // 计算右侧向量（前方向量叉乘上方向量得到右侧）
+    const right = new THREE.Vector3()
+    right.crossVectors(front, new THREE.Vector3(0, 1, 0))
+    right.normalize()
     
     // 根据按键更新移动方向
     if (keysPressed.value.has('w') || keysPressed.value.has('arrowup')) {
