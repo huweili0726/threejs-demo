@@ -31,7 +31,11 @@ export function useCharacterMovement() {
    * @param moveModel 移动模型的函数
    * @param loadedModels 已加载的模型Map
    */
-  const updateCharacterMovement = (deltaTime: number, modelUrl: string, moveModel: (modelUrl: string, direction: THREE.Vector3, speed: number) => void, loadedModels: Map<string, THREE.Group>) => {
+  const updateCharacterMovement = (deltaTime: number, modelUrl: string, moveModel: (options: {
+    modelUrl: string
+    direction: THREE.Vector3
+    speed: number
+  }) => void, loadedModels: Map<string, THREE.Group>) => {
     if (!modelUrl) return
     
     const speed = .1 * deltaTime // 移动速度（基于时间增量，确保不同帧率下速度一致）
@@ -68,7 +72,11 @@ export function useCharacterMovement() {
     // 归一化方向向量，确保斜向移动速度一致
     if (moveDirection.length() > 0) {
       moveDirection.normalize()
-      moveModel(modelUrl, moveDirection, speed)
+      moveModel({
+        modelUrl,
+        direction: moveDirection,
+        speed
+      })
     }
   }
   

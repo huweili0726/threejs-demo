@@ -151,11 +151,16 @@ export function useModelLoader(scene: any, render?: () => void) {
 
   /**
    * 移动模型
-   * @param modelUrl 模型URL
-   * @param direction 移动方向向量
-   * @param speed 移动速度
+   * @param options.modelUrl 模型URL
+   * @param options.direction 移动方向向量
+   * @param options.speed 移动速度
    */
-  const moveModel = (modelUrl: string, direction: THREE.Vector3, speed: number) => {
+  const moveModel = (options: {
+    modelUrl: string
+    direction: THREE.Vector3
+    speed: number
+  }) => {
+    const { modelUrl, direction, speed } = options
     console.log(`移动模型 ${modelUrl} 方向 ${direction.toArray()} 速度 ${speed}`)
     const model = loadedModels.value.get(modelUrl)
     if (model) {
