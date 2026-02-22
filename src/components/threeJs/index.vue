@@ -19,7 +19,7 @@ const threeJsContainer = ref<HTMLDivElement>()
 
 // 使用three自定义 Hooks
 const { scene, initScene, render, onWindowResize, camera, controls, flyTo, setAnimationUpdateCallback, startAnimationLoop, stopAnimationLoop } = useThreeScene(threeJsContainer)
-const { isLoading, loadingText, loadModel, loadModels, updateAnimations, moveModel, attachCameraToModel, cameraFollowModel, loadedModels } = useModelLoader(scene, render)
+const { isLoading, loadingText, loadModel, loadModels, updateAnimations, moveModel, cameraFollowModel, loadedModels } = useModelLoader(scene, render)
 const { loadEnvironment } = useEnvironmentLoader(scene)
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement()
 
