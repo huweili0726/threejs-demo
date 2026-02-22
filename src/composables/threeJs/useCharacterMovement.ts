@@ -26,16 +26,22 @@ export function useCharacterMovement() {
   
   /**
    * 更新人物移动
-   * @param deltaTime 时间增量
-   * @param modelUrl 模型URL
-   * @param moveModel 移动模型的函数
-   * @param loadedModels 已加载的模型Map
+   * @param options.deltaTime 时间增量
+   * @param options.modelUrl 模型URL
+   * @param options.moveModel 移动模型的函数
+   * @param options.loadedModels 已加载的模型Map
    */
-  const updateCharacterMovement = (deltaTime: number, modelUrl: string, moveModel: (options: {
+  const updateCharacterMovement = (options: {
+    deltaTime: number
     modelUrl: string
-    direction: THREE.Vector3
-    speed: number
-  }) => void, loadedModels: Map<string, THREE.Group>) => {
+    moveModel: (options: {
+      modelUrl: string
+      direction: THREE.Vector3
+      speed: number
+    }) => void
+    loadedModels: Map<string, THREE.Group>
+  }) => {
+    const { deltaTime, modelUrl, moveModel, loadedModels } = options
     if (!modelUrl) return
     
     const speed = .1 * deltaTime // 移动速度（基于时间增量，确保不同帧率下速度一致）

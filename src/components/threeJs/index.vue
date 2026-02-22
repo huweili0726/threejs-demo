@@ -51,7 +51,12 @@ onMounted(() => {
   // 设置动画更新回调
   setAnimationUpdateCallback((deltaTime: number) => {
     updateAnimations(deltaTime)
-    updateCharacterMovement(deltaTime, currentModelUrl.value, moveModel, loadedModels.value)
+    updateCharacterMovement({
+      deltaTime,
+      modelUrl: currentModelUrl.value,
+      moveModel,
+      loadedModels: loadedModels.value
+    })
     // 相机跟随人物
     if (currentModelUrl.value && camera.value) {
       cameraFollowModel(currentModelUrl.value, camera.value, cameraOffset)
