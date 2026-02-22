@@ -6,7 +6,7 @@ export function useModelLoader(scene: any, render?: () => void) {
   const isLoading = ref(false)
   const loadingText = ref('正在加载模型...')
   const modelMixers = ref<Map<string, THREE.AnimationMixer>>(new Map())
-  const loadedModels = ref<Map<string, THREE.Group>>(new Map())
+  const loadedModelMaps = ref<Map<string, THREE.Group>>(new Map())
 
   /**
    * 加载3D模型
@@ -68,7 +68,7 @@ export function useModelLoader(scene: any, render?: () => void) {
           group.userData.frontAxis = options.frontAxis || new THREE.Vector3(0, 0, 1)
           group.userData.config = options
           
-          loadedModels.value.set(modelUrl, group)
+          loadedModelMaps.value.set(modelUrl, group)
           scene.value!.add(group)
           if (render) {
             render()
@@ -162,7 +162,7 @@ export function useModelLoader(scene: any, render?: () => void) {
   }) => {
     const { modelUrl, direction, speed } = options
     console.log(`移动模型 ${modelUrl} 方向 ${direction.toArray()} 速度 ${speed}`)
-    const model = loadedModels.value.get(modelUrl)
+    const model = loadedModelMaps.value.get(modelUrl)
     if (model) {
       model.position.add(direction.multiplyScalar(speed))
       if (render) {
@@ -177,7 +177,7 @@ export function useModelLoader(scene: any, render?: () => void) {
    * @returns 模型位置向量
    */
   const getModelPosition = (modelUrl: string): THREE.Vector3 | null => {
-    const model = loadedModels.value.get(modelUrl)
+    const model = loadedModelMaps.value.get(modelUrl)
     return model ? model.position.clone() : null
   }
 
@@ -188,7 +188,7 @@ export function useModelLoader(scene: any, render?: () => void) {
    * @param offset 相机偏移量（基于模型局部坐标系）
    */
   const cameraFollowModel = (modelUrl: string, camera: THREE.PerspectiveCamera | null, offset: THREE.Vector3 = new THREE.Vector3(0, 2, -5)) => {
-    const model = loadedModels.value.get(modelUrl)
+    const model = loadedModelMaps.value.get(modelUrl)
     if (model && camera) {
       // 计算相机目标位置（基于模型局部坐标系）
       const targetPosition = new THREE.Vector3()
@@ -221,7 +221,7 @@ export function useModelLoader(scene: any, render?: () => void) {
     isLoading,
     loadingText,
     modelMixers,
-    loadedModels,
+    loadedModelMaps,
     loadModel,
     loadModels,
     updateAnimations,

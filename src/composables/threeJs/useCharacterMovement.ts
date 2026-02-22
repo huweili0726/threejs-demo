@@ -29,7 +29,7 @@ export function useCharacterMovement() {
    * @param options.deltaTime 时间增量
    * @param options.modelUrl 模型URL
    * @param options.moveModel 移动模型的函数
-   * @param options.loadedModels 已加载的模型Map
+   * @param options.loadedModelMaps 已加载的模型Map
    */
   const updateCharacterMovement = (options: {
     deltaTime: number
@@ -39,9 +39,9 @@ export function useCharacterMovement() {
       direction: THREE.Vector3
       speed: number
     }) => void
-    loadedModels: Map<string, THREE.Group>
+    loadedModelMaps: Map<string, THREE.Group>
   }) => {
-    const { deltaTime, modelUrl, moveModel, loadedModels } = options
+    const { deltaTime, modelUrl, moveModel, loadedModelMaps } = options
     if (!modelUrl) return
     
     const speed = .1 * deltaTime // 移动速度（基于时间增量，确保不同帧率下速度一致）
@@ -49,7 +49,7 @@ export function useCharacterMovement() {
     const moveDirection = new THREE.Vector3()
     
     // 获取模型的世界旋转状态
-    const model = loadedModels.get(modelUrl)
+    const model = loadedModelMaps.get(modelUrl)
     if (!model) return
     
     // 获取模型自定义的前方向量（默认0,0,1）

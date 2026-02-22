@@ -19,7 +19,7 @@ const threeJsContainer = ref<HTMLDivElement>()
 
 // 使用three自定义 Hooks
 const { scene, initScene, render, onWindowResize, camera, controls, flyTo, setAnimationUpdateCallback, startAnimationLoop, stopAnimationLoop } = useThreeScene(threeJsContainer)
-const { isLoading, loadingText, loadModel, loadModels, updateAnimations, moveModel, cameraFollowModel, loadedModels } = useModelLoader(scene, render)
+const { isLoading, loadingText, loadModel, loadModels, updateAnimations, moveModel, cameraFollowModel, loadedModelMaps } = useModelLoader(scene, render)
 const { loadEnvironment } = useEnvironmentLoader(scene)
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement()
 
@@ -55,7 +55,7 @@ onMounted(() => {
       deltaTime,
       modelUrl: currentModelUrl.value,
       moveModel,
-      loadedModels: loadedModels.value
+      loadedModelMaps: loadedModelMaps.value
     })
     // 相机跟随人物
     if (currentModelUrl.value && camera.value) {
