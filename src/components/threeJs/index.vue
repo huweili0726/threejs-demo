@@ -52,10 +52,10 @@ onMounted(() => {
   setAnimationUpdateCallback((deltaTime: number) => {
     updateAnimations(deltaTime)
     updateCharacterMovement({
-      deltaTime,
-      modelUrl: currentModelUrl.value,
-      moveModel,
-      loadedModelMaps: loadedModelMaps.value
+      deltaTime, // ✅ 把外层的时间增量传入
+      modelUrl: currentModelUrl.value, // ✅ 把外层的模型URL传入
+      moveModel, // ✅ 把外层的移动模型的函数传入
+      loadedModelMaps: loadedModelMaps.value // ✅ 把外层的模型Map传入
     })
     // 相机跟随人物
     if (currentModelUrl.value && camera.value) {
