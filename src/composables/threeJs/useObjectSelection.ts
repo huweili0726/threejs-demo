@@ -41,6 +41,7 @@ export function useObjectSelection() {
   ) => {
     const { camera, scene, onSelect, highlightEnabled = true } = options
 
+    // 双击事件处理函数
     const handleDoubleClick = (event: MouseEvent) => {
       // 校验依赖项：确保scene、camera已初始化
       if (!camera || !scene) return
