@@ -187,7 +187,7 @@ export function useModelLoader(scene: any, render?: () => void) {
       targetPosition.add(model.position)
       
       // 平滑移动相机到目标位置
-      camera.position.lerp(targetPosition, 0.2) // 0.2是平滑因子，值越大跟随越紧密
+      camera.position.lerp(targetPosition, 1) // 0.2是平滑因子，值越大跟随越紧密
       
       // 获取模型前方向量（优先使用模型自定义的frontAxis，默认0,0,1）
       const direction = model.userData.frontAxis ? model.userData.frontAxis.clone() : new THREE.Vector3(0, 0, 1)
