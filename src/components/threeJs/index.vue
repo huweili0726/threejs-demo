@@ -31,10 +31,10 @@ const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement()
 const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any)
 
 // 控制变量
-const currentModelUrl = ref<string>('glb/man.glb')
+const currentModelUrl = ref<string>('glb/man.glb') // 当前加载的模型URL
 const cameraOffset = new THREE.Vector3(0, 0.1, -0.12) // 相机偏移量（在模型后方，稍微上方）
-let cleanupKeyboardEvents: (() => void) | null = null
-let cleanupSelection: (() => void) | null = null
+let cleanupKeyboardEvents: (() => void) | null = null // 清理键盘事件的函数
+let cleanupSelection: (() => void) | null = null // 清理双击选中事件的函数
 
 const props = withDefaults(
   defineProps<{
@@ -99,22 +99,20 @@ onMounted(() => {
   })
   
   // 初始化双击选中功能
-  if (camera.value && scene.value) {
-    cleanupSelection = initDoubleClickSelection(
-      {
-        onSelect: (object) => {
-          if (object) {
-            console.log('🎉 双击选中了物体：', object.name)
-            // 这里可以加你自己的逻辑：比如触发开门动画、弹出详情面板、跳转场景等
-          } else {
-            console.log('🗑️  取消选中')
-          }
-        },
-        highlightEnabled: true // 开启蓝色高亮效果
-      }
-    )
-  }
-  
+  cleanupSelection = initDoubleClickSelection(
+    {
+      onSelect: (object) => {
+        if (object) {
+          console.log('🎉 双击选中了物体：', object.name)
+          // 这里可以加你自己的逻辑：比如触发开门动画、弹出详情面板、跳转场景等
+        } else {
+          console.log('🗑️  取消选中')
+        }
+      },
+      highlightEnabled: true // 开启蓝色高亮效果
+    }
+  )
+
   // 启动动画循环
   startAnimationLoop()
 })
