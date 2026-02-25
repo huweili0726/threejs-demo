@@ -1,7 +1,9 @@
 <template>
   <div class="home-container">
+    <!-- 控制模型 -->
     <ThreeController @focusModel="handleFocusModel" />
 
+    <!-- 渲染场景 -->
     <ThreeJs
       :skyBoxUrl="skyBoxUrl" 
       :loadModel="pendingLoadSingleModel"
