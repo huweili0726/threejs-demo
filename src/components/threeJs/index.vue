@@ -10,24 +10,18 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref, watchEffect, watch } from 'vue'
 import * as THREE from 'three'
-import { useThreeScene } from '@/composables/threeJs/useThreeScene'
-import { useModelLoader } from '@/composables/threeJs/useModelLoader'
-import { useEnvironmentLoader } from '@/composables/threeJs/useEnvironmentLoader'
-import { useCharacterMovement } from '@/composables/threeJs/useCharacterMovement'
-import { useObjectSelection } from '@/composables/threeJs/useObjectSelection'
+import { useThreeScene } from '@/composables/threeJs/useThreeScene' // 场景相关Hooks
+import { useModelLoader } from '@/composables/threeJs/useModelLoader' // 模型加载相关Hooks
+import { useEnvironmentLoader } from '@/composables/threeJs/useEnvironmentLoader' // 环境贴图加载相关Hooks
+import { useCharacterMovement } from '@/composables/threeJs/useCharacterMovement' // 人物移动控制相关Hooks
+import { useObjectSelection } from '@/composables/threeJs/useObjectSelection' // 物体选择相关Hooks
 
 const threeJsContainer = ref<HTMLDivElement>()
 
-// 使用three自定义 Hooks
-// 场景相关
 const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize } = useThreeScene(threeJsContainer)
-// 模型加载相关
 const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel } = useModelLoader(scene as any, render)
-// 环境加载相关
 const { loadEnvironment } = useEnvironmentLoader(scene as any)
-// 人物移动相关
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement()
-// 物体选择相关
 const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any)
 
 // 控制变量
