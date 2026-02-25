@@ -14,6 +14,7 @@ import { useThreeScene } from '@/composables/threeJs/useThreeScene'
 import { useModelLoader } from '@/composables/threeJs/useModelLoader'
 import { useEnvironmentLoader } from '@/composables/threeJs/useEnvironmentLoader'
 import { useCharacterMovement } from '@/composables/threeJs/useCharacterMovement'
+import { useObjectSelection } from '@/composables/threeJs/useObjectSelection'
 
 const threeJsContainer = ref<HTMLDivElement>()
 
@@ -22,11 +23,13 @@ const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, sta
 const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel } = useModelLoader(scene, render)
 const { loadEnvironment } = useEnvironmentLoader(scene)
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement()
+const { initDoubleClickSelection, clearSelection } = useObjectSelection()
 
 // 控制变量
 const currentModelUrl = ref<string>('glb/man.glb')
 const cameraOffset = new THREE.Vector3(0, 0.1, -0.12) // 相机偏移量（在模型后方，稍微上方）
 let cleanupKeyboardEvents: (() => void) | null = null
+let cleanupSelection: (() => void) | null = null
 
 const props = withDefaults(
   defineProps<{
@@ -90,6 +93,27 @@ onMounted(() => {
     }
   })
   
+  // 初始化双击选中功能
+  if (camera.value && scene.value) {
+    cleanupSelection = initDoubleClickSelection(
+      camera.value,
+      scene.value,
+      {
+        selectableNames: [], // 空数组，允许双击任何物体
+        pickMode: 'child', // 直接选中点击到的最细分子物体
+        onSelect: (object) => {
+          if (object) {
+            console.log('🎉 双击选中了物体：', object.name)
+            // 这里可以加你自己的逻辑：比如触发开门动画、弹出详情面板、跳转场景等
+          } else {
+            console.log('🗑️  取消选中')
+          }
+        },
+        highlightEnabled: true // 开启蓝色高亮效果
+      }
+    )
+  }
+  
   // 启动动画循环
   startAnimationLoop()
 })
@@ -104,6 +128,9 @@ onBeforeUnmount(() => {
   stopAnimationLoop()
   if (cleanupKeyboardEvents) {
     cleanupKeyboardEvents()
+  }
+  if (cleanupSelection) {
+    cleanupSelection()
   }
 })
 
