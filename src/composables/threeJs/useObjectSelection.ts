@@ -25,24 +25,21 @@ export function useObjectSelection() {
 
   /**
    * 初始化双击事件监听
-   * @param camera 相机对象
-   * @param scene 场景对象
-   * @param options 配置项
-   * @param options.selectableNames 可选中的物体name数组，比如['door', 'window']，为空数组时所有物体都可选中
-   * @param options.pickMode 拾取模式：'parent' 向上查找匹配name的父级物体（默认），'child' 直接选中点击到的最细分子物体
+   * @param options.camera 相机对象
+   * @param options.scene 场景对象
    * @param options.onSelect 选中后的回调函数，返回选中的物体
    * @param options.highlightEnabled 是否开启高亮效果，默认true
    * @returns 清理函数
    */
   const initDoubleClickSelection = (
-    camera: THREE.PerspectiveCamera,
-    scene: THREE.Scene,
     options: {
+      camera: THREE.PerspectiveCamera,
+      scene: THREE.Scene,
       onSelect?: (object: THREE.Object3D | null) => void
       highlightEnabled?: boolean
     }
   ) => {
-    const { onSelect, highlightEnabled = true } = options
+    const { camera, scene, onSelect, highlightEnabled = true } = options
 
     const handleDoubleClick = (event: MouseEvent) => {
       // 校验依赖项：确保scene、camera已初始化

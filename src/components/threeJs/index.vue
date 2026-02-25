@@ -96,9 +96,9 @@ onMounted(() => {
   // 初始化双击选中功能
   if (camera.value && scene.value) {
     cleanupSelection = initDoubleClickSelection(
-      camera.value,
-      scene.value,
       {
+        camera: camera.value,
+        scene: scene.value,
         onSelect: (object) => {
           if (object) {
             console.log('🎉 双击选中了物体：', object.name)
