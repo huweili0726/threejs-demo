@@ -42,6 +42,7 @@ onMounted(() => {
   }
 })
 
+// 飞行到-1楼入口处 同时加载人物模型
 const handleFocusModel = (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration?: number, modelInitPosition?: {x: number, y: number, z: number}, onLookAt?: {x: number, y: number, z: number}) => {
   // 发布飞行指令
   pendingFlyTo.value = {
