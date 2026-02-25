@@ -6,8 +6,8 @@
  * @version 1.0.0
  * @date 2026-02-25
  */
-import { ref, ShallowRef } from 'vue'
 import * as THREE from 'three'
+import { ref, ShallowRef } from 'vue'
 import { GLTFLoader, DRACOLoader } from 'three-stdlib'
 
 export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => void) {

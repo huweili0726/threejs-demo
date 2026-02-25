@@ -6,8 +6,8 @@
  * @version 1.0.0
  * @date 2026-02-25
  */
-import { ref } from 'vue'
 import * as THREE from 'three'
+import { ref } from 'vue'
 
 export function useCharacterMovement() {
   // 控制变量

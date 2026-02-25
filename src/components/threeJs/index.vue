@@ -8,8 +8,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref, watchEffect, watch } from 'vue'
 import * as THREE from 'three'
+import { onMounted, onBeforeUnmount, ref, watchEffect, watch } from 'vue'
 import { useThreeScene } from '@/composables/threeJs/useThreeScene' // 场景相关Hooks
 import { useModelLoader } from '@/composables/threeJs/useModelLoader' // 模型加载相关Hooks
 import { useEnvironmentLoader } from '@/composables/threeJs/useEnvironmentLoader' // 环境贴图加载相关Hooks

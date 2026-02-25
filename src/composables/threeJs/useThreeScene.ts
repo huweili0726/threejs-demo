@@ -6,8 +6,8 @@
  * @version 1.0.0
  * @date 2026-02-25
  */
-import { shallowRef, onBeforeUnmount } from 'vue'
 import * as THREE from 'three'
+import { shallowRef, onBeforeUnmount } from 'vue'
 import { OrbitControls } from 'three-stdlib'
 import { useWindowSize } from '@vueuse/core'
 

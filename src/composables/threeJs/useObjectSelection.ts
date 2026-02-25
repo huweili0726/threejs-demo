@@ -7,8 +7,8 @@
  * @date 2026-02-25
  * @description 鼠标双击选中3D物体，支持高亮显示和选中回调
  */
-import { ref, ShallowRef } from 'vue'
 import * as THREE from 'three'
+import { ref, ShallowRef } from 'vue'
 
 export function useObjectSelection(camera: ShallowRef<THREE.PerspectiveCamera>, scene: ShallowRef<THREE.Scene>) {
   // 当前选中的物体
