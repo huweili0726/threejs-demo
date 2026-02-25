@@ -77,28 +77,13 @@ onMounted(() => {
     return
   }
   
-  initScene({ coordinateAxis: true, cameraPosition: new THREE.Vector3(-9, 5, -15) }) // 初始化场景
-  loadEnvironment( props.skyBoxUrl, render ) // 加载天空盒
-
-  // 初始化键盘事件监听
+  // 1、初始化场景
+  initScene({ coordinateAxis: true, cameraPosition: new THREE.Vector3(-9, 5, -15) }) 
+  // 2、加载天空盒
+  loadEnvironment( props.skyBoxUrl, render ) 
+  // 3、初始化键盘事件监听
   cleanupKeyboardEvents = initKeyboardEvents()
-  
-  // 设置动画更新回调
-  setAnimationUpdateCallback((deltaTime: number) => {
-    updateAnimations(deltaTime, modelMixers.value)
-    updateCharacterMovement({
-      deltaTime, // ✅ 把外层的时间增量传入
-      modelUrl: currentModelUrl.value, // ✅ 把外层的模型URL传入
-      moveModel, // ✅ 把外层的移动模型的函数传入
-      loadedModelMaps: loadedModelMaps.value // ✅ 把外层的模型Map传入
-    })
-    // 相机跟随人物
-    if (currentModelUrl.value && camera.value) {
-      cameraFollowModel( currentModelUrl.value, camera.value, cameraOffset )
-    }
-  })
-  
-  // 初始化双击选中功能
+  // 4、初始化双击选中功能
   cleanupSelection = initDoubleClickSelection(
     {
       onSelect: (object) => {
@@ -112,8 +97,22 @@ onMounted(() => {
       highlightEnabled: true // 开启蓝色高亮效果
     }
   )
+  // 5、设置动画更新回调
+  setAnimationUpdateCallback((deltaTime: number) => {
+    updateAnimations(deltaTime, modelMixers.value)
+    updateCharacterMovement({
+      deltaTime, // ✅ 把外层的时间增量传入
+      modelUrl: currentModelUrl.value, // ✅ 把外层的模型URL传入
+      moveModel, // ✅ 把外层的移动模型的函数传入
+      loadedModelMaps: loadedModelMaps.value // ✅ 把外层的模型Map传入
+    })
+    // 相机跟随人物
+    if (currentModelUrl.value && camera.value) {
+      cameraFollowModel( currentModelUrl.value, camera.value, cameraOffset )
+    }
+  })
 
-  // 启动动画循环
+  // 6、启动动画循环
   startAnimationLoop()
 })
 
