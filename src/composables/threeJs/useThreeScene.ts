@@ -25,47 +25,72 @@ export function useThreeScene(container: any) {
     if (!container.value) return
     const { coordinateAxis } = options
 
+    // 1. 创建Three.js主场景
     scene.value = new THREE.Scene()
     
+    // 2. 创建透视相机
+    // 参数说明：视野角度、宽高比、近裁剪面、远裁剪面
     camera.value = new THREE.PerspectiveCamera(45, width.value / height.value, 0.1, 90000)
+    // 设置相机初始位置
     camera.value.position.set(-9, 5, -15)
 
+    // 3. 创建WebGL渲染器
     renderer.value = new THREE.WebGLRenderer({ 
-      antialias: true,
-      alpha: true,
-      powerPreference: 'high-performance'
+      antialias: true,         // 开启抗锯齿
+      alpha: true,             // 支持透明背景
+      powerPreference: 'high-performance'  // 优先使用高性能GPU
     })
+    // 设置渲染画布尺寸
     renderer.value.setSize(width.value, height.value)
+    // 设置像素比，避免高分屏模糊，最高限制为2，平衡性能和画质
     renderer.value.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    // 设置色调映射为ACES电影级色调，提升画面真实感
     renderer.value.toneMapping = THREE.ACESFilmicToneMapping
+    // 曝光度，控制整体亮度
     renderer.value.toneMappingExposure = 1
+    // 关闭阴影映射，提升性能（如果需要阴影效果可以开启）
     renderer.value.shadowMap.enabled = false
+    // 设置输出颜色空间为sRGB，保证颜色显示正确
     renderer.value.outputColorSpace = THREE.SRGBColorSpace
+    // 将渲染器的DOM元素添加到容器中
     container.value.appendChild(renderer.value.domElement)
 
+    // 4. 创建轨道控制器，用于鼠标交互控制相机
     controls.value = new OrbitControls(camera.value, renderer.value.domElement)
+    // 关闭阻尼效果（开启的话移动会有惯性平滑效果）
     controls.value.enableDamping = false
+    // 阻尼系数，值越小平滑度越高
     controls.value.dampingFactor = 0.05
+    // 关闭自动旋转
     controls.value.autoRotate = false
+    // 自动旋转速度
     controls.value.autoRotateSpeed = 2
+    // 开启平移功能
     controls.value.enablePan = true
+    // 最小缩放距离（相机到目标点的最小距离）
     controls.value.minDistance = 1
+    // 最大缩放距离（相机到目标点的最大距离）
     controls.value.maxDistance = 100
+    // 最大极角（限制相机上下旋转角度，这里限制为90度，不能看到场景底部）
     controls.value.maxPolarAngle = Math.PI / 2
+    // 更新控制器状态
     controls.value.update()
+    // 控制器变化时触发重新渲染
     controls.value.addEventListener('change', render)
 
-    // 添加坐标轴辅助器
+    // 5. 添加坐标轴辅助器（红色=X轴，绿色=Y轴，蓝色=Z轴）
     if(coordinateAxis){
-      const axesHelper = new THREE.AxesHelper(50)
+      const axesHelper = new THREE.AxesHelper(50) // 50是轴的长度
       scene.value.add(axesHelper)
     }
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
+    // 6. 添加环境光，均匀照亮场景所有物体
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5) // 参数：颜色，强度
     scene.value.add(ambientLight)
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
-    directionalLight.position.set(5, 10, 7)
+    // 7. 添加平行光，模拟太阳光效果，产生阴影
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1) // 参数：颜色，强度
+    directionalLight.position.set(5, 10, 7) // 设置光源位置
     scene.value.add(directionalLight)
   }
 
