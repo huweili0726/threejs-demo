@@ -23,7 +23,7 @@ const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, sta
 const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel } = useModelLoader(scene, render)
 const { loadEnvironment } = useEnvironmentLoader(scene)
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement()
-const { initDoubleClickSelection, clearSelection } = useObjectSelection()
+const { initDoubleClickSelection } = useObjectSelection()
 
 // 控制变量
 const currentModelUrl = ref<string>('glb/man.glb')

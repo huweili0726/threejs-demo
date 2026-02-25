@@ -95,28 +95,31 @@ export function useObjectSelection() {
             }
           } else {
             // 如果有其他高亮模型，先恢复其原始材质
-          if (selectedObject.value && originalMaterial.value && (selectedObject.value as THREE.Mesh).isMesh) {
-            (selectedObject.value as THREE.Mesh).material = originalMaterial.value
-          }
+            if (selectedObject.value && originalMaterial.value && (selectedObject.value as THREE.Mesh).isMesh) {
+              (selectedObject.value as THREE.Mesh).material = originalMaterial.value
+            }
 
-            // 记录当前模型的原始材质，并设置高亮材质
-            originalMaterial.value = targetObject.material.clone()
-            
-            // 设置高亮材质
-            if (targetObject.material instanceof THREE.MeshStandardMaterial) {
-              targetObject.material = new THREE.MeshStandardMaterial({
-                ...targetObject.material,
-                emissive: highlightColor,
-                emissiveIntensity: 0.6,
-                metalness: Math.max(targetObject.material.metalness || 0, 0.6),
-                roughness: Math.min(targetObject.material.roughness || 1, 0.4)
-              })
-            } else {
-              // 对于其他材质类型，只修改自发光
-              targetObject.material = targetObject.material.clone()
-              if ('emissive' in targetObject.material) {
-                (targetObject.material as any).emissive = highlightColor
-                (targetObject.material as any).emissiveIntensity = 0.6
+            // 只有开启高亮时才修改材质
+            if (highlightEnabled) {
+              // 记录当前模型的原始材质，并设置高亮材质
+              originalMaterial.value = targetObject.material.clone()
+              
+              // 设置高亮材质
+              if (targetObject.material instanceof THREE.MeshStandardMaterial) {
+                targetObject.material = new THREE.MeshStandardMaterial({
+                  ...targetObject.material,
+                  emissive: highlightColor,
+                  emissiveIntensity: 0.6,
+                  metalness: Math.max(targetObject.material.metalness || 0, 0.6),
+                  roughness: Math.min(targetObject.material.roughness || 1, 0.4)
+                })
+              } else {
+                // 对于其他材质类型，只修改自发光
+                targetObject.material = targetObject.material.clone()
+                if ('emissive' in targetObject.material) {
+                  (targetObject.material as any).emissive = highlightColor
+                  (targetObject.material as any).emissiveIntensity = 0.6
+                }
               }
             }
 
