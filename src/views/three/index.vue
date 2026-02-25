@@ -2,9 +2,12 @@
   <div class="home-container">
     <ThreeController @focusModel="handleFocusModel" />
 
-    <ThreeJs 
-      ref="threeJsRef"
-      :skyBoxUrl="skyBoxUrl" />
+    <ThreeJs
+      :skyBoxUrl="skyBoxUrl" 
+      :loadModel="pendingLoadSingleModel"
+      :loadModels="pendingLoadModels"
+      :flyTo="pendingFlyTo"
+    />
   </div>
 </template>
 
@@ -13,14 +16,13 @@ import * as THREE from 'three'
 import { ref, onMounted } from 'vue'
 import ThreeJs from '@/components/threeJs/index.vue'
 import ThreeController from '@/views/three/threeController.vue'
-import { useThreeScene } from '@/composables/threeJs/useThreeScene'
-import { useModelLoader } from '@/composables/threeJs/useModelLoader'
 
-const { scene, render, flyTo } = useThreeScene()
-// const { loadModel, loadModels } = useModelLoader(scene, render)
-
-const threeJsRef = ref<InstanceType<typeof ThreeJs> | null>(null)
 const skyBoxUrl = ref('/hdr/sky.hdr')
+
+// 定义需要加载的模型配置
+const pendingLoadModels = ref<{modelUrls: string[], scale: number} | null>(null)
+const pendingLoadSingleModel = ref<any>(null)
+const pendingFlyTo = ref<{position: THREE.Vector3, target: THREE.Vector3, duration?: number} | null>(null)
 
 onMounted(() => {
   const modelsToLoad = [
@@ -33,31 +35,27 @@ onMounted(() => {
     'glb/配电干线.glb',
     'glb/消防给水.glb',
   ]
-  if (threeJsRef.value) {
-    // ✅ 调用子组件暴露的loadModels方法，使用子组件里已经初始化好的scene
-    threeJsRef.value.loadModels({
-      modelUrls: modelsToLoad,
-      scale: 1
-    }).catch(console.error)  // 加载模型
+  // 发布加载指令
+  pendingLoadModels.value = {
+    modelUrls: modelsToLoad,
+    scale: 1
   }
 })
 
 const handleFocusModel = (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration?: number, modelInitPosition?: {x: number, y: number, z: number}, onLookAt?: {x: number, y: number, z: number}) => {
-  if (threeJsRef.value) {
-    // ✅ 调用useThreeScene暴露的flyTo方法
-    flyTo(targetPosition, targetTarget, duration)
-
-    if (threeJsRef.value) {
-      // ✅ 调用子组件暴露的loadModel方法
-      threeJsRef.value.loadModel({
-        modelUrl: 'glb/man.glb',
-        scale: 0.0005,
-        modelInitPosition: modelInitPosition || { x: 0, y: 0, z: 0 },
-        onLookAt: onLookAt || { x: 0, y: 0, z: 0 },
-        frontAxis: new THREE.Vector3(0, 0, 1),
-      }).catch(console.error)  // 加载模型
-    }
-
+  // 发布飞行指令
+  pendingFlyTo.value = {
+    position: targetPosition,
+    target: targetTarget,
+    duration
+  }
+  // 发布加载人物模型指令
+  pendingLoadSingleModel.value = {
+    modelUrl: 'glb/man.glb',
+    scale: 0.0005,
+    modelInitPosition: modelInitPosition || { x: 0, y: 0, z: 0 },
+    onLookAt: onLookAt || { x: 0, y: 0, z: 0 },
+    frontAxis: new THREE.Vector3(0, 0, 1),
   }
 }
 </script>

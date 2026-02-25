@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref, watchEffect } from 'vue'
+import { onMounted, onBeforeUnmount, ref, watchEffect, watch } from 'vue'
 import * as THREE from 'three'
 import { useThreeScene } from '@/composables/threeJs/useThreeScene'
 import { useModelLoader } from '@/composables/threeJs/useModelLoader'
@@ -18,7 +18,7 @@ import { useCharacterMovement } from '@/composables/threeJs/useCharacterMovement
 const threeJsContainer = ref<HTMLDivElement>()
 
 // 使用three自定义 Hooks
-const { scene, camera, initScene, render, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize } = useThreeScene(threeJsContainer)
+const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize } = useThreeScene(threeJsContainer)
 const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel } = useModelLoader(scene, render)
 const { loadEnvironment } = useEnvironmentLoader(scene)
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement()
@@ -31,11 +31,38 @@ let cleanupKeyboardEvents: (() => void) | null = null
 const props = withDefaults(
   defineProps<{
     skyBoxUrl?: string  // 天空盒路径
+    loadModel?: any | null // 加载单个模型指令
+    loadModels?: {modelUrls: string[], scale: number} | null // 批量加载模型指令
+    flyTo?: {position: THREE.Vector3, target: THREE.Vector3, duration?: number} | null // 相机飞行指令
   }>(),
   {
     skyBoxUrl: undefined,
+    loadModels: null,
+    loadModel: null,
+    flyTo: null
   }
 )
+
+// 监听加载单个模型指令
+watch(() => props.loadModel, async (config) => {
+  if (config && scene.value) { // 确保场景初始化完成
+    await loadModel(config).catch(console.error)
+  }
+})
+
+// 监听批量加载模型指令
+watch(() => props.loadModels, async (config) => {
+  if (config && scene.value) { // 确保场景初始化完成
+    await loadModels(config).catch(console.error)
+  }
+}, { immediate: true })
+
+// 监听相机飞行指令
+watch(() => props.flyTo, async (config) => {
+  if (config && scene.value && camera.value) { // 确保场景和相机初始化完成
+    await flyTo(config.position, config.target, config.duration).catch(console.error)
+  }
+})
 
 onMounted(() => {
   if (!props.skyBoxUrl) {
