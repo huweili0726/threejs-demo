@@ -21,6 +21,7 @@ onMounted(() => {
   const modelsToLoad = [
     'glb/groundFloorOfficeBuilding.glb',
     'glb/underGround.glb',
+    'glb/shu.glb',
     'glb/8th_floor.glb',
     'glb/9th_floor.glb',
     'glb/空调送、回风、排烟.glb',
