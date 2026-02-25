@@ -38,13 +38,11 @@ export function useObjectSelection() {
     camera: THREE.PerspectiveCamera,
     scene: THREE.Scene,
     options: {
-      selectableNames: string[]
-      pickMode?: 'parent' | 'child'
       onSelect?: (object: THREE.Object3D | null) => void
       highlightEnabled?: boolean
     }
   ) => {
-    const { selectableNames, pickMode, onSelect, highlightEnabled = true } = options
+    const { onSelect, highlightEnabled = true } = options
 
     const handleDoubleClick = (event: MouseEvent) => {
       // 校验依赖项：确保scene、camera已初始化
@@ -77,26 +75,10 @@ export function useObjectSelection() {
           parentName: intersect.object.parent ? intersect.object.parent.name : 'root'
         })))
 
-        // 获取第一个交点的物体（最接近相机的物体）
+        // 获取第一个交点的物体（最接近相机的最细分子物体）
         let intersectedObject = intersects[0].object
-        let targetObject: THREE.Object3D | null = null
-
-        if (pickMode === 'child') {
-          // 子物体模式：直接选中点击到的最细分子物体
-          console.log('🎯 子物体模式：选中', intersectedObject.name, '类型：', intersectedObject.type)
-          targetObject = intersectedObject
-        } else {
-          // 父级模式（默认）：向上查找父级，直到找到name在可选中列表里的物体
-          let current: THREE.Object3D | null = intersectedObject
-          while (current) {
-            if (selectableNames.length === 0 || selectableNames.includes(current.name)) {
-              console.log('🎯 父级模式：选中', current.name, '类型：', current.type)
-              targetObject = current
-              break
-            }
-            current = current.parent
-          }
-        }
+        let targetObject: THREE.Object3D | null = intersectedObject
+        console.log('🎯 选中子物体：', intersectedObject.name, '类型：', intersectedObject.type)
 
         if (targetObject && targetObject instanceof THREE.Mesh) {
           // 判断：如果点击的是已经高亮的模型，则取消高亮

@@ -99,8 +99,6 @@ onMounted(() => {
       camera.value,
       scene.value,
       {
-        selectableNames: [], // 空数组，允许双击任何物体
-        pickMode: 'child', // 直接选中点击到的最细分子物体
         onSelect: (object) => {
           if (object) {
             console.log('🎉 双击选中了物体：', object.name)
