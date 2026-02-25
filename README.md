@@ -96,6 +96,9 @@ npm run preview
 - **平滑移动**：使用线性插值实现相机和人物的平滑移动
 - **模块化设计**：将核心逻辑封装为独立的 hook，提高代码可维护性
 - **键盘事件管理**：自动清理键盘事件监听器，避免内存泄漏
+- **双击物体选中**：支持双击任意3D物体，高亮显示并返回物体信息
+- **可配置高亮**：支持开关高亮效果，自定义高亮颜色和强度
+- **精确拾取**：支持最细粒度的子物体选中，不会连带父级物体
 
 ## 开发说明
 
@@ -152,6 +155,13 @@ npm run preview
   - `initKeyboardEvents`：初始化键盘事件监听，返回清理函数
   - `updateCharacterMovement`：更新人物移动和旋转状态
 
+### useObjectSelection
+- **功能**：3D物体选中、双击检测、高亮显示
+- **主要方法**：
+  - `initDoubleClickSelection`：初始化双击事件监听，返回清理函数
+  - `clearSelection`：清除当前选中状态
+  - **特性**：支持最细粒度子物体选中，可配置高亮开关，自动返回物体完整信息
+
 ## 人物移动控制
 
 ### 控制方式
@@ -166,13 +176,25 @@ npm run preview
 - 使用四元数处理旋转，避免万向锁问题
 - 自动清理键盘事件监听器，防止内存泄漏
 
-## 性能优化建议
+## 双击物体选中
 
-1. 使用 DRACO 压缩减少模型文件大小
-2. 使用并行加载提升加载速度
-3. 使用 shallowRef 避免 Three.js 对象的深度响应式
-4. 合理设置渲染器的像素比限制
-5. 使用环境贴图替代复杂的光照计算
-6. 使用线性插值（lerp）实现平滑移动，避免相机抖动
-7. 基于时间增量（deltaTime）控制移动速度，确保不同帧率下速度一致
-8. 模块化设计，将复杂逻辑分离到独立的 hook 中，提高代码可维护性
+### 功能说明
+支持双击任意3D物体，高亮显示并返回物体完整信息
+
+### 使用方法
+```typescript
+// 初始化hook
+const { initDoubleClickSelection } = useObjectSelection(camera, scene)
+
+// 初始化双击事件
+const cleanup = initDoubleClickSelection({
+  onSelect: (object) => {
+    if (object) {
+      console.log('选中物体：', object.name, object)
+      // 自定义逻辑：触发动画、弹出详情等
+    }
+  },
+  highlightEnabled: true // 开启蓝色高亮效果
+})
+```
+
