@@ -42,7 +42,7 @@ onMounted(() => {
     return
   }
   
-  initScene({ coordinateAxis: true }) // 初始化场景
+  initScene({ coordinateAxis: true, cameraPosition: new THREE.Vector3(-9, 5, -15) }) // 初始化场景
   loadEnvironment(props.skyBoxUrl, render) // 加载天空盒
 
   // 初始化键盘事件监听

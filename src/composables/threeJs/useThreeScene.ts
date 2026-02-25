@@ -17,13 +17,15 @@ export function useThreeScene(container: any) {
    * 初始化场景
    * @description 初始化场景，包括场景、相机、渲染器、轨道控制器、坐标轴辅助器、环境光、方向光
    * @param options.coordinateAxis 是否添加坐标轴辅助器 【红色 对应 X 轴，绿色 对应 Y 轴，蓝色 对应 Z 轴】
+   * @param options.cameraPosition 相机初始位置 【默认值：new THREE.Vector3(-9, 5, -15)】
    * @returns 场景实例
    */
   const initScene = (options: {
     coordinateAxis?: boolean
+    cameraPosition: THREE.Vector3
   }) => {
     if (!container.value) return
-    const { coordinateAxis } = options
+    const { coordinateAxis, cameraPosition = new THREE.Vector3(-9, 5, -15) } = options
 
     // 1. 创建Three.js主场景
     scene.value = new THREE.Scene()
@@ -32,7 +34,7 @@ export function useThreeScene(container: any) {
     // 参数说明：视野角度、宽高比、近裁剪面、远裁剪面
     camera.value = new THREE.PerspectiveCamera(45, width.value / height.value, 0.1, 90000)
     // 设置相机初始位置
-    camera.value.position.set(-9, 5, -15)
+    camera.value.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z)
 
     // 3. 创建WebGL渲染器
     renderer.value = new THREE.WebGLRenderer({ 
