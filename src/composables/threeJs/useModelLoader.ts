@@ -10,6 +10,13 @@ import * as THREE from 'three'
 import { ref, ShallowRef } from 'vue'
 import { GLTFLoader, DRACOLoader } from 'three-stdlib'
 
+// 全局单例DRACOLoader，只初始化一次，提升加载性能
+const globalDracoLoader = new DRACOLoader()
+globalDracoLoader.setDecoderPath(`${import.meta.env.BASE_URL}/draco/`)
+globalDracoLoader.setDecoderConfig({ type: 'wasm' })
+globalDracoLoader.setWorkerLimit(4)
+globalDracoLoader.preload()
+
 export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => void) {
   const isLoading = ref(false)
   const loadingText = ref('正在加载模型...')
@@ -44,12 +51,7 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
       const loader = new GLTFLoader()
       loader.setPath(`${import.meta.env.BASE_URL}/`)
       
-      const dracoLoader = new DRACOLoader()
-      dracoLoader.setDecoderPath(`${import.meta.env.BASE_URL}/draco/`)
-      dracoLoader.setDecoderConfig({ type: 'wasm' })
-      dracoLoader.setWorkerLimit(4)
-      dracoLoader.preload()
-      loader.setDRACOLoader(dracoLoader)
+      loader.setDRACOLoader(globalDracoLoader)
       
       loader.load(
         modelUrl,
