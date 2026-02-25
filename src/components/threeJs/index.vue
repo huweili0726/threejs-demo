@@ -20,10 +20,10 @@ const threeJsContainer = ref<HTMLDivElement>()
 
 // 使用three自定义 Hooks
 const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize } = useThreeScene(threeJsContainer)
-const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel } = useModelLoader(scene, render)
-const { loadEnvironment } = useEnvironmentLoader(scene)
+const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel } = useModelLoader(scene as any, render)
+const { loadEnvironment } = useEnvironmentLoader(scene as any)
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement()
-const { initDoubleClickSelection } = useObjectSelection()
+const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any)
 
 // 控制变量
 const currentModelUrl = ref<string>('glb/man.glb')
@@ -97,8 +97,6 @@ onMounted(() => {
   if (camera.value && scene.value) {
     cleanupSelection = initDoubleClickSelection(
       {
-        camera: camera.value,
-        scene: scene.value,
         onSelect: (object) => {
           if (object) {
             console.log('🎉 双击选中了物体：', object.name)

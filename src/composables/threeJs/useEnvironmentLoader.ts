@@ -6,11 +6,11 @@
  * @version 1.0.0
  * @date 2026-02-25
  */
-import { ref } from 'vue'
+import { ref, ShallowRef } from 'vue'
 import * as THREE from 'three'
 import { RGBELoader } from 'three-stdlib'
 
-export function useEnvironmentLoader(scene: any) {
+export function useEnvironmentLoader(scene: ShallowRef<THREE.Scene>) {
   /**
    * 加载环境贴图
    * @param skyBoxUrl - 环境贴图的 URL

@@ -7,10 +7,10 @@
  * @date 2026-02-25
  * @description 鼠标双击选中3D物体，支持高亮显示和选中回调
  */
-import { ref } from 'vue'
+import { ref, ShallowRef } from 'vue'
 import * as THREE from 'three'
 
-export function useObjectSelection() {
+export function useObjectSelection(camera: ShallowRef<THREE.PerspectiveCamera>, scene: ShallowRef<THREE.Scene>) {
   // 当前选中的物体
   const selectedObject = ref<THREE.Object3D | null>(null)
   // 存储选中物体原始的材质，用于恢复
@@ -25,43 +25,40 @@ export function useObjectSelection() {
 
   /**
    * 初始化双击事件监听
-   * @param options.camera 相机对象
-   * @param options.scene 场景对象
+   * @param options 配置项
    * @param options.onSelect 选中后的回调函数，返回选中的物体
    * @param options.highlightEnabled 是否开启高亮效果，默认true
    * @returns 清理函数
    */
   const initDoubleClickSelection = (
     options: {
-      camera: THREE.PerspectiveCamera,
-      scene: THREE.Scene,
       onSelect?: (object: THREE.Object3D | null) => void
       highlightEnabled?: boolean
     }
   ) => {
-    const { camera, scene, onSelect, highlightEnabled = true } = options
+    const { onSelect, highlightEnabled = true } = options
 
     // 双击事件处理函数
     const handleDoubleClick = (event: MouseEvent) => {
       // 校验依赖项：确保scene、camera已初始化
-      if (!camera || !scene) return
+      if (!camera.value || !scene.value) return
 
       // 关键：更新相机和场景的世界矩阵（漫游后必加）
-      camera.updateMatrixWorld(true)
-      scene.updateMatrixWorld(true)
+      camera.value.updateMatrixWorld(true)
+      scene.value.updateMatrixWorld(true)
 
       // 计算鼠标在画布内的相对位置（排除容器偏移）
-      const renderer = scene.children.find(child => child.type === 'WebGLRenderer') as any
+      const renderer = scene.value!.children.find(child => child.type === 'WebGLRenderer') as any
       const canvas = renderer ? renderer.domElement : document.querySelector('canvas')
       const rect = canvas ? canvas.getBoundingClientRect() : { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight }
       mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
 
       // 更新射线投射器
-      raycaster.setFromCamera(mouse, camera)
+      raycaster.setFromCamera(mouse, camera.value!)
 
       // 检测射线与场景中模型的交点，递归检测子物体
-      const intersects = raycaster.intersectObjects(scene.children, true)
+      const intersects = raycaster.intersectObjects(scene.value!.children, true)
 
       if (intersects && intersects.length > 0) {
         // 打印所有交点信息，帮助调试

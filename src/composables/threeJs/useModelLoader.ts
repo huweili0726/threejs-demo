@@ -6,11 +6,11 @@
  * @version 1.0.0
  * @date 2026-02-25
  */
-import { ref } from 'vue'
+import { ref, ShallowRef } from 'vue'
 import * as THREE from 'three'
 import { GLTFLoader, DRACOLoader } from 'three-stdlib'
 
-export function useModelLoader(scene: any, render?: () => void) {
+export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => void) {
   const isLoading = ref(false)
   const loadingText = ref('正在加载模型...')
   const modelMixers = ref<Map<string, THREE.AnimationMixer>>(new Map())
