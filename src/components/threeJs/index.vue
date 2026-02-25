@@ -19,10 +19,15 @@ import { useObjectSelection } from '@/composables/threeJs/useObjectSelection'
 const threeJsContainer = ref<HTMLDivElement>()
 
 // 使用three自定义 Hooks
+// 场景相关
 const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize } = useThreeScene(threeJsContainer)
+// 模型加载相关
 const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel } = useModelLoader(scene as any, render)
+// 环境加载相关
 const { loadEnvironment } = useEnvironmentLoader(scene as any)
+// 人物移动相关
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement()
+// 物体选择相关
 const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any)
 
 // 控制变量
