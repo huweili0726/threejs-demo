@@ -1,3 +1,11 @@
+/**
+ * 模型加载模块
+ * 
+ * @author huweili
+ * @email czxyhuweili@163.com
+ * @version 1.0.0
+ * @date 2026-02-25
+ */
 import { ref } from 'vue'
 import * as THREE from 'three'
 import { GLTFLoader, DRACOLoader } from 'three-stdlib'
