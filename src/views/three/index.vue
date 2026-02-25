@@ -13,6 +13,11 @@ import * as THREE from 'three'
 import { ref, onMounted } from 'vue'
 import ThreeJs from '@/components/threeJs/index.vue'
 import ThreeController from '@/views/three/threeController.vue'
+import { useThreeScene } from '@/composables/threeJs/useThreeScene'
+import { useModelLoader } from '@/composables/threeJs/useModelLoader'
+
+const { scene, render, flyTo } = useThreeScene()
+// const { loadModel, loadModels } = useModelLoader(scene, render)
 
 const threeJsRef = ref<InstanceType<typeof ThreeJs> | null>(null)
 const skyBoxUrl = ref('/hdr/sky.hdr')
@@ -29,6 +34,7 @@ onMounted(() => {
     'glb/消防给水.glb',
   ]
   if (threeJsRef.value) {
+    // ✅ 调用子组件暴露的loadModels方法，使用子组件里已经初始化好的scene
     threeJsRef.value.loadModels({
       modelUrls: modelsToLoad,
       scale: 1
@@ -38,9 +44,11 @@ onMounted(() => {
 
 const handleFocusModel = (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration?: number, modelInitPosition?: {x: number, y: number, z: number}, onLookAt?: {x: number, y: number, z: number}) => {
   if (threeJsRef.value) {
-    threeJsRef.value.flyToModel(targetPosition, targetTarget, duration)
+    // ✅ 调用useThreeScene暴露的flyTo方法
+    flyTo(targetPosition, targetTarget, duration)
 
     if (threeJsRef.value) {
+      // ✅ 调用子组件暴露的loadModel方法
       threeJsRef.value.loadModel({
         modelUrl: 'glb/man.glb',
         scale: 0.0005,

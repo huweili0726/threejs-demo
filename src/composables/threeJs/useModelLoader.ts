@@ -140,16 +140,6 @@ export function useModelLoader(scene: any, render?: () => void) {
   }
 
   /**
-   * 更新所有动画
-   * @param deltaTime 时间增量（秒）
-   */
-  const updateAnimations = (deltaTime: number) => {
-    modelMixers.value.forEach((mixer) => {
-      mixer.update(deltaTime)
-    })
-  }
-
-  /**
    * 移动模型
    * @param options.modelUrl 模型URL
    * @param options.direction 移动方向向量
@@ -224,7 +214,6 @@ export function useModelLoader(scene: any, render?: () => void) {
     loadedModelMaps,
     loadModel,
     loadModels,
-    updateAnimations,
     moveModel,
     getModelPosition,
     cameraFollowModel

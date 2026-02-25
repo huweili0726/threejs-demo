@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three-stdlib'
 import { useWindowSize } from '@vueuse/core'
 
-export function useThreeScene(container: any) {
+export function useThreeScene(container?: any) {
   const { width, height } = useWindowSize()
   const scene = shallowRef<THREE.Scene>()
   const camera = shallowRef<THREE.PerspectiveCamera>()
@@ -178,6 +178,17 @@ export function useThreeScene(container: any) {
   }
 
   /**
+   * 更新所有模型动画
+   * @param deltaTime 时间增量（秒）
+   * @param modelMixers 模型动画混合器Map集合
+   */
+  const updateAnimations = (deltaTime: number, modelMixers: Map<string, any>) => {
+    modelMixers.forEach((mixer) => {
+      mixer.update(deltaTime)
+    })
+  }
+
+  /**
    * 启动动画循环
    */
   const startAnimationLoop = () => {
@@ -226,6 +237,7 @@ export function useThreeScene(container: any) {
     render,
     onWindowResize,
     flyTo,
+    updateAnimations,
     setAnimationUpdateCallback,
     startAnimationLoop,
     stopAnimationLoop

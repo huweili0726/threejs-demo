@@ -18,8 +18,8 @@ import { useCharacterMovement } from '@/composables/threeJs/useCharacterMovement
 const threeJsContainer = ref<HTMLDivElement>()
 
 // 使用three自定义 Hooks
-const { scene, initScene, render, onWindowResize, camera, controls, flyTo, setAnimationUpdateCallback, startAnimationLoop, stopAnimationLoop } = useThreeScene(threeJsContainer)
-const { isLoading, loadingText, loadModel, loadModels, updateAnimations, moveModel, cameraFollowModel, loadedModelMaps } = useModelLoader(scene, render)
+const { scene, camera, initScene, render, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize } = useThreeScene(threeJsContainer)
+const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel } = useModelLoader(scene, render)
 const { loadEnvironment } = useEnvironmentLoader(scene)
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement()
 
@@ -43,14 +43,14 @@ onMounted(() => {
   }
   
   initScene({ coordinateAxis: true, cameraPosition: new THREE.Vector3(-9, 5, -15) }) // 初始化场景
-  loadEnvironment(props.skyBoxUrl, render) // 加载天空盒
+  loadEnvironment( props.skyBoxUrl, render ) // 加载天空盒
 
   // 初始化键盘事件监听
   cleanupKeyboardEvents = initKeyboardEvents()
   
   // 设置动画更新回调
   setAnimationUpdateCallback((deltaTime: number) => {
-    updateAnimations(deltaTime)
+    updateAnimations(deltaTime, modelMixers.value)
     updateCharacterMovement({
       deltaTime, // ✅ 把外层的时间增量传入
       modelUrl: currentModelUrl.value, // ✅ 把外层的模型URL传入
@@ -59,7 +59,7 @@ onMounted(() => {
     })
     // 相机跟随人物
     if (currentModelUrl.value && camera.value) {
-      cameraFollowModel(currentModelUrl.value, camera.value, cameraOffset)
+      cameraFollowModel( currentModelUrl.value, camera.value, cameraOffset )
     }
   })
   
@@ -80,25 +80,10 @@ onBeforeUnmount(() => {
   }
 })
 
-/**
- * 视角平滑飞行到指定模型
- * @param targetPosition 目标位置
- * @param targetTarget 目标朝向
- * @param duration 动画持续时间（毫秒）
- */
-const flyToModel = async (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number = 1000) => {
-  if (!scene.value || !camera.value || !controls.value) {
-    console.error('场景scene、相机camera、控制器controls未初始化')
-    return
-  }
-  await flyTo(targetPosition, targetTarget, duration)
-}
-
 // 暴露方法给父组件
 defineExpose({
   loadModel,
-  loadModels,
-  flyToModel
+  loadModels
 })
 </script>
 
