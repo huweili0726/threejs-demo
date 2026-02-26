@@ -22,9 +22,8 @@ const threeJsContainer = ref<HTMLDivElement>()
 const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize } = useThreeScene(threeJsContainer)
 const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel } = useModelLoader(scene as any, render)
 const { loadEnvironment } = useEnvironmentLoader(scene as any)
-const collisionDetection = useCollisionDetection()
-const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement(collisionDetection)
-const { addBoundingBoxesToObjects, addCharacterBoundingBox } = collisionDetection
+const { checkCollision, updateBoundingBoxes, addBoundingBoxesToObjects, addCharacterBoundingBox } = useCollisionDetection() 
+const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes )
 const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any)
 
 // 控制变量

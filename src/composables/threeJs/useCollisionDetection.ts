@@ -5,6 +5,7 @@
  * @email czxyhuweili@163.com
  * @version 1.0.0
  * @date 2026-02-26
+ * @description 碰撞检测模块，用于检测角色与墙壁的碰撞
  */
 import * as THREE from 'three'
 import { ref } from 'vue'
