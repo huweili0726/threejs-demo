@@ -5,13 +5,14 @@
  * @email czxyhuweili@163.com
  * @version 1.0.0
  * @date 2026-02-25
+ * @description 人物移动模块，处理人物的键盘输入和移动逻辑
  */
 import * as THREE from 'three'
 import { ref } from 'vue'
 
 export function useCharacterMovement( 
-  checkCollision: (characterBox: THREE.Box3) => boolean, 
-  updateBoundingBoxes: () => void 
+  checkCollision: (characterBox: THREE.Box3) => boolean, // 检查碰撞函数
+  updateBoundingBoxes: () => void // 更新碰撞框函数
 ) {
   // 控制变量
   const keysPressed = ref<Set<string>>(new Set())
