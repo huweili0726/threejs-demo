@@ -14,6 +14,7 @@ import { useThreeScene } from '@/composables/threeJs/useThreeScene' // 场景相
 import { useModelLoader } from '@/composables/threeJs/useModelLoader' // 模型加载相关Hooks
 import { useEnvironmentLoader } from '@/composables/threeJs/useEnvironmentLoader' // 环境贴图加载相关Hooks
 import { useCharacterMovement } from '@/composables/threeJs/useCharacterMovement' // 人物移动控制相关Hooks
+import { useCollisionDetection } from '@/composables/threeJs/useCollisionDetection' // 碰撞检测相关Hooks
 import { useObjectSelection } from '@/composables/threeJs/useObjectSelection' // 物体选择相关Hooks
 
 const threeJsContainer = ref<HTMLDivElement>()
@@ -21,7 +22,9 @@ const threeJsContainer = ref<HTMLDivElement>()
 const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize } = useThreeScene(threeJsContainer)
 const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel } = useModelLoader(scene as any, render)
 const { loadEnvironment } = useEnvironmentLoader(scene as any)
-const { initKeyboardEvents, updateCharacterMovement, addBoundingBoxesToObjects, addCharacterBoundingBox } = useCharacterMovement()
+const collisionDetection = useCollisionDetection()
+const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement(collisionDetection)
+const { addBoundingBoxesToObjects, addCharacterBoundingBox } = collisionDetection
 const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any)
 
 // 控制变量
