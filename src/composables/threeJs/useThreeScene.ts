@@ -5,6 +5,7 @@
  * @email czxyhuweili@163.com
  * @version 1.0.0
  * @date 2026-02-25
+ * @description 场景模块，用于创建Three.js场景、相机、渲染器、轨道控制器、坐标轴辅助器、环境光、方向光
  */
 import * as THREE from 'three'
 import { shallowRef, onBeforeUnmount } from 'vue'

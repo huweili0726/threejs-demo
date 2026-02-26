@@ -5,6 +5,7 @@
  * @email czxyhuweili@163.com
  * @version 1.0.0
  * @date 2026-02-25
+ * @description 模型加载模块，用于加载3D模型并添加到场景中
  */
 import * as THREE from 'three'
 import { ref, ShallowRef } from 'vue'
