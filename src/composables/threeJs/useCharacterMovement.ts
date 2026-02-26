@@ -72,9 +72,7 @@ export function useCharacterMovement() {
       
       // 遍历模型的所有子对象
       model.traverse((child) => {
-        if (child instanceof THREE.Mesh && 
-            objectNames.some(name => child.name === name)) {
-          
+        if (child instanceof THREE.Mesh && objectNames.some(name => child.name === name)) {
           const worldMatrix = child.matrixWorld // 获取子对象的世界矩阵
           const box = new THREE.Box3().setFromBufferAttribute(child.geometry.attributes.position) // 创建包围盒
           box.applyMatrix4(worldMatrix) // 将世界矩阵应用到包围盒上
