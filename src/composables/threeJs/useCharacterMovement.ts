@@ -158,6 +158,22 @@ export function useCharacterMovement() {
   }
   
   /**
+   * 检测人物是否与墙体发生碰撞
+   * @param characterBox 人物的包围盒
+   * @returns 是否发生碰撞
+   */
+  const checkCollision = (characterBox: THREE.Box3): boolean => {
+    // 遍历所有目标墙体的包围盒
+    for (const wallBox of wallBoundingBoxes.value) {
+      // 检测人物碰撞盒是否与墙体包围盒重叠
+      if (characterBox.intersectsBox(wallBox.box)) {
+        return true
+      }
+    }
+    return false
+  }
+  
+  /**
    * 更新人物移动
    * @param options.deltaTime 时间增量
    * @param options.modelUrl 模型URL
@@ -211,11 +227,34 @@ export function useCharacterMovement() {
     // 归一化方向向量，确保斜向移动速度一致
     if (moveDirection.length() > 0) {
       moveDirection.normalize()
-      moveModel({
-        modelUrl,
-        direction: moveDirection,
-        speed
-      })
+      
+      // 保存当前位置
+      const originalPosition = model.position.clone()
+      
+      // 临时移动模型到预测位置
+      model.position.add(moveDirection.clone().multiplyScalar(speed))
+      model.updateMatrixWorld(true)
+      
+      // 创建预测位置的包围盒
+      const predictedBox = new THREE.Box3().setFromObject(model)
+      
+      // 检测是否发生碰撞
+      const hasCollision = checkCollision(predictedBox)
+      
+      // 将模型移回原位置
+      model.position.copy(originalPosition)
+      model.updateMatrixWorld(true)
+      
+      if (!hasCollision) {
+        // 如果没有碰撞，执行移动
+        moveModel({
+          modelUrl,
+          direction: moveDirection,
+          speed
+        })
+      } else {
+        console.log('碰撞检测：阻止移动')
+      }
     }
     
     // 更新所有包围盒的位置
