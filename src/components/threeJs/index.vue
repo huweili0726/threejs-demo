@@ -21,7 +21,7 @@ const threeJsContainer = ref<HTMLDivElement>()
 const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize } = useThreeScene(threeJsContainer)
 const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel } = useModelLoader(scene as any, render)
 const { loadEnvironment } = useEnvironmentLoader(scene as any)
-const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement()
+const { initKeyboardEvents, updateCharacterMovement, addBoundingBoxesToObjects } = useCharacterMovement()
 const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any)
 
 // 控制变量
@@ -56,6 +56,14 @@ watch(() => props.loadModel, async (config) => {
 watch(() => props.loadModels, async (config) => {
   if (config && scene.value) { // 确保场景初始化完成
     await loadModels(config).catch(console.error)
+    // 加载完成后为指定物体添加红色包围盒
+    if (scene.value && loadedModelMaps.value) {
+      addBoundingBoxesToObjects({
+        scene: scene.value,
+        objectNames: ['Cube109_1', 'Cube072'], // 指定要添加包围盒的物体名称
+        loadedModelMaps: loadedModelMaps.value
+      })
+    }
   }
 }, { immediate: true })
 

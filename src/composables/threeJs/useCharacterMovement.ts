@@ -9,9 +9,25 @@
 import * as THREE from 'three'
 import { ref } from 'vue'
 
+// 定义包围盒类型
+interface WallBoundingBox {
+  box: THREE.Box3
+  selectMode: {
+    name: string
+    uuid: string
+  }
+}
+
+// 定义包围盒辅助对象类型
+interface MeshBoxHelper extends THREE.BoxHelper {
+  // 扩展BoxHelper类型
+}
+
 export function useCharacterMovement() {
   // 控制变量
   const keysPressed = ref<Set<string>>(new Set())
+  const wallBoundingBoxes = ref<WallBoundingBox[]>([])
+  const wallHelpers = ref<MeshBoxHelper[]>([])
   
   // 初始化键盘事件监听
   const initKeyboardEvents = () => {
@@ -30,6 +46,57 @@ export function useCharacterMovement() {
       window.removeEventListener('keydown', handleKeyDown)
       window.removeEventListener('keyup', handleKeyUp)
     }
+  }
+  
+  /**
+   * 为指定名称的物体添加红色包围盒
+   * @param options.scene 场景对象
+   * @param options.objectNames 要添加包围盒的物体名称数组
+   * @param options.loadedModelMaps 已加载的模型Map
+   */
+  const addBoundingBoxesToObjects = (options: {
+    scene: THREE.Scene
+    objectNames: string[]
+    loadedModelMaps: Map<string, THREE.Group>
+  }) => {
+    const { scene, objectNames, loadedModelMaps } = options
+    
+    // 清空之前的包围盒和辅助对象
+    wallBoundingBoxes.value = []
+    wallHelpers.value.forEach(helper => scene.remove(helper))
+    wallHelpers.value = []
+    
+    // 遍历所有加载的模型
+    loadedModelMaps.forEach(model => {
+      model.updateMatrixWorld(true)
+      
+      // 遍历模型的所有子对象
+      model.traverse((child) => {
+        if (child instanceof THREE.Mesh && 
+            objectNames.some(name => child.name === name)) {
+          
+          const worldMatrix = child.matrixWorld // 获取子对象的世界矩阵
+          const box = new THREE.Box3().setFromBufferAttribute(child.geometry.attributes.position) // 创建包围盒
+          box.applyMatrix4(worldMatrix) // 将世界矩阵应用到包围盒上
+
+          wallBoundingBoxes.value.push({ 
+            "box": box, 
+            "selectMode": { "name": child.name, "uuid": child.uuid } 
+          }) // 将计算好的包围盒添加到数组中
+
+          // 添加红色包围盒可视化
+          const helper = new THREE.BoxHelper(child, 0xff0000) as MeshBoxHelper
+          helper.visible = true
+          helper.renderOrder = 1000
+          helper.material.depthTest = false
+          helper.update()
+          wallHelpers.value.push(helper)
+          scene.add(helper)
+
+          console.log(`已添加红色包围盒，名称:`, child.name)
+        }
+      })
+    })
   }
   
   /**
@@ -97,6 +164,8 @@ export function useCharacterMovement() {
   return {
     keysPressed,
     initKeyboardEvents,
-    updateCharacterMovement
+    updateCharacterMovement,
+    addBoundingBoxesToObjects,
+    wallBoundingBoxes
   }
 }
