@@ -16,6 +16,7 @@ import { useEnvironmentLoader } from '@/composables/threeJs/useEnvironmentLoader
 import { useCharacterMovement } from '@/composables/threeJs/useCharacterMovement' // 人物移动控制相关Hooks
 import { useCollisionDetection } from '@/composables/threeJs/useCollisionDetection' // 碰撞检测相关Hooks
 import { useObjectSelection } from '@/composables/threeJs/useObjectSelection' // 物体选择相关Hooks
+import { jsonUtils } from '@/utils/json' // JSON工具相关
 
 const threeJsContainer = ref<HTMLDivElement>()
 
@@ -25,6 +26,8 @@ const { loadEnvironment } = useEnvironmentLoader(scene as any)
 const { checkCollision, updateBoundingBoxes, addBoundingBoxesToObjects, addCharacterBoundingBox } = useCollisionDetection() 
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes )
 const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any)
+
+const { getJsonFile } = jsonUtils()
 
 // 控制变量
 const peopleModelUrl = ref<string>('glb/man.glb') // 当前加载的人物模型URL
@@ -68,11 +71,15 @@ watch(() => props.loadModels, async (config) => {
   if (config && scene.value) { // 确保场景初始化完成
     await loadModels(config).catch(console.error)
 
+    // 加载完成后，获取配置文件中的需要添加包围盒的物体名称
+    let configJson = await getJsonFile(`${import.meta.env.BASE_URL}/config/wall.jsonc`)
+    let _objectNames = configJson?.walls?.map((item: any) => item.name) || []
+
     // 为指定物体添加红色包围盒
     if (loadedModelMaps.value) {
       addBoundingBoxesToObjects({
         scene: scene.value,
-        objectNames: ['Cube109_1', 'Cube072'], // 指定要添加包围盒的物体名称
+        objectNames: _objectNames, // 指定要添加包围盒的物体名称
         loadedModelMaps: loadedModelMaps.value
       })
     }
