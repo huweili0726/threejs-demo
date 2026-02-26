@@ -27,7 +27,7 @@ const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( ch
 const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any)
 
 // 控制变量
-const currentModelUrl = ref<string>('glb/man.glb') // 当前加载的模型URL
+const peopleModelUrl = ref<string>('glb/man.glb') // 当前加载的人物模型URL
 const cameraOffset = new THREE.Vector3(0, 0.1, -0.12) // 相机偏移量（在模型后方，稍微上方）
 let cleanupKeyboardEvents: (() => void) | null = null // 清理键盘事件的函数
 let cleanupSelection: (() => void) | null = null // 清理双击选中事件的函数
@@ -56,7 +56,7 @@ watch(() => props.loadModel, async (config) => {
       // 为人物模型添加红色包围盒
       addCharacterBoundingBox({
         scene: scene.value,
-        modelUrl: currentModelUrl.value,
+        modelUrl: peopleModelUrl.value,
         loadedModelMaps: loadedModelMaps.value
       })
     }
@@ -115,13 +115,13 @@ onMounted(() => {
     updateAnimations(deltaTime, modelMixers.value)
     updateCharacterMovement({
       deltaTime, // ✅ 把外层的时间增量传入
-      modelUrl: currentModelUrl.value, // ✅ 把外层的模型URL传入
+      modelUrl: peopleModelUrl.value, // ✅ 把外层的模型URL传入
       moveModel, // ✅ 把外层的移动模型的函数传入
       loadedModelMaps: loadedModelMaps.value // ✅ 把外层的模型Map传入
     })
     // 相机跟随人物
-    if (currentModelUrl.value && camera.value) {
-      cameraFollowModel( currentModelUrl.value, camera.value, cameraOffset )
+    if (peopleModelUrl.value && camera.value) {
+      cameraFollowModel( peopleModelUrl.value, camera.value, cameraOffset )
     }
   })
 
