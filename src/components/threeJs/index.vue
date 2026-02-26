@@ -51,9 +51,9 @@ const props = withDefaults(
 watch(() => props.loadModel, async (config) => {
   if (config && scene.value) { // 确保场景初始化完成
     await loadModel(config).catch(console.error)
-    // 加载完成后为指定物体添加红色包围盒
-    if (scene.value && loadedModelMaps.value) {
-      // 为人物模型添加红色包围盒
+
+    // 为人物模型添加红色包围盒
+    if (loadedModelMaps.value) {
       addCharacterBoundingBox({
         scene: scene.value,
         modelUrl: peopleModelUrl.value,
@@ -67,8 +67,9 @@ watch(() => props.loadModel, async (config) => {
 watch(() => props.loadModels, async (config) => {
   if (config && scene.value) { // 确保场景初始化完成
     await loadModels(config).catch(console.error)
-    // 加载完成后为指定物体添加红色包围盒
-    if (scene.value && loadedModelMaps.value) {
+
+    // 为指定物体添加红色包围盒
+    if (loadedModelMaps.value) {
       addBoundingBoxesToObjects({
         scene: scene.value,
         objectNames: ['Cube109_1', 'Cube072'], // 指定要添加包围盒的物体名称
