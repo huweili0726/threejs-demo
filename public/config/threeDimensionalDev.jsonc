@@ -1,0 +1,289 @@
+{
+	"threeDevs": [
+		{
+			"id": "door_1",
+			"meshName": "Cube099_1",
+			"type": "door",
+			"popInfo": {
+				"title": "1号门",
+				"content": [
+					{"name": "名称", "value": "电控防护门"},
+					{"name": "产品型号", "value": "DF1520(1)"},
+					{"name": "生产日期", "value": "2017年1月"},
+					{"name": "所属公司", "value": "西安市正泰五防工程有限责任公司"},
+					{"name": "地址", "value": "西安市西影路14号"},
+					{"name": "电话", "value": "029-85534091"}
+				]
+			}
+		},
+		{
+			"id": "door_2",
+			"meshName": "Cube107_1",
+			"type": "door",
+			"popInfo": {
+				"title": "2号门",
+				"content": [
+					{"name": "名称", "value": "电控防护密闭屏蔽门"},
+					{"name": "产品型号", "value": "DFMP1520(5)"},
+					{"name": "生产日期", "value": "2017年1月"},
+					{"name": "所属公司", "value": "西安市正泰五防工程有限责任公司"},
+					{"name": "地址", "value": "西安市西影路14号"},
+					{"name": "电话", "value": "029-85534091"}
+				]
+			}
+		},
+		{
+			"id": "door_3",
+			"meshName": "Cube109_1",
+			"type": "door",
+			"popInfo": {
+				"title": "3号门",
+				"content": [
+					{"name": "名称", "value": "电控密闭门"},
+					{"name": "产品型号", "value": "DM1520"},
+					{"name": "生产日期", "value": "2017年1月"},
+					{"name": "所属公司", "value": "西安市正泰五防工程有限责任公司"},
+					{"name": "地址", "value": "西安市西影路14号"},
+					{"name": "电话", "value": "029-85534091"}
+				]
+			}
+		},
+		{
+			"id": "door_4",
+			"meshName": "Cube111_1",
+			"type": "door",
+			"popInfo": {
+				"title": "4号门",
+				"content": [
+					{"name": "名称", "value": "电控密闭门"},
+					{"name": "产品型号", "value": "DM1520"},
+					{"name": "生产日期", "value": "2017年1月"},
+					{"name": "所属公司", "value": "西安市正泰五防工程有限责任公司"},
+					{"name": "地址", "value": "西安市西影路14号"},
+					{"name": "电话", "value": "029-85534091"}
+				]
+			}
+		},
+		{
+			"id": "generatorRoom_1",
+			"meshName": "Cube752",
+			"type": "generator",
+			"popInfo": {
+				"title": "发电机1号",
+				"content": [
+					{"name": "名称", "value": "柴油发电机组"},
+					{"name": "产品标准", "value": "ISO8528,GB/T2820"},
+					{"name": "产品型号", "value": "HGG330"},
+					{"name": "常用功率", "value": "240KW/300KVA"},
+					{"name": "备用功率", "value": "264KW/330KVA"},
+					{"name": "制造日期", "value": "2014年12月"},
+					{"name": "额定功率", "value": "50Hz"},
+					{"name": "额定电压", "value": "400/230v"},
+					{"name": "额定功率因素", "value": "0.8（滞后）"},
+					{"name": "生产编号", "value": "20148373"},
+					{"name": "所属公司", "value": "广东康菱动力科技有限公司"}
+				]
+			}
+		},
+		{
+			"id": "generatorRoom_2",
+			"meshName": "Cube753",
+			"type": "generator",
+			"popInfo": {
+				"title": "发电机2号",
+				"content": [
+					{"name": "名称", "value": "柴油发电机组"},
+					{"name": "产品标准", "value": "ISO8528,GB/T2820"},
+					{"name": "产品型号", "value": "HGG330"},
+					{"name": "常用功率", "value": "240KW/300KVA"},
+					{"name": "备用功率", "value": "264KW/330KVA"},
+					{"name": "制造日期", "value": "2014年12月"},
+					{"name": "额定功率", "value": "50Hz"},
+					{"name": "额定电压", "value": "400/230v"},
+					{"name": "额定功率因素", "value": "0.8（滞后）"},
+					{"name": "生产编号", "value": "20148374"},
+					{"name": "所属公司", "value": "广东康菱动力科技有限公司"}
+				]
+			}
+		},
+		{
+			"id": "AirConditioningMachineRoom_1",
+			"meshName": "Cube175_1",
+			"type": "airConditioningMachine",
+			"popInfo": {
+				"title": "XL-21动力配电柜",
+				"content": [
+					{"name": "名称", "value": "冷却塔电源控制柜"},
+					{"name": "控制电流", "value": "A、B、C相电流"}
+				]
+			}
+		},
+		{
+			"id": "AirConditioningMachineRoom_2",
+			"meshName": "Cube116_2",
+			"type": "airConditioningMachine",
+			"popInfo": {
+				"title": "除湿机1号",
+				"content": [
+					{"name": "名称", "value": "地下人防除湿空调机组"},
+					{"name": "产品型号", "value": "CK12-DK-1"},
+					{"name": "制冷量", "value": "68KW"},
+					{"name": "风量", "value": "12000m³/h"},
+					{"name": "机外余压", "value": "700Pa"},
+					{"name": "除湿量", "value": "40kg/h"},
+					{"name": "机器容量", "value": "23kw"},
+					{"name": "重量", "value": "1100kg"},
+					{"name": "电源", "value": "3N-50Hz-380V"},
+					{"name": "冷却水量", "value": "14m³/h"},
+					{"name": "外型尺寸", "value": "3200*1800*1430mm"},
+					{"name": "生产日期", "value": "2014.11"},
+					{"name": "出厂编号", "value": "1412021"}
+				]
+			}
+		},
+		{
+			"id": "AirConditioningMachineRoom_3",
+			"meshName": "Cube154_2",
+			"type": "airConditioningMachine",
+			"popInfo": {
+				"title": "除湿机2号",
+				"content": [
+					{"name": "名称", "value": "地下人防除湿空调机组"},
+					{"name": "产品型号", "value": "CK12-DK-1"},
+					{"name": "制冷量", "value": "68KW"},
+					{"name": "风量", "value": "12000m³/h"},
+					{"name": "机外余压", "value": "700Pa"},
+					{"name": "除湿量", "value": "40kg/h"},
+					{"name": "机器容量", "value": "23kw"},
+					{"name": "重量", "value": "1100kg"},
+					{"name": "电源", "value": "3N-50Hz-380V"},
+					{"name": "冷却水量", "value": "14m³/h"},
+					{"name": "外型尺寸", "value": "3200*1800*1430mm"},
+					{"name": "生产日期", "value": "2014.11"},
+					{"name": "出厂编号", "value": "1412021"}
+				]
+			}
+		},
+		{
+			"id": "AirConditioningMachineRoom_4",
+			"meshName": "Cube147_2",
+			"type": "airConditioningMachine",
+			"popInfo": {
+				"title": "除湿机3号",
+				"content": [
+					{"name": "名称", "value": "地下人防除湿空调机组"},
+					{"name": "产品型号", "value": "CK12-DK-1"},
+					{"name": "制冷量", "value": "68KW"},
+					{"name": "风量", "value": "12000m³/h"},
+					{"name": "机外余压", "value": "700Pa"},
+					{"name": "除湿量", "value": "40kg/h"},
+					{"name": "机器容量", "value": "23kw"},
+					{"name": "重量", "value": "1100kg"},
+					{"name": "电源", "value": "3N-50Hz-380V"},
+					{"name": "冷却水量", "value": "14m³/h"},
+					{"name": "外型尺寸", "value": "3200*1800*1430mm"},
+					{"name": "生产日期", "value": "2014.11"},
+					{"name": "出厂编号", "value": "1412021"}
+				]
+			}
+		},
+		{
+			"id": "PumpRoom_1",
+			"meshName": "不锈钢水管065_2",
+			"type": "pump",
+			"popInfo": {
+				"title": "压力表",
+				"content": [
+					{"name": "名称", "value": "远传压力表"},
+					{"name": "单位", "value": "MPa"},
+					{"name": "所属公司", "value": "青岛华青集团有限公司"}
+				]
+			}
+		},
+		{
+			"id": "PumpRoom_2",
+			"meshName": "不锈钢水管113_1",
+			"type": "pump",
+			"popInfo": {
+				"title": "压力表",
+				"content": [
+					{"name": "名称", "value": "消防供水1号压力表"},
+					{"name": "单位", "value": "MPa"},
+					{"name": "所属公司", "value": "杭州鹳山仪表有限公司"}
+				]
+			}
+		},
+		{
+			"id": "PumpRoom_3",
+			"meshName": "不锈钢水管112_1",
+			"type": "pump",
+			"popInfo": {
+				"title": "压力表",
+				"content": [
+					{"name": "名称", "value": "消防供水2号压力表"},
+					{"name": "单位", "value": "MPa"},
+					{"name": "所属公司", "value": "杭州鹳山仪表有限公司"}
+				]
+			}
+		},
+		{
+			"id": "PumpRoom_4",
+			"meshName": "发电机010",
+			"type": "pump",
+			"popInfo": {
+				"title": "消防稳压罐1号",
+				"content": [
+					{"name": "名称", "value": "隔膜气压罐"},
+					{"name": "产品编号", "value": "14C02-86"},
+					{"name": "设计压力", "value": "1.0MPa"},
+					{"name": "设计温度", "value": "80℃"},
+					{"name": "容积", "value": "0.77m³"},
+					{"name": "介质", "value": "空气"},
+					{"name": "推荐使用寿命", "value": "7年"},
+					{"name": "所属单位", "value": "上海市奉贤设备容器厂制造有限公司"}
+				]
+			}
+		},
+		{
+			"id": "PumpRoom_5",
+			"meshName": "发电机076",
+			"type": "pump",
+			"popInfo": {
+				"title": "喷淋稳压罐",
+				"content": [
+					{"name": "名称", "value": "隔膜气压罐"},
+					{"name": "产品编号", "value": "14C02-87"},
+					{"name": "设计压力", "value": "1.0MPa"},
+					{"name": "设计温度", "value": "80℃"},
+					{"name": "容积", "value": "0.77m³"},
+					{"name": "介质", "value": "空气"},
+					{"name": "推荐使用寿命", "value": "7年"},
+					{"name": "所属单位", "value": "上海市奉贤设备容器厂制造有限公司"}
+				]
+			}
+		},
+		{
+			"id": "communicationPowerSupplyRoom_1",
+			"meshName": "Cube530_1",
+			"type": "communicationPowerSupply",
+			"popInfo": {
+				"title": "空调机组",
+				"content": [
+					{"name": "名称", "value": "水冷单元式空调机组"},
+					{"name": "产品型号", "value": "L8"},
+					{"name": "风量", "value": "1500m³/h"},
+					{"name": "制冷量", "value": "8kw³"},
+					{"name": "机外余压", "value": "150Pa"},
+					{"name": "冷却水量", "value": "2m/h"},
+					{"name": "冷却水管经", "value": "RC1-1/4#"},
+					{"name": "机组容量", "value": "28kw"},
+					{"name": "电源", "value": "3N-50Hz-380V"},
+					{"name": "重量", "value": "300kg"},
+					{"name": "外形尺寸", "value": "980*600*1700mm"},
+					{"name": "生产日期", "value": "2014.12"},
+					{"name": "出厂编号", "value": "1412027"}
+				]
+			}
+		}
+	]
+}
