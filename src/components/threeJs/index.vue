@@ -21,7 +21,7 @@ const threeJsContainer = ref<HTMLDivElement>()
 const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize } = useThreeScene(threeJsContainer)
 const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel } = useModelLoader(scene as any, render)
 const { loadEnvironment } = useEnvironmentLoader(scene as any)
-const { initKeyboardEvents, updateCharacterMovement, addBoundingBoxesToObjects } = useCharacterMovement()
+const { initKeyboardEvents, updateCharacterMovement, addBoundingBoxesToObjects, addCharacterBoundingBox } = useCharacterMovement()
 const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any)
 
 // 控制变量
@@ -49,6 +49,16 @@ const props = withDefaults(
 watch(() => props.loadModel, async (config) => {
   if (config && scene.value) { // 确保场景初始化完成
     await loadModel(config).catch(console.error)
+
+    // 加载完成后为指定物体添加红色包围盒
+    if (scene.value && loadedModelMaps.value) {
+      // 为人物模型添加红色包围盒
+      addCharacterBoundingBox({
+        scene: scene.value,
+        modelUrl: currentModelUrl.value,
+        loadedModelMaps: loadedModelMaps.value
+      })
+    }
   }
 })
 
@@ -116,6 +126,15 @@ onMounted(() => {
 
   // 6、启动动画循环
   startAnimationLoop()
+  
+  // 7、为人物模型添加红色包围盒
+  if (scene.value && currentModelUrl.value && loadedModelMaps.value) {
+    addCharacterBoundingBox({
+      scene: scene.value,
+      modelUrl: currentModelUrl.value,
+      loadedModelMaps: loadedModelMaps.value
+    })
+  }
 })
 
 // 监听窗口大小变化

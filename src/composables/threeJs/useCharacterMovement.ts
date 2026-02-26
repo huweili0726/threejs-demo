@@ -28,6 +28,8 @@ export function useCharacterMovement() {
   const keysPressed = ref<Set<string>>(new Set())
   const wallBoundingBoxes = ref<WallBoundingBox[]>([])
   const wallHelpers = ref<MeshBoxHelper[]>([])
+  const characterBoundingBox = ref<THREE.Box3 | null>(null)
+  const characterHelper = ref<MeshBoxHelper | null>(null)
   
   // 初始化键盘事件监听
   const initKeyboardEvents = () => {
@@ -72,7 +74,9 @@ export function useCharacterMovement() {
       
       // 遍历模型的所有子对象
       model.traverse((child) => {
-        if (child instanceof THREE.Mesh && objectNames.some(name => child.name === name)) {
+        if (child instanceof THREE.Mesh && 
+            objectNames.some(name => child.name === name)) {
+          
           const worldMatrix = child.matrixWorld // 获取子对象的世界矩阵
           const box = new THREE.Box3().setFromBufferAttribute(child.geometry.attributes.position) // 创建包围盒
           box.applyMatrix4(worldMatrix) // 将世界矩阵应用到包围盒上
@@ -95,6 +99,62 @@ export function useCharacterMovement() {
         }
       })
     })
+  }
+  
+  /**
+   * 为人物模型添加红色包围盒
+   * @param options.scene 场景对象
+   * @param options.modelUrl 人物模型URL
+   * @param options.loadedModelMaps 已加载的模型Map
+   */
+  const addCharacterBoundingBox = (options: {
+    scene: THREE.Scene
+    modelUrl: string
+    loadedModelMaps: Map<string, THREE.Group>
+  }) => {
+    const { scene, modelUrl, loadedModelMaps } = options
+    
+    // 移除之前的人物包围盒
+    if (characterHelper.value) {
+      scene.remove(characterHelper.value)
+      characterHelper.value = null
+    }
+    characterBoundingBox.value = null
+    
+    const model = loadedModelMaps.get(modelUrl)
+    if (!model) return
+    
+    model.updateMatrixWorld(true)
+    
+    // 为人物模型添加包围盒
+    const helper = new THREE.BoxHelper(model, 0xff0000) as MeshBoxHelper
+    helper.visible = true
+    helper.renderOrder = 1000
+    helper.material.depthTest = false
+    helper.update()
+    characterHelper.value = helper
+    scene.add(helper)
+    
+    // 计算人物模型的包围盒
+    const box = new THREE.Box3().setFromObject(model)
+    characterBoundingBox.value = box
+    
+    console.log(`已添加人物模型红色包围盒`)
+  }
+  
+  /**
+   * 更新所有包围盒的位置
+   */
+  const updateBoundingBoxes = () => {
+    // 更新墙体包围盒辅助对象
+    wallHelpers.value.forEach(helper => {
+      helper.update()
+    })
+    
+    // 更新人物包围盒辅助对象
+    if (characterHelper.value) {
+      characterHelper.value.update()
+    }
   }
   
   /**
@@ -157,6 +217,9 @@ export function useCharacterMovement() {
         speed
       })
     }
+    
+    // 更新所有包围盒的位置
+    updateBoundingBoxes()
   }
   
   return {
@@ -164,6 +227,8 @@ export function useCharacterMovement() {
     initKeyboardEvents,
     updateCharacterMovement,
     addBoundingBoxesToObjects,
+    addCharacterBoundingBox,
+    updateBoundingBoxes,
     wallBoundingBoxes
   }
 }
