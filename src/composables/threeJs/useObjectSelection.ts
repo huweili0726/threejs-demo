@@ -61,6 +61,11 @@ export function useObjectSelection(camera: ShallowRef<THREE.PerspectiveCamera>, 
       const intersects = raycaster.intersectObjects(scene.value!.children, true)
 
       if (intersects && intersects.length > 0) {
+        // 过滤掉包围盒辅助对象（BoxHelper）
+        const filteredIntersects = intersects.filter(intersect => 
+          intersect.object.type !== 'BoxHelper' // 直接过滤掉 BoxHelper 类型
+        )
+
         // 打印所有交点信息，帮助调试
         console.log('🔍 射线检测到的所有物体：', intersects.map(intersect => ({
           name: intersect.object.name,
@@ -70,80 +75,91 @@ export function useObjectSelection(camera: ShallowRef<THREE.PerspectiveCamera>, 
           parentName: intersect.object.parent ? intersect.object.parent.name : 'root'
         })))
 
-        // 获取第一个交点的物体（最接近相机的最细分子物体）
-        let intersectedObject = intersects[0].object
-        let targetObject: THREE.Object3D | null = intersectedObject
-        console.log('🎯 选中子物体：', intersectedObject.name, '类型：', intersectedObject.type)
+        // 打印过滤后的交点信息
+        console.log('🔍 过滤后的物体：', filteredIntersects.map(intersect => ({
+          name: intersect.object.name,
+          type: intersect.object.type,
+          depth: intersect.distance,
+          uuid: intersect.object.uuid,
+          parentName: intersect.object.parent ? intersect.object.parent.name : 'root'
+        })))
 
-        if (targetObject && targetObject instanceof THREE.Mesh) {
-          // 判断：如果点击的是已经高亮的模型，则取消高亮
-          if (selectedObject.value === targetObject) {
-            // 恢复原始材质
-            if (originalMaterial.value) {
-              (targetObject as THREE.Mesh).material = originalMaterial.value
-            }
-            // 重置高亮状态
-            selectedObject.value = null
-            originalMaterial.value = null
-            if (onSelect) {
-              onSelect(null)
-            }
-          } else {
-            // 如果有其他高亮模型，先恢复其原始材质
-            if (selectedObject.value && originalMaterial.value && (selectedObject.value as THREE.Mesh).isMesh) {
-              (selectedObject.value as THREE.Mesh).material = originalMaterial.value
-            }
+        if (filteredIntersects.length > 0) {
+          // 获取第一个交点的物体（最接近相机的最细分子物体）
+          let intersectedObject = filteredIntersects[0].object
+          let targetObject: THREE.Object3D | null = intersectedObject
+          console.log('🎯 选中子物体：', intersectedObject.name, '类型：', intersectedObject.type)
 
-            // 只有开启高亮时才修改材质
-            if (highlightEnabled) {
-              // 记录当前模型的原始材质，并设置高亮材质
-              originalMaterial.value = targetObject.material.clone()
-              
-              // 设置高亮材质
-              if (targetObject.material instanceof THREE.MeshStandardMaterial) {
-                targetObject.material = new THREE.MeshStandardMaterial({
-                  ...targetObject.material,
-                  emissive: highlightColor,
-                  emissiveIntensity: 0.6,
-                  metalness: Math.max(targetObject.material.metalness || 0, 0.6),
-                  roughness: Math.min(targetObject.material.roughness || 1, 0.4)
-                })
-              } else {
-                // 对于其他材质类型，只修改自发光
-                targetObject.material = targetObject.material.clone()
-                if ('emissive' in targetObject.material) {
-                  (targetObject.material as any).emissive = highlightColor
-                  (targetObject.material as any).emissiveIntensity = 0.6
+          if (targetObject && targetObject instanceof THREE.Mesh) {
+            // 判断：如果点击的是已经高亮的模型，则取消高亮
+            if (selectedObject.value === targetObject) {
+              // 恢复原始材质
+              if (originalMaterial.value) {
+                (targetObject as THREE.Mesh).material = originalMaterial.value
+              }
+              // 重置高亮状态
+              selectedObject.value = null
+              originalMaterial.value = null
+              if (onSelect) {
+                onSelect(null)
+              }
+            } else {
+              // 如果有其他高亮模型，先恢复其原始材质
+              if (selectedObject.value && originalMaterial.value && (selectedObject.value as THREE.Mesh).isMesh) {
+                (selectedObject.value as THREE.Mesh).material = originalMaterial.value
+              }
+
+              // 只有开启高亮时才修改材质
+              if (highlightEnabled) {
+                // 记录当前模型的原始材质，并设置高亮材质
+                originalMaterial.value = targetObject.material.clone()
+                
+                // 设置高亮材质
+                if (targetObject.material instanceof THREE.MeshStandardMaterial) {
+                  targetObject.material = new THREE.MeshStandardMaterial({
+                    ...targetObject.material,
+                    emissive: highlightColor,
+                    emissiveIntensity: 0.6,
+                    metalness: Math.max(targetObject.material.metalness || 0, 0.6),
+                    roughness: Math.min(targetObject.material.roughness || 1, 0.4)
+                  })
+                } else {
+                  // 对于其他材质类型，只修改自发光
+                  targetObject.material = targetObject.material.clone()
+                  if ('emissive' in targetObject.material) {
+                    (targetObject.material as any).emissive = highlightColor
+                    (targetObject.material as any).emissiveIntensity = 0.6
+                  }
                 }
               }
+
+              // 获取世界坐标
+              targetObject.getWorldPosition(worldPos)
+
+              // 存储新选中的物体
+              selectedObject.value = targetObject
+
+              // 触发选中回调
+              if (onSelect) {
+                onSelect(targetObject)
+              }
+
+              // 打印物体信息
+              console.log('✅ 双击选中模型信息：', targetObject)
+              console.log(`模型坐标：X=${worldPos.x}, Y=${worldPos.y}, Z=${worldPos.z}`)
+              console.log('模型详细信息：', {
+                name: targetObject.name,
+                uuid: targetObject.uuid,
+                position: worldPos,
+                rotation: targetObject.rotation,
+                scale: targetObject.scale,
+                userData: targetObject.userData,
+                material: targetObject.material.type
+              })
             }
 
-            // 获取世界坐标
-            targetObject.getWorldPosition(worldPos)
-
-            // 存储新选中的物体
-            selectedObject.value = targetObject
-
-            // 触发选中回调
-            if (onSelect) {
-              onSelect(targetObject)
-            }
-
-            // 打印物体信息
-            console.log('✅ 双击选中模型信息：', targetObject)
-            console.log(`模型坐标：X=${worldPos.x}, Y=${worldPos.y}, Z=${worldPos.z}`)
-            console.log('模型详细信息：', {
-              name: targetObject.name,
-              uuid: targetObject.uuid,
-              position: worldPos,
-              rotation: targetObject.rotation,
-              scale: targetObject.scale,
-              userData: targetObject.userData,
-              material: targetObject.material.type
-            })
+            return
           }
-
-          return
         }
       }
 
