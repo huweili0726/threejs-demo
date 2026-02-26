@@ -15,9 +15,7 @@ export function useCharacterMovement(
 ) {
   // 控制变量
   const keysPressed = ref<Set<string>>(new Set())
-  // const collisionInstance = collisionDetection
-  // const { checkCollision, updateBoundingBoxes } = collisionInstance  
-  
+
   // 初始化键盘事件监听
   const initKeyboardEvents = () => {
     const handleKeyDown = (event: KeyboardEvent) => {
