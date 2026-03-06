@@ -1,5 +1,10 @@
 {
 	"threeDevs": [
+    {
+      "id": "door_0",
+      "meshName": "Cube801",
+      "type": "door"
+    },
 		{
 			"id": "door_1",
 			"meshName": "Cube099_1",

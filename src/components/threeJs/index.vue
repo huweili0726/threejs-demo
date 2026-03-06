@@ -136,13 +136,27 @@ onMounted(() => {
     getPopupData: (object: THREE.Object3D) => {
       // 根据物体名称返回弹窗数据（渲染在弹窗里面的内容）
       if (object.name) {
-        return {
-          id: `popup-${Date.now()}`,
-          title: object.name,
-          content: [
-            { name: '类型', value: object.type },
-            { name: 'UUID', value: object.uuid.slice(0, 8) + '...' }
-          ]
+        // 从配置文件中查找对应的弹窗数据
+        const devItem = threeDimensionalConfig?.threeDevs?.find((item: any) => item.meshName === object.name)
+        // 如果找到对应配置，返回弹窗数据
+        if (devItem && devItem.popInfo) {
+          return {
+            id: `popup-${Date.now()}`,
+            title: devItem.popInfo.title,
+            content: devItem.popInfo.content
+          }
+        }
+        // 如果没有找到对应配置，返回默认弹窗数据
+        else{
+          // 默认弹窗数据
+          return {
+            id: `popup-${Date.now()}`,
+            title: object.name,
+            content: [
+              { name: '类型', value: object.type },
+              { name: 'UUID', value: object.uuid.slice(0, 8) + '...' }
+            ]
+          }
         }
       }
       return null
