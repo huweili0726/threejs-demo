@@ -188,14 +188,12 @@ export function useObjectPopup(
    * 初始化双击弹窗事件
    * @param options 配置项
    * @param options.getPopupData 根据选中物体获取弹窗数据的回调函数
-   * @param options.filterObject 过滤物体的回调函数，返回 true 表示可以弹出弹窗
    * @returns 清理函数
    */
   const initDoubleClickPopup = (options: {
     getPopupData?: (object: THREE.Object3D) => PopupData | null
-    filterObject?: (object: THREE.Object3D) => boolean
   }) => {
-    const { getPopupData, filterObject } = options
+    const { getPopupData } = options
 
     // 初始化 CSS2DRenderer
     initCSS2DRenderer()
@@ -232,11 +230,6 @@ export function useObjectPopup(
         if (filteredIntersects.length > 0) {
           // 获取第一个交点的物体
           const intersectedObject = filteredIntersects[0].object
-
-          // 如果有过滤函数，先进行过滤
-          if (filterObject && !filterObject(intersectedObject)) {
-            return
-          }
 
           console.log('🎯 双击选中物体:', intersectedObject.name, '类型:', intersectedObject.type)
 

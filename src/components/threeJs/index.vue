@@ -160,10 +160,6 @@ onMounted(() => {
         }
       }
       return null
-    },
-    // 过滤物体（可选）
-    filterObject: (object: THREE.Object3D) => {
-      return threeDimensionalConfig?.threeDevs?.map((item: any) => item.meshName)?.includes(object.name) || false
     }
   })
 
