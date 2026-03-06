@@ -24,6 +24,12 @@ interface PopupData {
   content: PopupContentItem[]
 }
 
+// 单个弹窗实例接口
+interface PopupInstance {
+  label: CSS2DObject
+  object: THREE.Object3D
+}
+
 export function useObjectPopup(
   camera: ShallowRef<THREE.PerspectiveCamera>,
   scene: ShallowRef<THREE.Scene>,
@@ -31,10 +37,8 @@ export function useObjectPopup(
 ) {
   // CSS2D 渲染器
   let labelRenderer: CSS2DRenderer | null = null
-  // 当前显示的弹窗
-  const currentPopup = ref<CSS2DObject | null>(null)
-  // 当前弹窗附加的物体
-  const currentObject = ref<THREE.Object3D | null>(null)
+  // 所有显示的弹窗列表
+  const popups = ref<PopupInstance[]>([])
 
   // 复用对象，避免每次双击创建新对象提升性能
   const raycaster = new THREE.Raycaster()
@@ -97,8 +101,12 @@ export function useObjectPopup(
   const showPopup = (data: PopupData, object: THREE.Object3D) => {
     if (!scene.value) return
 
-    // 先关闭之前的弹窗
-    closePopup()
+    // 检查是否已在该物体上显示过弹窗
+    const existingPopup = popups.value.find(p => p.object === object)
+    if (existingPopup) {
+      console.log('⚠️ 该物体已显示弹窗:', data.title)
+      return
+    }
 
     // 创建弹窗元素
     const popupElement = createPopupElement(data)
@@ -118,32 +126,49 @@ export function useObjectPopup(
     // 转换中心点到物体的局部坐标系
     object.worldToLocal(center)
     
-    // 设置弹窗位置：在物体处
+    // 设置弹窗位置：在物体中心上方固定距离
+    // const popupOffset = 0.5
     label.position.set(center.x, center.y, center.z)
     
     // 将弹窗作为物体的子对象添加
     // 这样弹窗会继承物体的变换（位置、旋转、缩放）
     object.add(label)
     
-    // 存储当前弹窗和物体
-    currentPopup.value = label
-    currentObject.value = object
+    // 添加到弹窗列表
+    popups.value.push({
+      label,
+      object
+    })
     
-    console.log('📌 显示弹窗:', data.title, '附加到:', object.name)
+    console.log('📌 显示弹窗:', data.title, '附加到:', object.name, '当前弹窗数:', popups.value.length)
   }
 
   /**
-   * 关闭弹窗
+   * 关闭指定ID的弹窗
+   * @param id 弹窗 ID
    */
-  const closePopup = () => {
-    if (currentPopup.value) {
-      // 从父对象中移除弹窗
-      if (currentPopup.value.parent) {
-        currentPopup.value.parent.remove(currentPopup.value)
+  const closePopup = (id?: string) => {
+    if (!id) {
+      // 关闭所有弹窗
+      popups.value.forEach(popup => {
+        if (popup.label.parent) {
+          popup.label.parent.remove(popup.label)
+        }
+      })
+      popups.value = []
+      console.log('❌ 关闭所有弹窗')
+      return
+    }
+
+    // 关闭指定ID的弹窗
+    const index = popups.value.findIndex(p => p.label.userData.popId === id)
+    if (index !== -1) {
+      const popup = popups.value[index]
+      if (popup.label.parent) {
+        popup.label.parent.remove(popup.label)
       }
-      currentPopup.value = null
-      currentObject.value = null
-      console.log('❌ 关闭弹窗')
+      popups.value.splice(index, 1)
+      console.log('❌ 关闭弹窗:', id, '剩余弹窗数:', popups.value.length)
     }
   }
 
@@ -152,9 +177,7 @@ export function useObjectPopup(
    * @param id 弹窗 ID
    */
   const closePopBtn = (id: string) => {
-    if (currentPopup.value && currentPopup.value.userData.popId === id) {
-      closePopup()
-    }
+    closePopup(id)
   }
 
   // 将关闭函数挂载到 window 对象，供 HTML onclick 调用
@@ -279,8 +302,7 @@ export function useObjectPopup(
   }
 
   return {
-    currentPopup,
-    currentObject,
+    popups,
     initDoubleClickPopup,
     showPopup,
     closePopup,
