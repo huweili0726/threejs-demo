@@ -4,11 +4,10 @@
     <div class="button-group">
       <!-- 图片点位控制按钮组 -->
       <div class="button-group img-point-controls">
-        <div class="group-title" @click="toggleControls('imgPoint')">
+        <div class="group-title">
           模型切换控制
-          <span class="toggle-icon">{{ isImgPointControlsOpen ? '▼' : '▶' }}</span>
         </div>
-        <div v-if="isImgPointControlsOpen" class="controls-content">
+        <div class="controls-content">
           <button @click="toFloor('-1')" class="control-btn">-1楼</button>
         </div>
       </div>
@@ -19,7 +18,6 @@
 
 <script setup lang="ts">
 import * as THREE from 'three'
-import { ref } from 'vue'
 
 // 定义事件
 const emit = defineEmits<{
@@ -27,46 +25,6 @@ const emit = defineEmits<{
   (e: 'loadBothModels'): void
   (e: 'focusModel', targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration?: number, modelInitPosition?: {x: number, y: number, z: number}, onLookAt?: {x: number, y: number, z: number}): void
 }>()
-
-// 按钮组展开/折叠状态
-const isImgPointControlsOpen = ref(false)
-const isModelControlsOpen = ref(false)
-const isHemisphereControlsOpen = ref(false)
-const isDroneControlsOpen = ref(false)
-const isReplayControlsOpen = ref(false)
-const isDiffusionControlsOpen = ref(false)
-const isFenceControlsOpen = ref(false)
-const isPyramidControlsOpen = ref(false)
-
-// 切换按钮组展开/折叠状态
-const toggleControls = (controlType: string) => {
-  switch (controlType) {
-    case 'imgPoint':
-      isImgPointControlsOpen.value = !isImgPointControlsOpen.value
-      break
-    case 'model':
-      isModelControlsOpen.value = !isModelControlsOpen.value
-      break
-    case 'hemisphere':
-      isHemisphereControlsOpen.value = !isHemisphereControlsOpen.value
-      break
-    case 'drone':
-      isDroneControlsOpen.value = !isDroneControlsOpen.value
-      break
-    case 'replay':
-      isReplayControlsOpen.value = !isReplayControlsOpen.value
-      break
-    case 'diffusion':
-      isDiffusionControlsOpen.value = !isDiffusionControlsOpen.value
-      break
-    case 'fence':
-      isFenceControlsOpen.value = !isFenceControlsOpen.value
-      break
-    case 'pyramid':
-      isPyramidControlsOpen.value = !isPyramidControlsOpen.value
-      break
-  }
-}
 
 // 切换楼层
 const toFloor = (floor: string) => {
