@@ -23,7 +23,7 @@ const threeJsContainer = ref<HTMLDivElement>()
 const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize } = useThreeScene(threeJsContainer)
 const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel } = useModelLoader(scene as any, render)
 const { loadEnvironment } = useEnvironmentLoader(scene as any)
-const { checkCollision, updateBoundingBoxes, addBoundingBoxesToObjects, addCharacterBoundingBox } = useCollisionDetection() 
+const { checkCollision, updateBoundingBoxes, setBoundingBoxesFromLoadResult, addCharacterBoundingBox } = useCollisionDetection() 
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes )
 const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any)
 
@@ -73,16 +73,15 @@ watch(() => props.loadModels, async (config) => {
     let configJson = await getJsonFile(`${import.meta.env.BASE_URL}/config/wall.jsonc`)
     let _objectNames = configJson?.walls?.map((item: any) => item.name) || []
 
-    // 先加载模型
-    await loadModels(config).catch(console.error)
+    // 加载模型并直接处理包围盒，避免重复遍历
+    const boundingBoxes = await loadModels({
+      ...config,
+      collisionObjectNames: _objectNames
+    }).catch(console.error)
 
-    // 为指定物体添加红色包围盒
-    if (loadedModelMaps.value) {
-      addBoundingBoxesToObjects({
-        scene: scene.value,
-        objectNames: _objectNames,
-        loadedModelMaps: loadedModelMaps.value
-      })
+    // 将从 loadModels 返回的包围盒信息设置到碰撞检测模块
+    if (boundingBoxes && boundingBoxes.length > 0) {
+      setBoundingBoxesFromLoadResult(boundingBoxes)
     }
   }
 }, { immediate: true })

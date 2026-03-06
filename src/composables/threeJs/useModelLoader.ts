@@ -32,7 +32,8 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
    * @param options.onLookAt 模型初始朝向
    * @param options.frontAxis 模型前方向量（默认：0,0,1，可根据不同模型自定义）
    * @param options.enableAnimation 是否启用动画
-   * @returns 加载完成后的 Promise
+   * @param options.collisionObjectNames 需要添加碰撞检测的物体名称数组（可选）
+   * @returns 加载完成后的 Promise，返回包含包围盒信息的数组
    */
   const loadModel = (options: {
     modelUrl: string
@@ -41,8 +42,9 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
     onLookAt?: { x: number; y: number; z: number }
     frontAxis?: THREE.Vector3
     enableAnimation?: boolean
-  }): Promise<void> => {
-    const { modelUrl, scale, modelInitPosition = { x: 0, y: 0, z: 0 }, onLookAt = { x: 0, y: 0, z: 0 }, enableAnimation = true } = options
+    collisionObjectNames?: string[]
+  }): Promise<{ name: string; box: THREE.Box3; uuid: string }[]> => {
+    const { modelUrl, scale, modelInitPosition = { x: 0, y: 0, z: 0 }, onLookAt = { x: 0, y: 0, z: 0 }, enableAnimation = true, collisionObjectNames = [] } = options
     return new Promise((resolve, reject) => {
       if (!scene.value) {
         reject(new Error('Scene not initialized'))
@@ -82,10 +84,42 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
           loadedModelMaps.value.set(modelUrl, group)
           scene.value!.add(group)
           
+          // 在模型加载时直接处理包围盒，避免后续重复遍历
+          const boundingBoxes: { name: string; box: THREE.Box3; uuid: string }[] = []
+          if (collisionObjectNames.length > 0) {
+            group.updateMatrixWorld(true)
+            
+            group.traverse((child) => {
+              if (child instanceof THREE.Mesh && 
+                  collisionObjectNames.some(name => child.name === name)) {
+                
+                const worldMatrix = child.matrixWorld
+                const box = new THREE.Box3().setFromBufferAttribute(child.geometry.attributes.position)
+                box.applyMatrix4(worldMatrix)
+                
+                boundingBoxes.push({
+                  name: child.name,
+                  box: box,
+                  uuid: child.uuid
+                })
+                
+                // 添加红色包围盒可视化
+                const helper = new THREE.BoxHelper(child, 0xff0000)
+                helper.visible = true
+                helper.renderOrder = 1000
+                helper.material.depthTest = false
+                helper.update()
+                scene.value!.add(helper)
+                
+                console.log(`已添加红色包围盒，名称:`, child.name)
+              }
+            })
+          }
+          
           if (render) {
             render()
           }
-          resolve()
+          resolve(boundingBoxes)
         },
         (xhr) => {
           const percent = Math.round((xhr.loaded / xhr.total) * 100)
@@ -111,7 +145,8 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
    * @param options.modelInitPosition 模型初始位置
    * @param options.onLookAt 模型初始朝向
    * @param options.enableAnimation 是否启用动画
-   * @returns 加载完成后的 Promise
+   * @param options.collisionObjectNames 需要添加碰撞检测的物体名称数组（可选）
+   * @returns 加载完成后的 Promise，返回所有模型的包围盒信息
    */
   const loadModels = (options: {
     modelUrls: string[]
@@ -119,8 +154,9 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
     modelInitPosition?: { x: number; y: number; z: number }
     onLookAt?: { x: number; y: number; z: number }
     enableAnimation?: boolean
-  }): Promise<void> => {
-    const { modelUrls, scale, modelInitPosition, onLookAt, enableAnimation } = options
+    collisionObjectNames?: string[]
+  }): Promise<{ name: string; box: THREE.Box3; uuid: string }[]> => {
+    const { modelUrls, scale, modelInitPosition, onLookAt, enableAnimation, collisionObjectNames = [] } = options
     return new Promise(async (resolve, reject) => {
       try {
         isLoading.value = true
@@ -132,16 +168,20 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
           scale,
           modelInitPosition,
           onLookAt,
-          enableAnimation
+          enableAnimation,
+          collisionObjectNames
         }))
-        await Promise.all(loadPromises)
+        const results = await Promise.all(loadPromises)
+        
+        // 合并所有模型的包围盒信息
+        const allBoundingBoxes = results.flat()
         
         isLoading.value = false
         const modelLoadEndTime = performance.now()
         const totalLoadTime = modelLoadEndTime - modelLoadStartTime
         console.log(`🚀 所有模型并行加载完成总耗时：${totalLoadTime.toFixed(3)} 毫秒 (${(totalLoadTime / 1000).toFixed(3)} 秒)`)
         
-        resolve()
+        resolve(allBoundingBoxes)
       } catch (error) {
         console.error('模型加载失败:', error)
         loadingText.value = '模型加载失败'

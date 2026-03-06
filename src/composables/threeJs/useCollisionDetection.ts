@@ -100,6 +100,25 @@ export function useCollisionDetection() {
       })
     })
   }
+
+  /**
+   * 直接从 loadModels 返回的包围盒信息设置碰撞检测数据
+   * @param boundingBoxes 从 loadModels 返回的包围盒信息数组
+   */
+  const setBoundingBoxesFromLoadResult = (boundingBoxes: { name: string; box: THREE.Box3; uuid: string }[]) => {
+    // 清空之前的包围盒数据
+    wallBoundingBoxes.value = []
+    
+    // 直接使用从 loadModels 返回的包围盒信息
+    boundingBoxes.forEach(item => {
+      wallBoundingBoxes.value.push({
+        box: item.box,
+        selectMode: { name: item.name, uuid: item.uuid }
+      })
+    })
+    
+    console.log(`已设置 ${boundingBoxes.length} 个碰撞包围盒`)
+  }
   
   /**
    * 为人物模型添加红色包围盒
@@ -177,6 +196,7 @@ export function useCollisionDetection() {
     wallBoundingBoxes,
     addBoundingBoxesToModel,
     addBoundingBoxesToObjects,
+    setBoundingBoxesFromLoadResult,
     addCharacterBoundingBox,
     updateBoundingBoxes,
     checkCollision
