@@ -16,7 +16,9 @@ import { useEnvironmentLoader } from '@/composables/threeJs/useEnvironmentLoader
 import { useCharacterMovement } from '@/composables/threeJs/useCharacterMovement' // 人物移动控制相关Hooks
 import { useCollisionDetection } from '@/composables/threeJs/useCollisionDetection' // 碰撞检测相关Hooks
 import { useObjectSelection } from '@/composables/threeJs/useObjectSelection' // 物体选择相关Hooks
+import { useObjectPopup } from '@/composables/threeJs/useObjectPopup' // 物体弹窗相关Hooks
 import { jsonUtils } from '@/utils/json' // JSON工具相关
+import '@/assets/css/object-popup.css' // 弹窗样式
 
 const threeJsContainer = ref<HTMLDivElement>()
 
@@ -26,6 +28,7 @@ const { loadEnvironment } = useEnvironmentLoader(scene as any)
 const { checkCollision, updateBoundingBoxes, setBoundingBoxesFromLoadResult, addCharacterBoundingBox } = useCollisionDetection() 
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes )
 const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any)
+const { initDoubleClickPopup, updateCSS2DRenderer, handleResize } = useObjectPopup(camera as any, scene as any, threeJsContainer)
 
 const { getJsonFile } = jsonUtils()
 
@@ -34,6 +37,7 @@ const peopleModelUrl = ref<string>('glb/man.glb') // 当前加载的人物模型
 const cameraOffset = new THREE.Vector3(0, 0.1, -0.12) // 相机偏移量（在模型后方，稍微上方）
 let cleanupKeyboardEvents: (() => void) | null = null // 清理键盘事件的函数
 let cleanupSelection: (() => void) | null = null // 清理双击选中事件的函数
+let cleanupPopup: (() => void) | null = null // 清理双击弹窗事件的函数
 
 const props = withDefaults(
   defineProps<{
@@ -118,7 +122,35 @@ onMounted(() => {
       highlightEnabled: true // 开启蓝色高亮效果
     }
   )
-  // 5、设置动画更新回调
+
+  // 5、初始化双击弹窗功能
+  cleanupPopup = initDoubleClickPopup({
+    getPopupData: (object: THREE.Object3D) => {
+      // 根据物体名称返回弹窗数据
+      if (object.name) {
+        // 获取物体中心位置
+        const box = new THREE.Box3().setFromObject(object)
+        const center = new THREE.Vector3()
+        box.getCenter(center)
+
+        return {
+          id: `popup-${Date.now()}`,
+          title: object.name,
+          content: [
+            { name: '类型', value: object.type },
+            { name: 'UUID', value: object.uuid.slice(0, 8) + '...' }
+          ],
+          position: {
+            x: center.x,
+            y: center.y + 1,
+            z: center.z
+          }
+        }
+      }
+      return null
+    }
+  })
+  // 6、设置动画更新回调
   setAnimationUpdateCallback((deltaTime: number) => {
     updateAnimations(deltaTime, modelMixers.value)
     updateCharacterMovement({
@@ -131,15 +163,22 @@ onMounted(() => {
     if (peopleModelUrl.value && camera.value) {
       cameraFollowModel( peopleModelUrl.value, camera.value, cameraOffset )
     }
+    // 更新 CSS2DRenderer
+    updateCSS2DRenderer()
   })
 
-  // 6、启动动画循环
+  // 7、启动动画循环
   startAnimationLoop()
 })
 
 // 监听窗口大小变化
 watchEffect(() => {
   onWindowResize()
+  // 更新 CSS2DRenderer
+  if (threeJsContainer.value) {
+    const { width, height } = threeJsContainer.value.getBoundingClientRect()
+    handleResize(width, height)
+  }
 })
 
 // 组件卸载时清理
@@ -150,6 +189,9 @@ onBeforeUnmount(() => {
   }
   if (cleanupSelection) {
     cleanupSelection()
+  }
+  if (cleanupPopup) {
+    cleanupPopup()
   }
 })
 

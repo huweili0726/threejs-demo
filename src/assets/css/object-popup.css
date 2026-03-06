@@ -1,0 +1,106 @@
+/* 3D 物体弹窗样式 */
+
+.three-pop {
+  pointer-events: auto;
+  user-select: none;
+}
+
+.dev-info-div {
+  background: linear-gradient(135deg, rgba(0, 160, 198, 0.95) 0%, rgba(0, 120, 160, 0.95) 100%);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  min-width: 200px;
+  max-width: 300px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.dev-title {
+  background: rgba(0, 0, 0, 0.2);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.devPop-close-btn {
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #ffffff;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.devPop-close-btn:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: rotate(90deg);
+}
+
+.devPop-close-btn::before,
+.devPop-close-btn::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 2px;
+  background: #ffffff;
+  border-radius: 1px;
+}
+
+.devPop-close-btn::before {
+  transform: rotate(45deg);
+}
+
+.devPop-close-btn::after {
+  transform: rotate(-45deg);
+}
+
+.dev-content {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 12px 16px;
+}
+
+.dev-params {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0, 160, 198, 0.1);
+  font-size: 14px;
+}
+
+.dev-params:last-child {
+  border-bottom: none;
+}
+
+.dev-params span:first-child {
+  color: #00a0c6;
+  font-weight: 500;
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+
+.dev-params span:last-child {
+  color: #333333;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 150px;
+}
+
+.dev-bottom {
+  height: 4px;
+  background: linear-gradient(90deg, #00a0c6 0%, #0078a0 100%);
+}
