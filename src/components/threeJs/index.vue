@@ -138,9 +138,14 @@ onMounted(() => {
         }
       }
       return null
+    },
+    // 过滤物体（可选）
+    filterObject: (object: THREE.Object3D) => {
+      // 只允许特定名称的物体弹出弹窗
+      return ['Cube107_1', 'Cube109_1'].includes(object.name)
     }
   })
-  
+
   // 6、设置动画更新回调
   setAnimationUpdateCallback((deltaTime: number) => {
     updateAnimations(deltaTime, modelMixers.value)
