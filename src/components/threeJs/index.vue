@@ -133,7 +133,7 @@ onMounted(() => {
 
   // 5、初始化双击弹窗功能
   cleanupPopup = initDoubleClickPopup({
-    // 弹窗数据获取函数
+    // 弹窗数据获取函数 return的内容就是要显示在弹窗上的数据
     getPopupData: (object: THREE.Object3D) => {
       // 根据物体名称返回弹窗数据（渲染在弹窗里面的内容）
       if (object.name) {
