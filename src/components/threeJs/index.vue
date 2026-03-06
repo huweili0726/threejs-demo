@@ -128,23 +128,13 @@ onMounted(() => {
     getPopupData: (object: THREE.Object3D) => {
       // 根据物体名称返回弹窗数据
       if (object.name) {
-        // 获取物体中心位置
-        const box = new THREE.Box3().setFromObject(object)
-        const center = new THREE.Vector3()
-        box.getCenter(center)
-
         return {
           id: `popup-${Date.now()}`,
           title: object.name,
           content: [
             { name: '类型', value: object.type },
             { name: 'UUID', value: object.uuid.slice(0, 8) + '...' }
-          ],
-          position: {
-            x: center.x,
-            y: center.y + 1,
-            z: center.z
-          }
+          ]
         }
       }
       return null

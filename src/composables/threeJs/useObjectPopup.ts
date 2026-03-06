@@ -5,7 +5,7 @@
  * @email czxyhuweili@163.com
  * @version 1.0.0
  * @date 2026-03-06
- * @description 使用 CSS2DRenderer 在双击物体时弹出 HTML 弹窗
+ * @description 使用 CSS2DRenderer 在双击物体时弹出 HTML 弹窗，弹窗会随物体移动和缩放
  */
 import * as THREE from 'three'
 import { ref, ShallowRef } from 'vue'
@@ -22,7 +22,6 @@ interface PopupData {
   id: string
   title: string
   content: PopupContentItem[]
-  position: { x: number; y: number; z: number }
 }
 
 export function useObjectPopup(
@@ -32,10 +31,10 @@ export function useObjectPopup(
 ) {
   // CSS2D 渲染器
   let labelRenderer: CSS2DRenderer | null = null
-  // 当前弹窗 ID
-  let popCurrentId: string = ''
   // 当前显示的弹窗
   const currentPopup = ref<CSS2DObject | null>(null)
+  // 当前弹窗附加的物体
+  const currentObject = ref<THREE.Object3D | null>(null)
 
   // 复用对象，避免每次双击创建新对象提升性能
   const raycaster = new THREE.Raycaster()
@@ -71,9 +70,7 @@ export function useObjectPopup(
     div.id = data.id
     div.className = 'three-pop'
 
-    popCurrentId = div.id
-
-    // 构建弹窗 HTML 内容（参考提供的样式）
+    // 构建弹窗 HTML 内容
     let htmlContent = `
       <div class="dev-info-div">
         <div class="dev-title">${data.title}<button class="devPop-close-btn" data-type="close-btn" onclick="closePopBtn('${data.id}')"></button></div>
@@ -95,8 +92,9 @@ export function useObjectPopup(
   /**
    * 显示弹窗
    * @param data 弹窗数据
+   * @param object 要附加的物体
    */
-  const showPopup = (data: PopupData) => {
+  const showPopup = (data: PopupData, object: THREE.Object3D) => {
     if (!scene.value) return
 
     // 先关闭之前的弹窗
@@ -107,24 +105,38 @@ export function useObjectPopup(
 
     // 创建 CSS2DObject
     const label = new CSS2DObject(popupElement)
-    label.position.set(data.position.x, data.position.y, data.position.z)
-    label.userData.popId = data.id
-    label.name = data.id
-
-    // 添加到场景
-    scene.value.add(label)
+    
+    // 计算物体的包围盒
+    const box = new THREE.Box3().setFromObject(object)
+    const size = new THREE.Vector3()
+    box.getSize(size)
+    
+    // 设置弹窗位置：在物体中心上方
+    const popupOffset = size.y * 0.5 // 弹窗高度基于物体大小
+    label.position.set(0, size.y * 0.5 + popupOffset, 0)
+    
+    // 将弹窗作为物体的子对象添加
+    // 这样弹窗会继承物体的变换（位置、旋转、缩放）
+    object.add(label)
+    
+    // 存储当前弹窗和物体
     currentPopup.value = label
-
-    console.log('📌 显示弹窗:', data.title, '位置:', data.position)
+    currentObject.value = object
+    
+    console.log('📌 显示弹窗:', data.title, '附加到:', object.name)
   }
 
   /**
    * 关闭弹窗
    */
   const closePopup = () => {
-    if (currentPopup.value && scene.value) {
-      scene.value.remove(currentPopup.value)
+    if (currentPopup.value) {
+      // 从父对象中移除弹窗
+      if (currentPopup.value.parent) {
+        currentPopup.value.parent.remove(currentPopup.value)
+      }
       currentPopup.value = null
+      currentObject.value = null
       console.log('❌ 关闭弹窗')
     }
   }
@@ -142,18 +154,6 @@ export function useObjectPopup(
   // 将关闭函数挂载到 window 对象，供 HTML onclick 调用
   if (typeof window !== 'undefined') {
     (window as any).closePopBtn = closePopBtn
-  }
-
-  /**
-   * 获取物体中心位置
-   * @param object 3D 物体
-   * @returns 世界坐标位置
-   */
-  const getObjectCenterPosition = (object: THREE.Object3D): THREE.Vector3 => {
-    const box = new THREE.Box3().setFromObject(object)
-    const center = new THREE.Vector3()
-    box.getCenter(center)
-    return center
   }
 
   /**
@@ -216,25 +216,19 @@ export function useObjectPopup(
           if (getPopupData) {
             const popupData = getPopupData(intersectedObject)
             if (popupData) {
-              showPopup(popupData)
+              showPopup(popupData, intersectedObject)
             }
           } else {
             // 默认弹窗数据
-            const position = getObjectCenterPosition(intersectedObject)
             const defaultData: PopupData = {
               id: `popup-${Date.now()}`,
               title: intersectedObject.name || '未命名物体',
               content: [
                 { name: '类型', value: intersectedObject.type },
                 { name: 'UUID', value: intersectedObject.uuid.slice(0, 8) + '...' }
-              ],
-              position: {
-                x: position.x,
-                y: position.y, // 在物体上方显示
-                z: position.z
-              }
+              ]
             }
-            showPopup(defaultData)
+            showPopup(defaultData, intersectedObject)
           }
         }
       }
@@ -280,7 +274,7 @@ export function useObjectPopup(
 
   return {
     currentPopup,
-    initCSS2DRenderer,
+    currentObject,
     initDoubleClickPopup,
     showPopup,
     closePopup,
