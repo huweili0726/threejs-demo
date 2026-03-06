@@ -179,12 +179,15 @@ watchEffect(() => {
 // 组件卸载时清理
 onBeforeUnmount(() => {
   stopAnimationLoop()
+  // 清理键盘事件监听
   if (cleanupKeyboardEvents) {
     cleanupKeyboardEvents()
   }
+  // 清理双击选中功能
   if (cleanupSelection) {
     cleanupSelection()
   }
+  // 清理双击弹窗功能
   if (cleanupPopup) {
     cleanupPopup()
   }
