@@ -127,7 +127,6 @@ export function useObjectPopup(
     object.worldToLocal(center)
     
     // 设置弹窗位置：在物体中心上方固定距离
-    // const popupOffset = 0.5
     label.position.set(center.x, center.y, center.z)
     
     // 将弹窗作为物体的子对象添加
