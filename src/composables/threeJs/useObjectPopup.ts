@@ -110,14 +110,16 @@ export function useObjectPopup(
     label.userData.popId = data.id
     label.name = data.id
     
-    // 计算物体的包围盒
+    // 计算物体的中心点
     const box = new THREE.Box3().setFromObject(object)
-    const size = new THREE.Vector3()
-    box.getSize(size)
+    const center = new THREE.Vector3()
+    box.getCenter(center)
     
-    // 设置弹窗位置：在物体中心上方
-    const popupOffset = size.y * 0.5 // 弹窗高度基于物体大小
-    label.position.set(0, size.y * 0.5 + popupOffset, 0)
+    // 转换中心点到物体的局部坐标系
+    object.worldToLocal(center)
+    
+    // 设置弹窗位置：在物体处
+    label.position.set(center.x, center.y, center.z)
     
     // 将弹窗作为物体的子对象添加
     // 这样弹窗会继承物体的变换（位置、旋转、缩放）
