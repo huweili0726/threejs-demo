@@ -42,6 +42,10 @@ let cleanupKeyboardEvents: (() => void) | null = null // 清理键盘事件的�
 let cleanupSelection: (() => void) | null = null // 清理双击选中事件的函数
 let cleanupPopup: (() => void) | null = null // 清理双击弹窗事件的函数
 
+// 配置数据
+let wallConfig: any = null // 墙配置
+let threeDimensionalConfig: any = null // 三维模型弹窗信息配置
+
 const props = withDefaults(
   defineProps<{
     skyBoxUrl?: string  // 天空盒路径
@@ -77,8 +81,9 @@ watch(() => props.loadModel, async (config) => {
 watch(() => props.loadModels, async (config) => {
   if (config && scene.value) { // 确保场景初始化完成
     // 加载配置文件中的需要添加包围盒的物体名称
-    let configJson = await getJsonFile(`${import.meta.env.BASE_URL}/config/wall.jsonc`)
-    let _objectNames = configJson?.walls?.map((item: any) => item.name) || []
+    wallConfig = await getJsonFile(`${import.meta.env.BASE_URL}/config/wall.jsonc`)
+    threeDimensionalConfig = await getJsonFile(`${import.meta.env.BASE_URL}/config/threeDimensionalDev.jsonc`)
+    let _objectNames = wallConfig?.walls?.map((item: any) => item.name) || []
 
     // 加载模型并直接处理包围盒，避免重复遍历
     const boundingBoxes = await loadModels({
@@ -104,7 +109,7 @@ onMounted(() => {
   if (!props.skyBoxUrl) {
     return
   }
-  
+
   // 1、初始化场景
   initScene({ coordinateAxis: true, cameraPosition: new THREE.Vector3(-9, 5, -15) }) 
   // 2、加载天空盒
@@ -144,8 +149,7 @@ onMounted(() => {
     },
     // 过滤物体（可选）
     filterObject: (object: THREE.Object3D) => {
-      // 只允许特定名称的物体弹出弹窗
-      return ['Cube107_1', 'Cube109_1'].includes(object.name)
+      return threeDimensionalConfig?.threeDevs?.map((item: any) => item.meshName)?.includes(object.name) || false
     }
   })
 
