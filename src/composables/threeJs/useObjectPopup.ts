@@ -106,6 +106,10 @@ export function useObjectPopup(
     // 创建 CSS2DObject
     const label = new CSS2DObject(popupElement)
     
+    // 设置弹窗ID到userData，用于关闭时识别
+    label.userData.popId = data.id
+    label.name = data.id
+    
     // 计算物体的包围盒
     const box = new THREE.Box3().setFromObject(object)
     const size = new THREE.Vector3()
