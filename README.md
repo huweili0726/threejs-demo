@@ -34,6 +34,7 @@
 │   ├── App.vue          # 根组件
 │   └── main.ts          # 入口文件
 ├── public/              # 公共资源
+│   ├── config/          # 配置文件
 │   ├── draco/           # DRACO 压缩解码器
 │   ├── glb/             # 3D 模型文件
 │   └── hdr/             # 环境贴图
@@ -101,6 +102,41 @@ npm run preview
 - **精确拾取**：支持最细粒度的子物体选中，不会连带父级物体
 - **碰撞检测**：人物模型与墙体等物体的碰撞检测，防止穿墙
 - **包围盒可视化**：为人物模型和墙体等物体添加红色包围盒，直观显示碰撞边界
+- **物体标签显示**：根据配置文件在指定物体附近显示标签
+- **双击物体弹窗**：双击配置文件中指定的物体，弹出详细信息弹窗
+- **多弹窗并存**：支持同时打开多个弹窗，可单独关闭
+- **弹窗跟随**：弹窗随物体移动和缩放，保持相对位置不变
+
+## 配置文件
+
+项目使用 `public/config/threeDimensionalDev.jsonc` 配置文件管理物体的标签和弹窗信息：
+
+```json
+{
+  "threeDevs": [
+    {
+      "id": "door_1",
+      "meshName": "Cube099_1",
+      "type": "door",
+      "popInfo": {
+        "title": "1号门",
+        "content": [
+          {"name": "名称", "value": "电控防护门"},
+          {"name": "产品型号", "value": "DF1520(1)"}
+        ]
+      }
+    }
+  ]
+}
+```
+
+配置字段说明：
+- **id**：唯一标识符
+- **meshName**：3D 物体的名称，用于匹配场景中的物体
+- **type**：物体类型
+- **popInfo**：弹窗信息
+  - **title**：弹窗标题
+  - **content**：弹窗内容数组，每项包含 name 和 value
 
 ## 开发说明
 
@@ -121,10 +157,11 @@ npm run preview
 - 3D 模型文件放在 `public/glb/` 目录下
 - DRACO 解码器放在 `public/draco/` 目录下
 - 环境贴图放在 `public/hdr/` 目录下
+- 配置文件放在 `public/config/` 目录下
 
 ## Three.js Hooks 说明
 
-项目提供了四个主要的 Three.js 组合式函数，实现了核心功能的模块化和可复用性：
+项目提供了多个 Three.js 组合式函数，实现了核心功能的模块化和可复用性：
 
 ### useThreeScene
 - **功能**：场景初始化、相机、渲染器、控制器管理
@@ -162,7 +199,7 @@ npm run preview
 - **主要方法**：
   - `initDoubleClickSelection`：初始化双击事件监听，返回清理函数
   - `clearSelection`：清除当前选中状态
-  - **特性**：支持最细粒度子物体选中，可配置高亮开关，自动返回物体完整信息
+- **特性**：支持最细粒度子物体选中，可配置高亮开关，自动返回物体完整信息
 
 ### useCollisionDetection
 - **功能**：碰撞检测、包围盒管理、碰撞边界可视化
@@ -171,7 +208,26 @@ npm run preview
   - `addCharacterBoundingBox`：为人物模型添加红色包围盒
   - `updateBoundingBoxes`：更新所有包围盒的位置
   - `checkCollision`：检测人物是否与墙体发生碰撞
-  - **特性**：支持实时碰撞检测，防止人物穿墙，直观的包围盒可视化
+- **特性**：支持实时碰撞检测，防止人物穿墙，直观的包围盒可视化
+
+### useObjectLabels
+- **功能**：3D物体标签显示
+- **主要方法**：
+  - `initObjectLabels`：初始化物体标签
+  - `updateLabels`：更新标签位置
+- **特性**：根据配置文件在物体附近显示标签，标签随物体移动
+
+### useObjectPopup
+- **功能**：3D物体弹窗、双击显示详细信息
+- **主要方法**：
+  - `initDoubleClickPopup`：初始化双击弹窗事件，返回清理函数
+  - `showPopup`：手动显示弹窗
+  - `closePopup`：关闭弹窗
+  - `updateCSS2DRenderer`：更新 CSS2D 渲染器
+- **特性**：
+  - 支持多弹窗并存，可单独关闭
+  - 弹窗随物体移动和缩放，保持相对位置
+  - 支持配置文件过滤，只允许指定物体弹出弹窗
 
 ## 人物移动控制
 
@@ -211,3 +267,49 @@ const cleanup = initDoubleClickSelection({
 })
 ```
 
+## 双击物体弹窗
+
+### 功能说明
+双击配置文件中指定的物体，弹出详细信息弹窗，支持多弹窗并存
+
+### 使用方法
+```typescript
+// 初始化hook
+const { initDoubleClickPopup, updateCSS2DRenderer, handleResize } = useObjectPopup(camera, scene, container)
+
+// 初始化双击弹窗事件
+const cleanupPopup = initDoubleClickPopup({
+  getPopupData: (object) => {
+    // 自定义弹窗数据获取逻辑
+    return {
+      id: `popup-${Date.now()}`,
+      title: object.name,
+      content: [
+        { name: '类型', value: object.type },
+        { name: 'UUID', value: object.uuid.slice(0, 8) + '...' }
+      ]
+    }
+  },
+  // 可选：自定义过滤函数
+  filterObject: (object) => {
+    return ['Cube099_1', 'Cube107_1'].includes(object.name)
+  }
+})
+
+// 在动画循环中更新 CSS2DRenderer
+setAnimationUpdateCallback(() => {
+  updateCSS2DRenderer()
+})
+
+// 监听窗口大小变化
+const { width, height } = useWindowSize()
+watchEffect(() => {
+  handleResize(width.value, height.value)
+})
+```
+
+### 弹窗特性
+- **多弹窗并存**：可以同时打开多个弹窗
+- **单独关闭**：每个弹窗都有独立的关闭按钮
+- **跟随物体**：弹窗随物体移动和缩放，保持相对位置
+- **配置过滤**：只允许配置文件中的物体弹出弹窗
