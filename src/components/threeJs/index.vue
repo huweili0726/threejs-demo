@@ -140,6 +140,7 @@ onMounted(() => {
       return null
     }
   })
+  
   // 6、设置动画更新回调
   setAnimationUpdateCallback((deltaTime: number) => {
     updateAnimations(deltaTime, modelMixers.value)
