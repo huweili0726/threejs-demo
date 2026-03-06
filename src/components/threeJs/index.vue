@@ -69,17 +69,18 @@ watch(() => props.loadModel, async (config) => {
 // 监听批量加载模型指令
 watch(() => props.loadModels, async (config) => {
   if (config && scene.value) { // 确保场景初始化完成
-    await loadModels(config).catch(console.error)
-
-    // 加载完成后，获取配置文件中的需要添加包围盒的物体名称
+    // 加载配置文件中的需要添加包围盒的物体名称
     let configJson = await getJsonFile(`${import.meta.env.BASE_URL}/config/wall.jsonc`)
     let _objectNames = configJson?.walls?.map((item: any) => item.name) || []
+
+    // 先加载模型
+    await loadModels(config).catch(console.error)
 
     // 为指定物体添加红色包围盒
     if (loadedModelMaps.value) {
       addBoundingBoxesToObjects({
         scene: scene.value,
-        objectNames: _objectNames, // 指定要添加包围盒的物体名称
+        objectNames: _objectNames,
         loadedModelMaps: loadedModelMaps.value
       })
     }

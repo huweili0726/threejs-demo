@@ -81,6 +81,7 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
           
           loadedModelMaps.value.set(modelUrl, group)
           scene.value!.add(group)
+          
           if (render) {
             render()
           }

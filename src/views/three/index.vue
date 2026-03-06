@@ -40,7 +40,7 @@ onMounted(() => {
   // 发布加载指令
   pendingLoadModels.value = {
     modelUrls: modelsToLoad,
-    scale: 1
+    scale: 1,
   }
 })
 

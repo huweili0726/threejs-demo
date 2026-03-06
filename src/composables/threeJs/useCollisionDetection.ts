@@ -32,7 +32,49 @@ export function useCollisionDetection() {
   const characterHelper = ref<MeshBoxHelper | null>(null)
   
   /**
-   * 为指定名称的物体添加红色包围盒
+   * 为指定名称的物体添加红色包围盒（单个模型）
+   * @param options.scene 场景对象
+   * @param options.objectNames 要添加包围盒的物体名称数组
+   * @param options.model 单个模型对象
+   */
+  const addBoundingBoxesToModel = (options: {
+    scene: THREE.Scene
+    objectNames: string[]
+    model: THREE.Group
+  }) => {
+    const { scene, objectNames, model } = options
+    
+    model.updateMatrixWorld(true)
+    
+    // 遍历模型的所有子对象
+    model.traverse((child) => {
+      if (child instanceof THREE.Mesh && 
+          objectNames.some(name => child.name === name)) {
+        
+        const worldMatrix = child.matrixWorld
+        const box = new THREE.Box3().setFromBufferAttribute(child.geometry.attributes.position)
+        box.applyMatrix4(worldMatrix)
+
+        wallBoundingBoxes.value.push({ 
+          "box": box, 
+          "selectMode": { "name": child.name, "uuid": child.uuid } 
+        })
+
+        const helper = new THREE.BoxHelper(child, 0xff0000) as MeshBoxHelper
+        helper.visible = true
+        helper.renderOrder = 1000
+        helper.material.depthTest = false
+        helper.update()
+        wallHelpers.value.push(helper)
+        scene.add(helper)
+
+        console.log(`已添加红色包围盒，名称:`, child.name)
+      }
+    })
+  }
+
+  /**
+   * 为指定名称的物体添加红色包围盒（多个模型）
    * @param options.scene 场景对象
    * @param options.objectNames 要添加包围盒的物体名称数组
    * @param options.loadedModelMaps 已加载的模型Map
@@ -51,33 +93,10 @@ export function useCollisionDetection() {
     
     // 遍历所有加载的模型
     loadedModelMaps.forEach(model => {
-      model.updateMatrixWorld(true)
-      
-      // 遍历模型的所有子对象
-      model.traverse((child) => {
-        if (child instanceof THREE.Mesh && 
-            objectNames.some(name => child.name === name)) {
-          
-          const worldMatrix = child.matrixWorld // 获取子对象的世界矩阵
-          const box = new THREE.Box3().setFromBufferAttribute(child.geometry.attributes.position) // 创建包围盒
-          box.applyMatrix4(worldMatrix) // 将世界矩阵应用到包围盒上
-
-          wallBoundingBoxes.value.push({ 
-            "box": box, 
-            "selectMode": { "name": child.name, "uuid": child.uuid } 
-          }) // 将计算好的包围盒添加到数组中
-
-          // 添加红色包围盒可视化
-          const helper = new THREE.BoxHelper(child, 0xff0000) as MeshBoxHelper
-          helper.visible = true
-          helper.renderOrder = 1000
-          helper.material.depthTest = false
-          helper.update()
-          wallHelpers.value.push(helper)
-          scene.add(helper)
-
-          console.log(`已添加红色包围盒，名称:`, child.name)
-        }
+      addBoundingBoxesToModel({
+        scene,
+        objectNames,
+        model
       })
     })
   }
@@ -156,6 +175,7 @@ export function useCollisionDetection() {
   
   return {
     wallBoundingBoxes,
+    addBoundingBoxesToModel,
     addBoundingBoxesToObjects,
     addCharacterBoundingBox,
     updateBoundingBoxes,

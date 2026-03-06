@@ -2,6 +2,7 @@
   // 需要进行碰撞检测的物体
   "walls": [
     { "name": "Cube109_1" },
-    { "name": "Cube072" }
+    { "name": "Cube072" },
+    { "name": "Cube019_1" }
   ]
 }
