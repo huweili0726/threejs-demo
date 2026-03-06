@@ -10,6 +10,7 @@
 <script setup lang="ts">
 import * as THREE from 'three'
 import { onMounted, onBeforeUnmount, ref, watchEffect, watch } from 'vue'
+import { useWindowSize } from '@vueuse/core'
 import { useThreeScene } from '@/composables/threeJs/useThreeScene' // 场景相关Hooks
 import { useModelLoader } from '@/composables/threeJs/useModelLoader' // 模型加载相关Hooks
 import { useEnvironmentLoader } from '@/composables/threeJs/useEnvironmentLoader' // 环境贴图加载相关Hooks
@@ -21,6 +22,10 @@ import { jsonUtils } from '@/utils/json' // JSON工具相关
 import '@/assets/css/object-popup.css' // 弹窗样式
 
 const threeJsContainer = ref<HTMLDivElement>()
+// json工具
+const { getJsonFile } = jsonUtils()
+// 获取窗口尺寸
+const { width, height } = useWindowSize()
 
 const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize } = useThreeScene(threeJsContainer)
 const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel } = useModelLoader(scene as any, render)
@@ -29,8 +34,6 @@ const { checkCollision, updateBoundingBoxes, setBoundingBoxesFromLoadResult, add
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes )
 const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any)
 const { initDoubleClickPopup, updateCSS2DRenderer, handleResize } = useObjectPopup(camera as any, scene as any, threeJsContainer)
-
-const { getJsonFile } = jsonUtils()
 
 // 控制变量
 const peopleModelUrl = ref<string>('glb/man.glb') // 当前加载的人物模型URL
@@ -169,12 +172,8 @@ onMounted(() => {
 
 // 监听窗口大小变化
 watchEffect(() => {
-  onWindowResize()
-  // 更新 CSS2DRenderer
-  if (threeJsContainer.value) {
-    const { width, height } = threeJsContainer.value.getBoundingClientRect()
-    handleResize(width, height)
-  }
+  onWindowResize() // 窗口大小改变时更新相机和渲染器
+  handleResize(width.value, height.value) // 更新 CSS2DRenderer
 })
 
 // 组件卸载时清理
