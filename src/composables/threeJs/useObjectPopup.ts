@@ -10,7 +10,10 @@
 import * as THREE from 'three'
 import { ref, ShallowRef } from 'vue'
 import { CSS2DRenderer, CSS2DObject } from 'three-stdlib'
-import { performRaycast, filterIntersects } from '@/composables/threeJs/useThreeUtils'
+import { useThreeUtils } from './useThreeUtils'
+
+// 初始化工具函数
+const { performRaycast, filterIntersects } = useThreeUtils()
 
 // 弹窗内容项接口
 interface PopupContentItem {
