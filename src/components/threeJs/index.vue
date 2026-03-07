@@ -32,7 +32,7 @@ const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadMod
 const { loadEnvironment } = useEnvironmentLoader(scene as any)
 const { checkCollision, updateBoundingBoxes, setBoundingBoxesFromLoadResult, addCharacterBoundingBox } = useCollisionDetection() 
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes )
-const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any)
+const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any, threeJsContainer)
 const { initDoubleClickPopup, updateCSS2DRenderer, handleResize } = useObjectPopup(camera as any, scene as any, threeJsContainer)
 
 // 控制变量

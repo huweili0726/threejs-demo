@@ -10,6 +10,7 @@
 import * as THREE from 'three'
 import { ref, ShallowRef } from 'vue'
 import { CSS2DRenderer, CSS2DObject } from 'three-stdlib'
+import { performRaycast, filterIntersects } from '@/composables/threeJs/useThreeUtils'
 
 // 弹窗内容项接口
 interface PopupContentItem {
@@ -39,10 +40,6 @@ export function useObjectPopup(
   let labelRenderer: CSS2DRenderer | null = null
   // 所有显示的弹窗列表
   const popups = ref<PopupInstance[]>([])
-
-  // 复用对象，避免每次双击创建新对象提升性能
-  const raycaster = new THREE.Raycaster()
-  const mouse = new THREE.Vector2()
 
   /**
    * 初始化 CSS2DRenderer
@@ -195,29 +192,12 @@ export function useObjectPopup(
       // 校验依赖项：确保 scene、camera 已初始化
       if (!camera.value || !scene.value) return
 
-      // 更新相机和场景的世界矩阵
-      camera.value.updateMatrixWorld(true)
-      scene.value.updateMatrixWorld(true)
-
-      // 计算鼠标在画布内的相对位置
-      const canvas = container.value?.querySelector('canvas')
-      const rect = canvas ? canvas.getBoundingClientRect() : { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight }
-      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
-      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
-
-      // 更新射线投射器
-      raycaster.setFromCamera(mouse, camera.value)
-
-      // 检测射线与场景中模型的交点
-      const intersects = raycaster.intersectObjects(scene.value.children, true)
+      // 使用工具函数进行射线检测
+      const intersects = performRaycast(camera, scene, container, event)
 
       if (intersects && intersects.length > 0) {
-        // 过滤掉包围盒辅助对象和 CSS2DObject
-        const filteredIntersects = intersects.filter(
-          (intersect) =>
-            intersect.object.type !== 'BoxHelper' &&
-            intersect.object.type !== 'CSS2DObject'
-        )
+        // 使用工具函数过滤射线检测结果
+        const filteredIntersects = filterIntersects(intersects)
 
         if (filteredIntersects.length > 0) {
           // 获取第一个交点的物体
