@@ -9,7 +9,7 @@
  */
 import * as THREE from 'three'
 import { ref, ShallowRef } from 'vue'
-import { useRaycastUtils } from './useThreeUtils'
+import { useRaycastUtils } from '@/composables/threeJs/useRaycastUtils'
 
 // 初始化工具函数
 const { performRaycast, filterIntersects } = useRaycastUtils()
