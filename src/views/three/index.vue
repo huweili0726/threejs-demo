@@ -1,15 +1,16 @@
 <template>
   <div class="home-container">
     <!-- 控制模型 -->
-    <ThreeController @focusModel="handleFocusModel" />
+    <ThreeController 
+      @toBottomfloorAndLoadcharacterModel="handleToBottomfloorAndLoadcharacterModel" 
+      @toTheSurface="handleToTheSurface" />
 
     <!-- 渲染场景 -->
     <ThreeJs
       :skyBoxUrl="skyBoxUrl" 
       :loadModel="pendingLoadSingleModel"
       :loadModels="pendingLoadModels"
-      :flyTo="pendingFlyTo"
-    />
+      :flyTo="pendingFlyTo"/>
   </div>
 </template>
 
@@ -44,8 +45,24 @@ onMounted(() => {
   }
 })
 
+const handleToTheSurface = (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3) => {
+  // 发布飞行指令
+  pendingFlyTo.value = {
+    position: targetPosition,
+    target: targetTarget,
+    duration: 2000
+  }
+}
+
 // 飞行到-1楼入口处 同时加载人物模型
-const handleFocusModel = (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration?: number, modelInitPosition?: {x: number, y: number, z: number}, onLookAt?: {x: number, y: number, z: number}) => {
+const handleToBottomfloorAndLoadcharacterModel = (
+  targetPosition: THREE.Vector3, // 视角飞到哪里
+  targetTarget: THREE.Vector3, // 视角飞到指定地点后看向哪里
+  duration?: number, // 飞行时间
+
+  modelInitPosition?: {x: number, y: number, z: number}, // 人物模型初始位置
+  onLookAt?: {x: number, y: number, z: number} // 人物模型看向位置
+) => {
   // 发布飞行指令
   pendingFlyTo.value = {
     position: targetPosition,
@@ -61,6 +78,7 @@ const handleFocusModel = (targetPosition: THREE.Vector3, targetTarget: THREE.Vec
     frontAxis: new THREE.Vector3(0, 0, 1),
   }
 }
+
 </script>
 
 <style scoped lang="less">

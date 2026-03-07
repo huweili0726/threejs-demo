@@ -8,6 +8,9 @@
           模型切换控制
         </div>
         <div class="controls-content">
+          <button @click="toFloor('0')" class="control-btn">地面</button>
+        </div>
+        <div class="controls-content">
           <button @click="toFloor('-1')" class="control-btn">-1楼</button>
         </div>
       </div>
@@ -21,20 +24,26 @@ import * as THREE from 'three'
 
 // 定义事件
 const emit = defineEmits<{
+  (e: 'toTheSurface', targetPosition: THREE.Vector3, targetTarget: THREE.Vector3): void
   (e: 'changeModel', modelUrl: string): void
   (e: 'loadBothModels'): void
-  (e: 'focusModel', targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration?: number, modelInitPosition?: {x: number, y: number, z: number}, onLookAt?: {x: number, y: number, z: number}): void
+  (e: 'toBottomfloorAndLoadcharacterModel', targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration?: number, modelInitPosition?: {x: number, y: number, z: number}, onLookAt?: {x: number, y: number, z: number}): void
 }>()
 
 // 切换楼层
 const toFloor = (floor: string) => {
-  if(floor === '-1') {
-    const targetPosition = new THREE.Vector3(-2, -1.7, 3.06)
-    const targetTarget = new THREE.Vector3(0, -1.7, 3.06)
-    const duration = 2000
-    const modelInitPosition = {x: -1.8, y: -1.8, z: 3.06}
-    const onLookAt = { x: 0, y: -1.8, z: 3.06 }
-    emit('focusModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
+  // 切换模型
+  if(floor === '0') {
+    const targetPosition = new THREE.Vector3(-9, 5, -15) 
+    const targetTarget = new THREE.Vector3(0, 0, 0) 
+    emit('toTheSurface', targetPosition, targetTarget)
+  } else if(floor === '-1') {
+    const targetPosition = new THREE.Vector3(-2, -1.7, 3.06) // 视角飞到-1楼入口处
+    const targetTarget = new THREE.Vector3(0, -1.7, 3.06) // 视角飞到指定地点后看向-1楼入口处
+    const duration = 2000 // 飞行时间
+    const modelInitPosition = {x: -1.8, y: -1.8, z: 3.06} // 人物模型初始位置
+    const onLookAt = { x: 0, y: -1.8, z: 3.06 } // 人物模型看向-1楼入口处
+    emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   }
 }
 

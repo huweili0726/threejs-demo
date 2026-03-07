@@ -259,6 +259,34 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
     }
   }
 
+  /**
+   * 删除模型
+   * @param modelUrl 模型URL
+   */
+  const removeModel = (modelUrl: string) => {
+    const model = loadedModelMaps.value.get(modelUrl)
+    if (model && scene.value) {
+      // 停止动画
+      const mixer = modelMixers.value.get(modelUrl)
+      if (mixer) {
+        mixer.stopAllAction()
+        modelMixers.value.delete(modelUrl)
+      }
+      
+      // 从场景中移除模型
+      scene.value.remove(model)
+      
+      // 从映射中删除
+      loadedModelMaps.value.delete(modelUrl)
+      
+      console.log(`✅ 模型 ${modelUrl} 已删除`)
+      
+      if (render) {
+        render()
+      }
+    }
+  }
+
   return {
     isLoading,
     loadingText,
@@ -268,6 +296,7 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
     loadModels,
     moveModel,
     getModelPosition,
-    cameraFollowModel
+    cameraFollowModel,
+    removeModel
   }
 }

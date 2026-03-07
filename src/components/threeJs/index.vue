@@ -28,7 +28,7 @@ const { getJsonFile } = jsonUtils()
 const { width, height } = useWindowSize()
 
 const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize } = useThreeScene(threeJsContainer)
-const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel } = useModelLoader(scene as any, render)
+const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel, removeModel } = useModelLoader(scene as any, render)
 const { loadEnvironment } = useEnvironmentLoader(scene as any)
 const { checkCollision, updateBoundingBoxes, setBoundingBoxesFromLoadResult, addCharacterBoundingBox } = useCollisionDetection() 
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes )
