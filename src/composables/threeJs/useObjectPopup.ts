@@ -77,7 +77,7 @@ export function useObjectPopup(
     // 构建弹窗 HTML 内容
     let htmlContent = `
       <div class="dev-info-div">
-        <div class="dev-title">${data.title}<button class="devPop-close-btn" data-type="close-btn" onclick="closePopBtn('${data.id}')"></button></div>
+        <div class="dev-title">${data.title}<button class="devPop-close-btn" data-type="close-btn" onclick="closePopup('${data.id}')"></button></div>
         <div class="dev-content">
     `
 
@@ -171,17 +171,9 @@ export function useObjectPopup(
     }
   }
 
-  /**
-   * 全局关闭弹窗函数（供 HTML onclick 调用）
-   * @param id 弹窗 ID
-   */
-  const closePopBtn = (id: string) => {
-    closePopup(id)
-  }
-
   // 将关闭函数挂载到 window 对象，供 HTML onclick 调用
   if (typeof window !== 'undefined') {
-    (window as any).closePopBtn = closePopBtn
+    (window as any).closePopup = closePopup
   }
 
   /**
