@@ -1,20 +1,20 @@
 /**
- * 3D 工具函数模块
+ * 射线检测工具函数模块 
  *
  * @author huweili
  * @email czxyhuweili@163.com
  * @version 1.0.0
  * @date 2026-03-07
- * @description 提供 Three.js 相关的工具函数
+ * @description 提供 Three.js 相关的射线检测工具函数
  */
 import * as THREE from 'three'
 import { ShallowRef } from 'vue'
 
 /**
- * 3D 工具函数 Hook
+ * 射线检测工具函数 Hook
  * @returns 工具函数集合
  */
-export function useThreeUtils() {
+export function useRaycastUtils() {
   /**
    * 射线检测工具函数
    * @param camera 相机

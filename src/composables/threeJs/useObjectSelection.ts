@@ -9,10 +9,10 @@
  */
 import * as THREE from 'three'
 import { ref, ShallowRef } from 'vue'
-import { useThreeUtils } from './useThreeUtils'
+import { useRaycastUtils } from './useThreeUtils'
 
 // 初始化工具函数
-const { performRaycast, filterIntersects } = useThreeUtils()
+const { performRaycast, filterIntersects } = useRaycastUtils()
 
 export function useObjectSelection(camera: ShallowRef<THREE.PerspectiveCamera>, scene: ShallowRef<THREE.Scene>, container: ShallowRef<HTMLElement | undefined>) {
   // 当前选中的物体
