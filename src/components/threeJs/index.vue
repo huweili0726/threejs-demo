@@ -182,7 +182,8 @@ onBeforeUnmount(() => {
 // 暴露方法给父组件
 defineExpose({
   loadModel,
-  flyTo
+  flyTo,  
+  removeModel
 })
 </script>
 

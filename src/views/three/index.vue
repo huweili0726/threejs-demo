@@ -20,6 +20,7 @@ import ThreeController from '@/views/three/threeController.vue'
 const threeJsRef = ref<typeof ThreeJs>()
 
 const handleToTheSurface = async (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3) => {
+  await threeJsRef.value?.removeModel('glb/man.glb')?.catch(console.error)
   await threeJsRef.value?.flyTo?.(targetPosition, targetTarget, 2000)?.catch(console.error)
 }
 
@@ -32,7 +33,6 @@ const handleToBottomfloorAndLoadcharacterModel = async (
   onLookAt?: {x: number, y: number, z: number} // 人物模型看向位置
 ) => {
   await threeJsRef.value?.flyTo?.(targetPosition, targetTarget, duration)?.catch(console.error)
-
   await threeJsRef.value?.loadModel({
     modelUrl: 'glb/man.glb',
     scale: 0.0005,

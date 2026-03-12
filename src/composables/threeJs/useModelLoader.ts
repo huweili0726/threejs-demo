@@ -51,6 +51,12 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
         return
       }
 
+      // 检查模型是否已经加载过，如果已加载则先移除旧模型
+      if (loadedModelMaps.value.has(modelUrl)) {
+        console.log(`⚠️ 模型 ${modelUrl} 已加载，先移除旧模型`)
+        removeModel(modelUrl)
+      }
+
       const loader = new GLTFLoader()
       loader.setPath(`${import.meta.env.BASE_URL}/`)
       
@@ -273,18 +279,70 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
         modelMixers.value.delete(modelUrl)
       }
       
-      // 从场景中移除模型
-      scene.value.remove(model)
+      // 确保从场景中移除模型（无论它在哪个父对象下）
+      if (model.parent) {
+        model.parent.remove(model)
+      } else {
+        scene.value.remove(model)
+      }
       
-      // 从映射中删除
+      // 清理模型资源（包括所有子对象）
+      model.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          // 清理几何体
+          if (child.geometry) {
+            child.geometry.dispose()
+          }
+          // 清理材质
+          if (child.material) {
+            if (Array.isArray(child.material)) {
+              child.material.forEach(material => material.dispose())
+            } else {
+              child.material.dispose()
+            }
+          }
+        }
+        // 清理包围盒辅助器
+        if (child instanceof THREE.BoxHelper) {
+          if (child.parent) {
+            child.parent.remove(child)
+          }
+          child.material.dispose()
+          child.geometry.dispose()
+        }
+      })
+      
+      // 从已加载模型Map中删除
       loadedModelMaps.value.delete(modelUrl)
       
-      console.log(`✅ 模型 ${modelUrl} 已删除`)
+      console.log(`✅ 已移除模型：${modelUrl}`)
       
       if (render) {
         render()
       }
     }
+  }
+
+  /**
+   * 检查场景中是否存在指定名称的物体
+   * @param objectName 物体名称
+   * @returns 是否存在
+   */
+  const hasObjectByName = (objectName: string): boolean => {
+    if (!scene.value) {
+      return false
+    }
+
+    let found = false
+    
+    // 递归遍历场景中的所有物体
+    scene.value.traverse((object) => {
+      if (object.name === objectName) {
+        found = true
+      }
+    })
+    
+    return found
   }
 
   return {
@@ -297,6 +355,7 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
     moveModel,
     getModelPosition,
     cameraFollowModel,
-    removeModel
+    removeModel,
+    hasObjectByName
   }
 }
