@@ -186,7 +186,7 @@ export function useAutoRoam() {
   }
 
   /**
-   * 停止自动漫游
+   * 停止自动漫游 并重置模型位置
    */
   const stopAutoRoam = () => {
     roamState.value = 'stopped'
