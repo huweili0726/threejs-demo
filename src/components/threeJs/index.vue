@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import * as THREE from 'three'
-import { onBeforeUnmount, ref, watchEffect, watch, onMounted } from 'vue'
+import { onBeforeUnmount, ref, watchEffect, onMounted } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 import { useThreeScene } from '@/composables/threeJs/useThreeScene' // 场景相关Hooks
 import { useModelLoader } from '@/composables/threeJs/useModelLoader' // 模型加载相关Hooks
@@ -180,9 +180,9 @@ onBeforeUnmount(() => {
   }
 })
 
+// 为人物模型添加碰撞检测包围盒
 const toAddCharacterBoundingBox = () => {
   if (scene.value) {
-    // 为人物模型添加碰撞检测包围盒
     addCharacterBoundingBox({
       scene: scene.value,
       modelUrl: `glb/man.glb`,
