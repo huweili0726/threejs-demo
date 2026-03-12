@@ -181,8 +181,6 @@ const loadCharacterModelAndStartRoam = async () => {
     if (model && scene.value) {
       // 初始化自动漫游
       initAutoRoam(model)
-      // 启动自动漫游
-      startAutoRoam()
       console.log('✅ 人物模型加载完成并启动自动漫游')
     }
   } catch (error) {

@@ -21,9 +21,12 @@
           漫游控制
         </div>
         <div class="controls-content">
+          <button @click="toStart()" class="control-btn">开始</button>
+        </div>
+        <div class="controls-content">
           <button @click="toPause()" class="control-btn">暂停</button>
         </div>
-              <div class="controls-content">
+        <div class="controls-content">
           <button @click="toContinue()" class="control-btn">继续</button>
         </div>
       </div>
@@ -47,6 +50,7 @@ const emit = defineEmits<{
   (e: 'toBottomfloorAndLoadcharacterModel', targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration?: number, modelInitPosition?: {x: number, y: number, z: number}, onLookAt?: {x: number, y: number, z: number}): void
   (e: 'pauseAutoRoam'): void
   (e: 'continueAutoRoam'): void
+  (e: 'startAutoRoam'): void
 }>()
 
 // 切换楼层
@@ -70,6 +74,11 @@ const toFloor = (floor: string) => {
     const onLookAt = floorNeg1Config?.characterModelToLook // 人物模型看向-1楼入口处
     emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   }
+}
+
+// 开始自动漫游
+const toStart = () => {
+  emit('startAutoRoam')
 }
 
 const toPause = () => {

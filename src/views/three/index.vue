@@ -5,7 +5,8 @@
       @toBottomfloorAndLoadcharacterModel="handleToBottomfloorAndLoadcharacterModel" 
       @toTheSurface="handleToTheSurface" 
       @pauseAutoRoam="handlePauseAutoRoam" 
-      @continueAutoRoam="handleContinueAutoRoam" />
+      @continueAutoRoam="handleContinueAutoRoam"
+      @startAutoRoam="handleStartAutoRoam" />
 
     <!-- 渲染场景 -->
     <ThreeJs 
@@ -50,6 +51,11 @@ const handleToBottomfloorAndLoadcharacterModel = async (
 
   // 启动自动漫游
   await threeJsRef.value?.loadCharacterModelAndStartRoam()
+}
+
+// 开始自动漫游
+const handleStartAutoRoam = () => {
+  threeJsRef.value?.startAutoRoam()
 }
 
 // 暂停自动漫游
