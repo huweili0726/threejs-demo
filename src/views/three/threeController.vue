@@ -21,6 +21,10 @@
 
 <script setup lang="ts">
 import * as THREE from 'three'
+import { useBasisStore } from '@/stores/basis' // 基础配置 Store
+
+// 使用基础配置 Store
+const basisStore = useBasisStore()
 
 // 定义事件
 const emit = defineEmits<{
@@ -34,15 +38,21 @@ const emit = defineEmits<{
 const toFloor = (floor: string) => {
   // 切换模型
   if(floor === '0') {
-    const targetPosition = new THREE.Vector3(-9, 5, -15) 
-    const targetTarget = new THREE.Vector3(0, 0, 0) 
+    const floor1Config = basisStore.floor1Config
+    const perspective = floor1Config?.perspective || { x: 0, y: 0, z: 0 }
+    const directionToLook = floor1Config?.directionToLook || { x: 0, y: 0, z: 0 }
+    const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+    const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
     emit('toTheSurface', targetPosition, targetTarget)
   } else if(floor === '-1') {
-    const targetPosition = new THREE.Vector3(-2, -1.7, 3.06) // 视角飞到-1楼入口处
-    const targetTarget = new THREE.Vector3(0, -1.7, 3.06) // 视角飞到指定地点后看向-1楼入口处
-    const duration = 2000 // 飞行时间
-    const modelInitPosition = {x: -1.8, y: -1.8, z: 3.06} // 人物模型初始位置
-    const onLookAt = { x: 0, y: -1.8, z: 3.06 } // 人物模型看向-1楼入口处
+    const floorNeg1Config = basisStore.neg1FloorConfig
+    const perspective = floorNeg1Config?.perspective || { x: 0, y: 0, z: 0 }
+    const directionToLook = floorNeg1Config?.directionToLook || { x: 0, y: 0, z: 0 }
+    const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+    const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+    const duration = floorNeg1Config?.durationTime || 2000 // 飞行时间
+    const modelInitPosition = floorNeg1Config?.characterModelSetPosition // 人物模型初始位置
+    const onLookAt = floorNeg1Config?.characterModelToLook // 人物模型看向-1楼入口处
     emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   }
 }

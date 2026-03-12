@@ -34,7 +34,7 @@ export function useThreeScene(container?: any) {
     cameraPosition: THREE.Vector3
   }) => {
     if (!container.value) return
-    const { coordinateAxis, cameraPosition = new THREE.Vector3(-9, 5, -15) } = options
+    const { coordinateAxis, cameraPosition } = options
 
     // 1. 创建Three.js主场景
     scene.value = new THREE.Scene()

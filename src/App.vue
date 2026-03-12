@@ -3,7 +3,20 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue'
+import { jsonUtils } from '@/utils/json'
+import { useBasisStore } from '@/stores/basis'
+
 // 应用程序入口组件
+const { getJsonFile } = jsonUtils()
+const basisStore = useBasisStore()
+
+onMounted(async () => {
+  // 系统启动时加载基础配置
+  const config = await getJsonFile(`${import.meta.env.BASE_URL}/config/basis.jsonc`)
+  basisStore.setBasisConfig(config)
+  console.log('✅ 基础配置加载完成:', config)
+})
 </script>
 
 <style scoped>

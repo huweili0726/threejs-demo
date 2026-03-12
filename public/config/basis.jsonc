@@ -1,0 +1,25 @@
+{
+  // 1楼初始视角配置
+  "floor_1th": {
+    "perspective": { "x": -9, "y": 5, "z": -15 }, // 默认视角（大楼之外的视角）
+    "directionToLook": { "x": 0, "y": 0, "z": 0 } // 默认视角（看向大楼中心）
+  },
+  // -1楼初始视角配置
+  "floor_neg1": {
+    "perspective": { "x": -2, "y": -1.7, "z": 3.06 }, 
+    "directionToLook": { "x": 0, "y": -1.7, "z": 3.06 },
+    "durationTime": 2000, // 切换视角的动画时长（毫秒）
+    "characterModelSetPosition": { "x": -1.8, "y": -1.8, "z": 3.06 }, // 人物模型位置（与视角同步）
+    "characterModelToLook": { "x": 0, "y": -1.8, "z": 3.06 } // 人物模型看向方向（与视角同步）
+  },
+  // 8楼初始视角配置
+  "floor_8th": {
+    "perspective": { "x": -2, "y": -1.7, "z": 3.06 }, 
+    "directionToLook": { "x": 0, "y": -1.7, "z": 3.06 },
+    "durationTime": 2000 // 切换视角的动画时长（毫秒）
+  },
+  // 9楼初始视角配置
+  "floor_9th": {
+
+  }
+}

@@ -18,7 +18,12 @@ export function useEnvironmentLoader(scene: ShallowRef<THREE.Scene>) {
    * @param onLoad - 加载完成后的回调函数
    * @returns 加载进度文本
    */
-  const loadEnvironment = (skyBoxUrl: string, onLoad?: () => void) => {
+  const loadEnvironment = (skyBoxUrl: string | undefined, onLoad?: () => void) => {
+    if (!skyBoxUrl) {
+      console.warn('⚠️ skyBoxUrl 为空，跳过环境贴图加载')
+      return ref('')
+    }
+
     const loadingText = ref('正在加载环境贴图...')
     
     const rgbeLoader = new RGBELoader()
