@@ -14,6 +14,19 @@
           <button @click="toFloor('-1')" class="control-btn">-1楼</button>
         </div>
       </div>
+
+      <!-- 图片点位控制按钮组 -->
+      <div class="button-group pyramid-controls">
+        <div class="group-title">
+          漫游控制
+        </div>
+        <div class="controls-content">
+          <button @click="toPause()" class="control-btn">暂停</button>
+        </div>
+              <div class="controls-content">
+          <button @click="toContinue()" class="control-btn">继续</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -32,6 +45,8 @@ const emit = defineEmits<{
   (e: 'changeModel', modelUrl: string): void
   (e: 'loadBothModels'): void
   (e: 'toBottomfloorAndLoadcharacterModel', targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration?: number, modelInitPosition?: {x: number, y: number, z: number}, onLookAt?: {x: number, y: number, z: number}): void
+  (e: 'pauseAutoRoam'): void
+  (e: 'continueAutoRoam'): void
 }>()
 
 // 切换楼层
@@ -55,6 +70,14 @@ const toFloor = (floor: string) => {
     const onLookAt = floorNeg1Config?.characterModelToLook // 人物模型看向-1楼入口处
     emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   }
+}
+
+const toPause = () => {
+  emit('pauseAutoRoam')
+}
+
+const toContinue = () => {
+  emit('continueAutoRoam')
 }
 
 </script>

@@ -39,7 +39,7 @@ const { checkCollision, updateBoundingBoxes, setBoundingBoxesFromLoadResult, add
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes )
 const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any, threeJsContainer)
 const { initDoubleClickPopup, updateCSS2DRenderer, handleResize } = useObjectPopup(camera as any, scene as any, threeJsContainer)
-const { initAutoRoam, loadRoamConfig, startAutoRoam, stopAutoRoam, updateAutoRoam } = useAutoRoam()
+const { initAutoRoam, loadRoamConfig, startAutoRoam, pauseAutoRoam, resumeAutoRoam, stopAutoRoam, updateAutoRoam } = useAutoRoam()
 
 // 控制变量
 const cameraOffset = new THREE.Vector3(0, 0.1, -0.12) // 相机偏移量（在模型后方，稍微上方）
@@ -216,7 +216,8 @@ defineExpose({
   startAutoRoam,
   stopAutoRoam,
   toAddCharacterBoundingBox,
-  addCharacterBoundingBox
+  pauseAutoRoam,
+  resumeAutoRoam
 })
 </script>
 
