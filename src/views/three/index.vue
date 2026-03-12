@@ -44,6 +44,7 @@ const handleToBottomfloorAndLoadcharacterModel = async (
   // 为人物模型添加碰撞检测包围盒
   threeJsRef.value?.toAddCharacterBoundingBox()
 
+  // 启动自动漫游
   await threeJsRef.value?.loadCharacterModelAndStartRoam()
 }
 
