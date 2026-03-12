@@ -180,13 +180,24 @@ onBeforeUnmount(() => {
   }
 })
 
+const toAddCharacterBoundingBox = () => {
+  if (scene.value) {
+    // 为人物模型添加碰撞检测包围盒
+    addCharacterBoundingBox({
+      scene: scene.value,
+      modelUrl: `glb/man.glb`,
+      loadedModelMaps: loadedModelMaps.value
+    })
+  }
+}
+
 // 加载人物模型并启动自动漫游
 const loadCharacterModelAndStartRoam = async () => {
   try {
+    const modelUrl = `glb/man.glb`
     // 获取加载的模型
-    const model = loadedModelMaps.value.get(`glb/man.glb`)
-    debugger
-    if (model) {
+    const model = loadedModelMaps.value.get(modelUrl)
+    if (model && scene.value) {
       // 初始化自动漫游
       initAutoRoam(model)
       // 启动自动漫游
@@ -205,7 +216,9 @@ defineExpose({
   removeModel,
   loadCharacterModelAndStartRoam,
   startAutoRoam,
-  stopAutoRoam
+  stopAutoRoam,
+  toAddCharacterBoundingBox,
+  addCharacterBoundingBox
 })
 </script>
 

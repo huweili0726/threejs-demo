@@ -40,6 +40,9 @@ const handleToBottomfloorAndLoadcharacterModel = async (
     onLookAt: onLookAt || { x: 0, y: 0, z: 0 },
     frontAxis: new THREE.Vector3(0, 0, 1),
   })?.catch(console.error)
+  
+  // 为人物模型添加碰撞检测包围盒
+  threeJsRef.value?.toAddCharacterBoundingBox()
 
   await threeJsRef.value?.loadCharacterModelAndStartRoam()
 }
