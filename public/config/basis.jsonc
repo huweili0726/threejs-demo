@@ -12,6 +12,12 @@
     "glb/配电干线.glb",
     "glb/消防给水.glb"
   ],
+  // 人物模型移动配置
+  "characterModelMove": {
+    "MAX_SPEED_MULTIPLIER": 6,
+    "ACCELERATION_THRESHOLD": 500,
+    "ACCELERATION_FACTOR": 0.01
+  },
   // 1楼初始视角配置
   "floor_1th": {
     "perspective": { "x": -9, "y": 5, "z": -15 }, // 默认视角（大楼之外的视角）
