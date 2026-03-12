@@ -7,7 +7,7 @@
 
     <!-- 渲染场景 -->
     <ThreeJs 
-      :loadModel="pendingLoadSingleModel" />
+      ref="threeJsRef" />
   </div>
 </template>
 
@@ -16,15 +16,11 @@ import * as THREE from 'three'
 import { ref } from 'vue'
 import ThreeJs from '@/components/threeJs/index.vue'
 import ThreeController from '@/views/three/threeController.vue'
-import { useThreeScene } from '@/composables/threeJs/useThreeScene'
 
-const { flyTo } = useThreeScene()
-
-// 定义需要加载的模型配置
-const pendingLoadSingleModel = ref<any>(null)
+const threeJsRef = ref<typeof ThreeJs>()
 
 const handleToTheSurface = async (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3) => {
-  await flyTo?.(targetPosition, targetTarget, 2000)?.catch(console.error)
+  await threeJsRef.value?.flyTo?.(targetPosition, targetTarget, 2000)?.catch(console.error)
 }
 
 // 飞行到-1楼入口处 同时加载人物模型
@@ -35,16 +31,15 @@ const handleToBottomfloorAndLoadcharacterModel = async (
   modelInitPosition?: {x: number, y: number, z: number}, // 人物模型初始位置
   onLookAt?: {x: number, y: number, z: number} // 人物模型看向位置
 ) => {
-  // 发布加载人物模型指令
-  pendingLoadSingleModel.value = {
+  await threeJsRef.value?.flyTo?.(targetPosition, targetTarget, duration)?.catch(console.error)
+
+  await threeJsRef.value?.loadModel({
     modelUrl: 'glb/man.glb',
     scale: 0.0005,
     modelInitPosition: modelInitPosition || { x: 0, y: 0, z: 0 },
     onLookAt: onLookAt || { x: 0, y: 0, z: 0 },
     frontAxis: new THREE.Vector3(0, 0, 1),
-  }
-
-  await flyTo?.(targetPosition, targetTarget, duration)?.catch(console.error)
+  })?.catch(console.error)
 }
 
 </script>

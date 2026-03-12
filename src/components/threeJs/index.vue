@@ -51,31 +51,6 @@ let basisConfig: any = null // 基础配置
 let wallConfig: any = null // 墙配置
 let threeDimensionalConfig: any = null // 三维模型弹窗信息配置
 
-const props = withDefaults(
-  defineProps<{
-    loadModel?: any | null // 加载单个模型指令
-  }>(),
-  {
-    loadModel: null
-  }
-)
-
-// 监听加载单个模型指令
-watch(() => props.loadModel, async (config) => {
-  if (config && scene.value) { // 确保场景初始化完成
-    await loadModel(config).catch(console.error)
-
-    // 为人物模型添加红色包围盒
-    if (loadedModelMaps.value) {
-      addCharacterBoundingBox({
-        scene: scene.value,
-        modelUrl: peopleModelUrl.value,
-        loadedModelMaps: loadedModelMaps.value
-      })
-    }
-  }
-})
-
 // 等待基础配置加载完成
 watch(() => basisStore.isLoaded, async (isLoaded) => {
   if (isLoaded) {

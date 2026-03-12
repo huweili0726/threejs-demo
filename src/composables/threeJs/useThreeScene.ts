@@ -12,16 +12,7 @@ import { shallowRef, onBeforeUnmount } from 'vue'
 import { OrbitControls } from 'three-stdlib'
 import { useWindowSize } from '@vueuse/core'
 
-let sceneInstance: ReturnType<typeof createThreeScene> | null = null
-
 export function useThreeScene() {
-  if (!sceneInstance) {
-    sceneInstance = createThreeScene()
-  }
-  return sceneInstance
-}
-
-function createThreeScene() {
   const { width, height } = useWindowSize()
   const scene = shallowRef<THREE.Scene>()
   const camera = shallowRef<THREE.PerspectiveCamera>()
