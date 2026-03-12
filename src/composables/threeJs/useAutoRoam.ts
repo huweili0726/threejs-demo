@@ -75,7 +75,7 @@ export function useAutoRoam() {
    * 加载漫游路径配置
    * @param configPath 配置文件路径
    */
-  const loadRoamConfig = async (configPath: string = `${import.meta.env.BASE_URL}/config/roamingPathPoint.json`) => {
+  const loadRoamConfig = async (configPath: string = `${import.meta.env.BASE_URL}/config/roamingPathPoint.jsonc`) => {
     try {
       const { getJsonFile } = jsonUtils()
       const config = await getJsonFile(configPath)
