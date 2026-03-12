@@ -47,6 +47,7 @@ let cleanupSelection: (() => void) | null = null // 清理双击选中事件的�
 let cleanupPopup: (() => void) | null = null // 清理双击弹窗事件的函数
 
 // 配置数据
+let basisConfig: any = null // 基础配置
 let wallConfig: any = null // 墙配置
 let threeDimensionalConfig: any = null // 三维模型弹窗信息配置
 
@@ -80,6 +81,7 @@ watch(() => props.loadModel, async (config) => {
 // 等待基础配置加载完成
 watch(() => basisStore.isLoaded, async (isLoaded) => {
   if (isLoaded) {
+    basisConfig = await getJsonFile(`${import.meta.env.BASE_URL}/config/basis.jsonc`)
     wallConfig = await getJsonFile(`${import.meta.env.BASE_URL}/config/wall.jsonc`)
     threeDimensionalConfig = await getJsonFile(`${import.meta.env.BASE_URL}/config/threeDimensionalDev.jsonc`)
 
@@ -147,16 +149,7 @@ watch(() => basisStore.isLoaded, async (isLoaded) => {
     // 加载模型并直接处理包围盒，避免重复遍历
     const boundingBoxes = await loadModels({
       ...{
-        modelUrls: [
-          'glb/groundFloorOfficeBuilding.glb',
-          'glb/underGround.glb',
-          'glb/shu.glb',
-          'glb/8th_floor.glb',
-          'glb/9th_floor.glb',
-          'glb/空调送、回风、排烟.glb',
-          'glb/配电干线.glb',
-          'glb/消防给水.glb',
-        ],
+        modelUrls: basisConfig?.modelUrls || [],
         scale: 1,
       },
       collisionObjectNames: _objectNames
