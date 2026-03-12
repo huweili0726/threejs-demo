@@ -1,0 +1,86 @@
+{
+	"initLocation": {
+		"points": [
+			{ "position": { "x": 0, "y": 130, "z": -30 }, "rotation": { "y": "0" }, "duration": 1, "stayTime": 0  }
+		]
+	},
+	"allRoom": {
+		"points": [
+			{ "position": { "x": 0, "y": 130, "z": -30 }, "rotation": { "y": "0" }, "duration": 100, "stayTime": 100, "sta": "刚站在-1入口" },
+			{ "position": { "x": 0, "y": 130, "z": 995 }, "rotation": { "y": "0" }, "duration": 6000, "stayTime": 500, "sta": "到发电机房门口了" },
+			{ "position": { "x": 0, "y": 130, "z": 995 }, "rotation": { "y": "-Math.PI/2" }, "duration": 1000, "stayTime": 500, "sta": "转个身准备进发电机房" },
+			{ "position": { "x": -540, "y": 130, "z": 995 }, "rotation": { "y": "-Math.PI/2" }, "duration": 2000, "stayTime": 3000, "sta": "进入了发电机房" },
+			{ "position": { "x": -540, "y": 130, "z": 995 }, "rotation": { "y": "Math.PI/2" }, "duration": 1000, "stayTime": 500, "sta": "看完发电机房之后原地转身，准备出去" },
+			{ "position": { "x": 0, "y": 130, "z": 995 }, "rotation": { "y": "Math.PI/2" }, "duration": 2000, "stayTime": 500, "sta": "从发电机房出来到走廊了" },
+			{ "position": { "x": 0, "y": 130, "z": 995 }, "rotation": { "y": "0" }, "duration": 1000, "stayTime": 500, "sta": "转个身" },
+			{ "position": { "x": 0, "y": 130, "z": 1900 }, "rotation": { "y": "0" }, "duration": 3000, "stayTime": 500, "sta": "继续向前走" },
+			{ "position": { "x": 0, "y": 130, "z": 1900 }, "rotation": { "y": "-Math.PI/2" }, "duration": 1000, "stayTime": 500, "sta": "原地向右转个身" },
+			{ "position": { "x": -1455, "y": 130, "z": 1900 }, "rotation": { "y": "-Math.PI/2" }, "duration": 3000, "stayTime": 500, "sta": "继续向右边行走" },
+			{ "position": { "x": -1455, "y": 130, "z": 1900 }, "rotation": { "y": "0" }, "duration": 1000, "stayTime": 500, "sta": "走到拐角转个身，继续向前" },
+			{ "position": { "x": -1455, "y": 130, "z": 5940 }, "rotation": { "y": "0" }, "duration": 8000, "stayTime": 500, "sta": "走到拐角处" },
+			{ "position": { "x": -1455, "y": 130, "z": 5940 }, "rotation": { "y": "Math.PI/2" }, "duration": 1000, "stayTime": 500, "sta": "转个身" },
+			{ "position": { "x": -1180, "y": 130, "z": 5940 }, "rotation": { "y": "Math.PI/2" }, "duration": 1000, "stayTime": 500, "sta": "继续走，走到了水泵房附近" },
+			{ "position": { "x": -1180, "y": 130, "z": 5940 }, "rotation": { "y": "0" }, "duration": 1000, "stayTime": 500, "sta": "转个身，准备下一步进水泵房" },
+			{ "position": { "x": -1180, "y": 130, "z": 6400 }, "rotation": { "y": "0" }, "duration": 1000, "stayTime": 3000, "sta": "进入了水泵房" },
+			{ "position": { "x": -1180, "y": 130, "z": 6400 }, "rotation": { "y": "Math.PI" }, "duration": 1000, "stayTime": 500, "sta": "看完水泵房之后原地转身，准备出去" },
+			{ "position": { "x": -1180, "y": 130, "z": 5940 }, "rotation": { "y": "Math.PI" }, "duration": 1000, "stayTime": 500, "sta": "已经出来到走廊了" },
+			{ "position": { "x": -1180, "y": 130, "z": 5940 }, "rotation": { "y": "Math.PI/2" }, "duration": 1000, "stayTime": 500, "sta": "转个身，继续巡检" },
+			{ "position": { "x": 1650, "y": 130, "z": 5940 }, "rotation": { "y": "Math.PI/2" }, "duration": 6000, "stayTime": 500 },
+			{ "position": { "x": 1650, "y": 130, "z": 5940 }, "rotation": { "y": "0" }, "duration": 1000, "stayTime": 500, "sta": "转个身，准备进空调机房" },
+			{ "position": { "x": 1650, "y": 130, "z": 6420 }, "rotation": { "y": "0" }, "duration": 1000, "stayTime": 500, "sta": "进了空调机房" },
+			{ "position": { "x": 1650, "y": 130, "z": 6420 }, "rotation": { "y": "-Math.PI/3" }, "duration": 1000, "stayTime": 3000, "sta": "进了空调机房后，转个身" },
+			{ "position": { "x": 1650, "y": 130, "z": 6420 }, "rotation": { "y": "-Math.PI" }, "duration": 1000, "stayTime": 500, "sta": "进了空调机房后，再转个身准备出去" },
+			{ "position": { "x": 1650, "y": 130, "z": 5940 }, "rotation": { "y": "-Math.PI" }, "duration": 1000, "stayTime": 500, "sta": "出去了，到走廊了" },
+			{ "position": { "x": 1650, "y": 130, "z": 5940 }, "rotation": { "y": "-Math.PI/2" }, "duration": 1000, "stayTime": 500, "sta": "到走廊了，再转个身" },
+			{ "position": { "x": 1390, "y": 130, "z": 5940 }, "rotation": { "y": "-Math.PI/2" }, "duration": 1000, "stayTime": 500, "sta": "往回走" },
+			{ "position": { "x": 1390, "y": 130, "z": 5940 }, "rotation": { "y": "-Math.PI" }, "duration": 1000, "stayTime": 500, "sta": "走到位了，再转个身" },
+			{ "position": { "x": 1390, "y": 130, "z": 4360 }, "rotation": { "y": "-Math.PI" }, "duration": 6000, "stayTime": 500, "sta": "走到通信电源配电室门口了" },
+			{ "position": { "x": 1390, "y": 130, "z": 4360 }, "rotation": { "y": "Math.PI/2" }, "duration": 1000, "stayTime": 500, "sta": "先原地转个身" },
+			{ "position": { "x": 1560, "y": 130, "z": 4360 }, "rotation": { "y": "Math.PI/2" }, "duration": 1000, "stayTime": 500, "sta": "进入了通信电源配电室" },
+			{ "position": { "x": 1560, "y": 130, "z": 4360 }, "rotation": { "y": "Math.PI" }, "duration": 1000, "stayTime": 3000, "sta": "转个身看设备" },
+			{ "position": { "x": 1560, "y": 130, "z": 4360 }, "rotation": { "y": "-Math.PI/2" }, "duration": 1000, "stayTime": 500, "sta": "准备出去，先转个身" },
+			{ "position": { "x": 1390, "y": 130, "z": 4360 }, "rotation": { "y": "-Math.PI/2" }, "duration": 1000, "stayTime": 500, "sta": "出去了，到走廊了" },
+			{ "position": { "x": 1390, "y": 130, "z": 4360 }, "rotation": { "y": "-Math.PI" }, "duration": 1000, "stayTime": 500, "sta": "到走廊了，先转个身" },
+			{ "position": { "x": 1390, "y": 130, "z": 1900 }, "rotation": { "y": "-Math.PI" }, "duration": 3000, "stayTime": 500 },
+			{ "position": { "x": 1390, "y": 130, "z": 1900 }, "rotation": { "y": "-Math.PI/2" }, "duration": 1000, "stayTime": 500, "sta": "到走廊转角了，先转个身" },
+			{ "position": { "x": 0, "y": 130, "z": 1900 }, "rotation": { "y": "-Math.PI/2" }, "duration": 4000, "stayTime": 0 },
+			{ "position": { "x": 0, "y": 130, "z": 1900 }, "rotation": { "y": "-Math.PI" }, "duration": 1000, "stayTime": 0, "sta": "走一圈了，准备离开-1" }
+		]
+	},
+	"wiredCommunication": {
+		"points": [
+			{ "position": { "x": 1390, "y": 130, "z": 3540 }, "rotation": { "y": "Math.PI/2" }, "duration": 1, "stayTime": 0, "sta": "有线通信室" }
+		]
+	},
+	"chemicalDefense": {
+		"points": [
+			{ "position": { "x": 300, "y": 130, "z": 5940 }, "rotation": { "y": "0" }, "duration": 1, "stayTime": 0, "sta": "防化值班室" }
+		]
+	},
+	"combatCommandHall": {
+		"points": [
+			{ "position": { "x": 550, "y": 130, "z": 2900 }, "rotation": { "y": "0" }, "duration": 1, "stayTime": 0, "sta": "作战指挥大厅" }
+		]
+	},
+	"generatorRoom": {
+		"points": [
+			{ "position": { "x": -400, "y": 130, "z": 950 }, "rotation": { "y": "-Math.PI/2" }, "duration": 1, "stayTime": 0 }
+		]
+	},
+	"airConditioningRoom": {
+		"points": [
+			{ "position": { "x": 1650, "y": 130, "z": 6200 }, "rotation": { "y": "0" }, "duration": 1, "stayTime": 0}
+		]
+	},
+	"waterPumpRoom": {
+		"points": [
+			{ "position": { "x": -1180, "y": 130, "z": 6200 }, "rotation": { "y": "0" }, "duration": 1, "stayTime": 0}
+		]
+	},
+	"communicationPowerRoom": {
+		"points": [
+			{ "position": { "x": 1590, "y": 130, "z": 4200 }, "rotation": { "y": "Math.PI/2" }, "duration": 1, "stayTime": 0 }
+		]
+	},
+	"__Remarks": "position:目标点位坐标，rotation:目标点位的朝向，duration:运动到这个目标点位所需要的时间，stayTime:在这个目标点位停留时间"
+}

@@ -18,6 +18,7 @@ import { useCharacterMovement } from '@/composables/threeJs/useCharacterMovement
 import { useCollisionDetection } from '@/composables/threeJs/useCollisionDetection' // 碰撞检测相关Hooks
 import { useObjectSelection } from '@/composables/threeJs/useObjectSelection' // 物体选择相关Hooks
 import { useObjectPopup } from '@/composables/threeJs/useObjectPopup' // 物体弹窗相关Hooks
+import { useAutoRoam } from '@/composables/threeJs/useAutoRoam' // 自动漫游相关Hooks
 import { useBasisStore } from '@/stores/basis' // 基础配置 Store
 import { jsonUtils } from '@/utils/json' // JSON工具相关
 import '@/assets/css/object-popup.css' // 弹窗样式
@@ -38,6 +39,7 @@ const { checkCollision, updateBoundingBoxes, setBoundingBoxesFromLoadResult, add
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes )
 const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any, threeJsContainer)
 const { initDoubleClickPopup, updateCSS2DRenderer, handleResize } = useObjectPopup(camera as any, scene as any, threeJsContainer)
+const { initAutoRoam, loadRoamConfig, startAutoRoam, stopAutoRoam, updateAutoRoam } = useAutoRoam()
 
 // 控制变量
 const peopleModelUrl = ref<string>('glb/man.glb') // 当前加载的人物模型URL
@@ -129,7 +131,10 @@ onMounted(async () => {
     setBoundingBoxesFromLoadResult(boundingBoxes)
   }
 
-  // 7、设置动画更新回调
+  // 7、加载漫游配置并启动自动漫游
+  await loadRoamConfig()
+  
+  // 8、设置动画更新回调
   setAnimationUpdateCallback((deltaTime: number) => {
     updateAnimations(deltaTime, modelMixers.value)
     updateCharacterMovement({
@@ -138,6 +143,8 @@ onMounted(async () => {
       moveModel, // ✅ 把外层的移动模型的函数传入
       loadedModelMaps: loadedModelMaps.value // ✅ 把外层的模型Map传入
     })
+    // 更新自动漫游
+    updateAutoRoam(deltaTime)
     // 相机跟随人物
     if (peopleModelUrl.value && camera.value) {
       cameraFollowModel( peopleModelUrl.value, camera.value, cameraOffset )
@@ -173,11 +180,32 @@ onBeforeUnmount(() => {
   }
 })
 
+// 加载人物模型并启动自动漫游
+const loadCharacterModelAndStartRoam = async () => {
+  try {
+    // 获取加载的模型
+    const model = loadedModelMaps.value.get(`glb/man.glb`)
+    debugger
+    if (model) {
+      // 初始化自动漫游
+      initAutoRoam(model)
+      // 启动自动漫游
+      startAutoRoam()
+      console.log('✅ 人物模型加载完成并启动自动漫游')
+    }
+  } catch (error) {
+    console.error('❌ 加载人物模型或启动自动漫游失败：', error)
+  }
+}
+
 // 暴露方法给父组件
 defineExpose({
   loadModel,
   flyTo,  
-  removeModel
+  removeModel,
+  loadCharacterModelAndStartRoam,
+  startAutoRoam,
+  stopAutoRoam
 })
 </script>
 

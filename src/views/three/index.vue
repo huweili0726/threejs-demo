@@ -40,6 +40,8 @@ const handleToBottomfloorAndLoadcharacterModel = async (
     onLookAt: onLookAt || { x: 0, y: 0, z: 0 },
     frontAxis: new THREE.Vector3(0, 0, 1),
   })?.catch(console.error)
+
+  await threeJsRef.value?.loadCharacterModelAndStartRoam()
 }
 
 </script>
