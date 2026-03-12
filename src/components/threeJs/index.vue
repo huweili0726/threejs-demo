@@ -31,7 +31,7 @@ const { width, height } = useWindowSize()
 // 使用基础配置 Store
 const basisStore = useBasisStore()
 
-const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize } = useThreeScene(threeJsContainer)
+const { scene, camera, initScene, render, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize } = useThreeScene()
 const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel, removeModel } = useModelLoader(scene as any, render)
 const { loadEnvironment } = useEnvironmentLoader(scene as any)
 const { checkCollision, updateBoundingBoxes, setBoundingBoxesFromLoadResult, addCharacterBoundingBox } = useCollisionDetection() 
@@ -54,12 +54,10 @@ const props = withDefaults(
   defineProps<{
     skyBoxUrl?: string  // 天空盒路径
     loadModel?: any | null // 加载单个模型指令
-    flyTo?: {position: THREE.Vector3, target: THREE.Vector3, duration?: number} | null // 相机飞行指令
   }>(),
   {
     skyBoxUrl: undefined,
-    loadModel: null,
-    flyTo: null
+    loadModel: null
   }
 )
 
@@ -79,13 +77,6 @@ watch(() => props.loadModel, async (config) => {
   }
 })
 
-// 监听相机飞行指令
-watch(() => props.flyTo, async (config) => {
-  if (config && scene.value && camera.value) { // 确保场景和相机初始化完成
-    await flyTo(config.position, config.target, config.duration).catch(console.error)
-  }
-})
-
 // 等待基础配置加载完成
 watch(() => basisStore.isLoaded, async (isLoaded) => {
   if (isLoaded) {
@@ -96,9 +87,7 @@ watch(() => basisStore.isLoaded, async (isLoaded) => {
     const floor1Config = basisStore.floor1Config
     const perspective = floor1Config?.perspective || { x: -9, y: 5, z: -15 }
     const cameraPosition = new THREE.Vector3(perspective?.x || -9, perspective?.y || 5, perspective?.z || -15) 
-    console.log("cameraPosition: ", cameraPosition)
-    initScene({ coordinateAxis: true, cameraPosition: cameraPosition }) 
-
+    initScene({ container: threeJsContainer, coordinateAxis: true, cameraPosition: cameraPosition }) 
 
     // 2、加载天空盒
     loadEnvironment( `/hdr/sky.hdr`, render ) 

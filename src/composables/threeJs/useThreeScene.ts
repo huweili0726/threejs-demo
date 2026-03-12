@@ -12,7 +12,7 @@ import { shallowRef, onBeforeUnmount } from 'vue'
 import { OrbitControls } from 'three-stdlib'
 import { useWindowSize } from '@vueuse/core'
 
-export function useThreeScene(container?: any) {
+export function useThreeScene() {
   const { width, height } = useWindowSize()
   const scene = shallowRef<THREE.Scene>()
   const camera = shallowRef<THREE.PerspectiveCamera>()
@@ -30,11 +30,13 @@ export function useThreeScene(container?: any) {
    * @returns 场景实例
    */
   const initScene = (options: {
+    container: any
     coordinateAxis?: boolean
     cameraPosition: THREE.Vector3
   }) => {
+    const { container, coordinateAxis, cameraPosition } = options
+
     if (!container.value) return
-    const { coordinateAxis, cameraPosition } = options
 
     // 1. 创建Three.js主场景
     scene.value = new THREE.Scene()
