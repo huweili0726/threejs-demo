@@ -6,7 +6,8 @@
       @toTheSurface="handleToTheSurface" 
       @pauseAutoRoam="handlePauseAutoRoam" 
       @continueAutoRoam="handleContinueAutoRoam"
-      @startAutoRoam="handleStartAutoRoam" />
+      @startAutoRoam="handleStartAutoRoam" 
+      @stopAutoRoam="handleStopAutoRoam" />
 
     <!-- 渲染场景 -->
     <ThreeJs 
@@ -67,6 +68,13 @@ const handlePauseAutoRoam = () => {
 const handleContinueAutoRoam = () => {
   threeJsRef.value?.resumeAutoRoam()
 }
+
+// 停止自动漫游
+const handleStopAutoRoam = () => {
+  threeJsRef.value?.stopAutoRoam()
+}
+
+
 
 </script>
 

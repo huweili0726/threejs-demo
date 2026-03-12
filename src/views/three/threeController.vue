@@ -29,6 +29,9 @@
         <div class="controls-content">
           <button @click="toContinue()" class="control-btn">继续</button>
         </div>
+        <div class="controls-content">
+          <button @click="toStop()" class="control-btn">停止</button>
+        </div>
       </div>
     </div>
   </div>
@@ -51,6 +54,7 @@ const emit = defineEmits<{
   (e: 'pauseAutoRoam'): void
   (e: 'continueAutoRoam'): void
   (e: 'startAutoRoam'): void
+  (e: 'stopAutoRoam'): void
 }>()
 
 // 切换楼层
@@ -87,6 +91,10 @@ const toPause = () => {
 
 const toContinue = () => {
   emit('continueAutoRoam')
+}
+
+const toStop = () => {
+  emit('stopAutoRoam')
 }
 
 </script>
