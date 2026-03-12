@@ -35,7 +35,7 @@ interface RoamStart {
   rotationY: number
 }
 
-export function useAutoRoam() {
+export function useAutoRoam(wallBoundingBoxes: any) {
   // 漫游路径点
   const roamPoints = ref<RoamPoint[]>([])
   // 当前漫游点索引
@@ -64,6 +64,8 @@ export function useAutoRoam() {
   let model: THREE.Group | null = null
   // 清理键盘事件的函数
   let cleanupKeyboardEvents: (() => void) | null = null
+  // 记录与碰撞体的上一帧距离
+  const lastWallDistances = new Map<string, number>()
 
   /**
    * 初始化自动漫游
@@ -93,6 +95,59 @@ export function useAutoRoam() {
     cleanupKeyboardEvents = () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
+  }
+
+  /**
+   * 碰撞检测（到达某个模型附近，自动弹窗）
+   * @param characterBox 人物的包围盒
+   * @param wallBoundingBoxes 墙体的包围盒数组
+   * @returns 碰撞检测结果
+   */
+  const isCloseToCollision = (characterBox: THREE.Box3, wallBoundingBoxes: Array<{ box: THREE.Box3; selectMode: { name: string; uuid: string } }>) => {
+    const threshold = 500; // 接近阈值
+    const farThreshold = 200; // 离开阈值（需大于接近阈值，避免抖动）
+    const result = {
+      flag: false, // 是否在接近阈值内
+      box: null as any, // 对应的碰撞体
+      distance: Infinity, // 当前距离
+      isApproaching: false, // 是否正在靠近（当前距离 < 上一帧距离）
+      isLeaving: false, // 是否正在离开（当前距离 > 上一帧距离）
+      isFullyLeft: false // 是否已完全离开（距离 > 离开阈值）
+    };
+
+    // 检查 wallBoundingBoxes 是否为空
+    if (!wallBoundingBoxes || wallBoundingBoxes.length === 0) {
+      return result;
+    }
+
+    for (const wallBox of wallBoundingBoxes) {
+      // 计算人物与碰撞体中心的距离
+      const wallCenter = new THREE.Vector3();
+      wallBox.box.getCenter(wallCenter);
+      const characterCenter = new THREE.Vector3();
+      characterBox.getCenter(characterCenter);
+      const currentDistance = characterCenter.distanceTo(wallCenter);
+
+      // 用碰撞体的唯一标识作为key（这里用selectMode+索引，确保唯一）
+      const wallKey = `${wallBox.selectMode.name}_${wallBox.selectMode.uuid}`;
+      const lastDistance = lastWallDistances.get(wallKey) || Infinity;
+
+      // 判断是否已完全离开
+      result.isFullyLeft = currentDistance > farThreshold;
+
+      if (currentDistance < threshold) {
+        result.flag = true;
+        result.box = wallBox;
+        result.distance = currentDistance;
+        result.isApproaching = currentDistance < lastDistance;
+        result.isLeaving = currentDistance > lastDistance;
+        break;
+      }
+
+      lastWallDistances.set(wallKey, currentDistance);
+    }
+
+    return result;
   }
 
   /**
@@ -300,6 +355,20 @@ export function useAutoRoam() {
       model.position.copy(newPos)
       model.rotation.y = newRotY
 
+      // 碰撞检测（到达某个模型附近，自动弹窗）
+      if (model) {
+        // 计算人物模型的包围盒
+        const characterBox = new THREE.Box3().setFromObject(model)
+        // 执行碰撞检测
+        const collisionResult = isCloseToCollision(characterBox, wallBoundingBoxes.value)
+
+        if (collisionResult.flag) {
+          console.log('🚨 检测到碰撞体接近，距离:', collisionResult.distance)
+          console.log('碰撞体信息:', collisionResult.box.selectMode.name)
+          // 这里可以添加弹窗逻辑
+        }
+      }
+
       // 到达目标点，进入停留状态
       if (progress >= 1) {
         if (currentPoint.stayTime) {
@@ -364,16 +433,17 @@ export function useAutoRoam() {
 
   return {
     // 状态
-    roamPoints,
-    currentPointIndex,
     roamState,
+    currentPointIndex,
+    
     // 方法
     initAutoRoam,
-    loadRoamConfig,
     startAutoRoam,
+    loadRoamConfig,
     pauseAutoRoam,
     resumeAutoRoam,
     stopAutoRoam,
-    updateAutoRoam
+    updateAutoRoam,
+    isCloseToCollision
   }
 }
