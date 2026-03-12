@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import * as THREE from 'three'
-import { onBeforeUnmount, ref, watchEffect, watch } from 'vue'
+import { onBeforeUnmount, ref, watchEffect, watch, onMounted } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 import { useThreeScene } from '@/composables/threeJs/useThreeScene' // 场景相关Hooks
 import { useModelLoader } from '@/composables/threeJs/useModelLoader' // 模型加载相关Hooks
@@ -51,109 +51,105 @@ let basisConfig: any = null // 基础配置
 let wallConfig: any = null // 墙配置
 let threeDimensionalConfig: any = null // 三维模型弹窗信息配置
 
-// 等待基础配置加载完成
-watch(() => basisStore.isLoaded, async (isLoaded) => {
-  if (isLoaded) {
-    basisConfig = await getJsonFile(`${import.meta.env.BASE_URL}/config/basis.jsonc`)
-    wallConfig = await getJsonFile(`${import.meta.env.BASE_URL}/config/wall.jsonc`)
-    threeDimensionalConfig = await getJsonFile(`${import.meta.env.BASE_URL}/config/threeDimensionalDev.jsonc`)
+onMounted(async () => {
+  basisConfig = await getJsonFile(`${import.meta.env.BASE_URL}/config/basis.jsonc`)
+  wallConfig = await getJsonFile(`${import.meta.env.BASE_URL}/config/wall.jsonc`)
+  threeDimensionalConfig = await getJsonFile(`${import.meta.env.BASE_URL}/config/threeDimensionalDev.jsonc`)
 
-    // 1、初始化场景（使用基础配置中的1楼视角）
-    const floor1Config = basisStore.floor1Config
-    const perspective = floor1Config?.perspective || { x: -9, y: 5, z: -15 }
-    const cameraPosition = new THREE.Vector3(perspective?.x || -9, perspective?.y || 5, perspective?.z || -15) 
-    initScene({ container: threeJsContainer, coordinateAxis: true, cameraPosition: cameraPosition }) 
+  // 1、初始化场景（使用基础配置中的1楼视角）
+  const floor1Config = basisStore.floor1Config
+  const perspective = floor1Config?.perspective || { x: -9, y: 5, z: -15 }
+  const cameraPosition = new THREE.Vector3(perspective?.x || -9, perspective?.y || 5, perspective?.z || -15) 
+  initScene({ container: threeJsContainer, coordinateAxis: true, cameraPosition: cameraPosition }) 
 
-    // 2、加载天空盒
-    loadEnvironment( basisConfig.skybox, render ) 
-    // 3、初始化键盘事件监听
-    cleanupKeyboardEvents = initKeyboardEvents()
-    // 4、初始化双击选中功能
-    cleanupSelection = initDoubleClickSelection(
-      {
-        onSelect: (object) => {
-          if (object) {
-            console.log('🎉 双击选中了物体：', object.name)
-            // 这里可以加你自己的逻辑：比如触发开门动画、弹出详情面板、跳转场景等
-          } else {
-            console.log('🗑️  取消选中')
-          }
-        },
-        highlightEnabled: true // 开启蓝色高亮效果
-      }
-    )
+  // 2、加载天空盒
+  loadEnvironment( basisConfig.skybox, render ) 
+  // 3、初始化键盘事件监听
+  cleanupKeyboardEvents = initKeyboardEvents()
+  // 4、初始化双击选中功能
+  cleanupSelection = initDoubleClickSelection(
+    {
+      onSelect: (object) => {
+        if (object) {
+          console.log('🎉 双击选中了物体：', object.name)
+          // 这里可以加你自己的逻辑：比如触发开门动画、弹出详情面板、跳转场景等
+        } else {
+          console.log('🗑️  取消选中')
+        }
+      },
+      highlightEnabled: true // 开启蓝色高亮效果
+    }
+  )
 
-    // 5、初始化双击弹窗功能
-    cleanupPopup = initDoubleClickPopup({
-      // 弹窗数据获取函数 return的内容就是要显示在弹窗上的数据
-      getPopupData: (object: THREE.Object3D) => {
-        // 根据物体名称返回弹窗数据（渲染在弹窗里面的内容）
-        if (object.name) {
-          // 从配置文件中查找对应的弹窗数据
-          const devItem = threeDimensionalConfig?.threeDevs?.find((item: any) => item.meshName === object.name)
-          // 如果找到对应配置，返回弹窗数据
-          if (devItem && devItem.popInfo) {
-            return {
-              id: `popup-${Date.now()}`,
-              title: devItem.popInfo.title,
-              content: devItem.popInfo.content
-            }
-          }
-          // 如果没有找到对应配置，返回默认弹窗数据
-          else{
-            // 默认弹窗数据
-            return {
-              id: `popup-${Date.now()}`,
-              title: object.name,
-              content: [
-                { name: '类型', value: object.type },
-                { name: 'UUID', value: object.uuid.slice(0, 8) + '...' }
-              ]
-            }
+  // 5、初始化双击弹窗功能
+  cleanupPopup = initDoubleClickPopup({
+    // 弹窗数据获取函数 return的内容就是要显示在弹窗上的数据
+    getPopupData: (object: THREE.Object3D) => {
+      // 根据物体名称返回弹窗数据（渲染在弹窗里面的内容）
+      if (object.name) {
+        // 从配置文件中查找对应的弹窗数据
+        const devItem = threeDimensionalConfig?.threeDevs?.find((item: any) => item.meshName === object.name)
+        // 如果找到对应配置，返回弹窗数据
+        if (devItem && devItem.popInfo) {
+          return {
+            id: `popup-${Date.now()}`,
+            title: devItem.popInfo.title,
+            content: devItem.popInfo.content
           }
         }
-        return null
+        // 如果没有找到对应配置，返回默认弹窗数据
+        else{
+          // 默认弹窗数据
+          return {
+            id: `popup-${Date.now()}`,
+            title: object.name,
+            content: [
+              { name: '类型', value: object.type },
+              { name: 'UUID', value: object.uuid.slice(0, 8) + '...' }
+            ]
+          }
+        }
       }
-    })
-
-    // 6、加载模型和包围盒
-    // 加载配置文件中的需要添加包围盒的物体名称
-    let _objectNames = wallConfig?.walls?.map((item: any) => item.name) || []
-    // 加载模型并直接处理包围盒，避免重复遍历
-    const boundingBoxes = await loadModels({
-      ...{
-        modelUrls: basisConfig?.modelUrls || [],
-        scale: 1,
-      },
-      collisionObjectNames: _objectNames
-
-    }).catch(console.error)
-    // 将从 loadModels 返回的包围盒信息设置到碰撞检测模块
-    if (boundingBoxes && boundingBoxes.length > 0) {
-      setBoundingBoxesFromLoadResult(boundingBoxes)
+      return null
     }
+  })
 
-    // 7、设置动画更新回调
-    setAnimationUpdateCallback((deltaTime: number) => {
-      updateAnimations(deltaTime, modelMixers.value)
-      updateCharacterMovement({
-        deltaTime, // ✅ 把外层的时间增量传入
-        modelUrl: peopleModelUrl.value, // ✅ 把外层的模型URL传入
-        moveModel, // ✅ 把外层的移动模型的函数传入
-        loadedModelMaps: loadedModelMaps.value // ✅ 把外层的模型Map传入
-      })
-      // 相机跟随人物
-      if (peopleModelUrl.value && camera.value) {
-        cameraFollowModel( peopleModelUrl.value, camera.value, cameraOffset )
-      }
-      // 更新 CSS2DRenderer
-      updateCSS2DRenderer()
-    })
+  // 6、加载模型和包围盒
+  // 加载配置文件中的需要添加包围盒的物体名称
+  let _objectNames = wallConfig?.walls?.map((item: any) => item.name) || []
+  // 加载模型并直接处理包围盒，避免重复遍历
+  const boundingBoxes = await loadModels({
+    ...{
+      modelUrls: basisConfig?.modelUrls || [],
+      scale: 1,
+    },
+    collisionObjectNames: _objectNames
 
-    // 8、启动动画循环
-    startAnimationLoop()
-
+  }).catch(console.error)
+  // 将从 loadModels 返回的包围盒信息设置到碰撞检测模块
+  if (boundingBoxes && boundingBoxes.length > 0) {
+    setBoundingBoxesFromLoadResult(boundingBoxes)
   }
+
+  // 7、设置动画更新回调
+  setAnimationUpdateCallback((deltaTime: number) => {
+    updateAnimations(deltaTime, modelMixers.value)
+    updateCharacterMovement({
+      deltaTime, // ✅ 把外层的时间增量传入
+      modelUrl: peopleModelUrl.value, // ✅ 把外层的模型URL传入
+      moveModel, // ✅ 把外层的移动模型的函数传入
+      loadedModelMaps: loadedModelMaps.value // ✅ 把外层的模型Map传入
+    })
+    // 相机跟随人物
+    if (peopleModelUrl.value && camera.value) {
+      cameraFollowModel( peopleModelUrl.value, camera.value, cameraOffset )
+    }
+    // 更新 CSS2DRenderer
+    updateCSS2DRenderer()
+  })
+
+  // 8、启动动画循环
+  startAnimationLoop()
 })
 
 // 监听窗口大小变化

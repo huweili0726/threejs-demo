@@ -9,21 +9,26 @@
  */
 import * as THREE from 'three'
 import { ref } from 'vue'
+import { useBasisStore } from '@/stores/basis'
 
 export function useCharacterMovement( 
   checkCollision: (characterBox: THREE.Box3) => boolean, // 检查碰撞函数
   updateBoundingBoxes: () => void // 更新碰撞框函数
 ) {
+  // 获取 store 实例（在函数内部获取，确保 Pinia 已初始化）
+  const basisStore = useBasisStore()
+
   // 控制变量
   const keysPressed = ref<Set<string>>(new Set())
   // 按键按下时间记录
   const keyDownTime = ref<Record<string, number>>({})
+
   // 最大速度倍数
-  const MAX_SPEED_MULTIPLIER = 6
+  const MAX_SPEED_MULTIPLIER = basisStore.characterModelMoveConfig?.MAX_SPEED_MULTIPLIER || 6
   // 加速时间阈值（毫秒）
-  const ACCELERATION_THRESHOLD = 500
+  const ACCELERATION_THRESHOLD = basisStore.characterModelMoveConfig?.ACCELERATION_THRESHOLD || 500
   // 加速度因子
-  const ACCELERATION_FACTOR = 0.01
+  const ACCELERATION_FACTOR = basisStore.characterModelMoveConfig?.ACCELERATION_FACTOR || 0.01
 
   // 初始化键盘事件监听
   const initKeyboardEvents = () => {

@@ -28,6 +28,16 @@ interface FloorConfig {
 
 // 基础配置接口
 interface BasisConfig {
+  // 天空盒
+  skybox?: string
+  // 需要加载的模型集合
+  modelUrls?: string[]
+  // 人物模型移动配置
+  characterModelMove?: {
+    MAX_SPEED_MULTIPLIER: number
+    ACCELERATION_THRESHOLD: number
+    ACCELERATION_FACTOR: number
+  }
   floor_1th: FloorConfig
   floor_neg1: FloorConfig
   floor_8th: FloorConfig
@@ -40,6 +50,7 @@ export const useBasisStore = defineStore('basis', () => {
   const isLoaded = ref(false)
 
   // Getters
+  const characterModelMoveConfig = computed(() => basisConfig.value?.characterModelMove)
   const floor1Config = computed(() => basisConfig.value?.floor_1th)
   const neg1FloorConfig = computed(() => basisConfig.value?.floor_neg1)
   const floor8thConfig = computed(() => basisConfig.value?.floor_8th)
@@ -56,33 +67,6 @@ export const useBasisStore = defineStore('basis', () => {
   }
 
   /**
-   * 获取指定楼层的视角配置
-   * @param floorKey 楼层键名，如 'floor_1th', 'floor_neg1' 等
-   * @returns 楼层配置
-   */
-  function getFloorConfig(floorKey: keyof BasisConfig): FloorConfig | undefined {
-    return basisConfig.value?.[floorKey]
-  }
-
-  /**
-   * 获取指定楼层的视角位置
-   * @param floorKey 楼层键名
-   * @returns 视角配置
-   */
-  function getFloorPerspective(floorKey: keyof BasisConfig): PerspectiveConfig | undefined {
-    return basisConfig.value?.[floorKey]?.perspective
-  }
-
-  /**
-   * 获取指定楼层的看向方向
-   * @param floorKey 楼层键名
-   * @returns 看向方向配置
-   */
-  function getFloorDirectionToLook(floorKey: keyof BasisConfig): PerspectiveConfig | undefined {
-    return basisConfig.value?.[floorKey]?.directionToLook
-  }
-
-  /**
    * 清除配置
    */
   function clearConfig() {
@@ -95,15 +79,13 @@ export const useBasisStore = defineStore('basis', () => {
     basisConfig,
     isLoaded,
     // Getters
+    characterModelMoveConfig,
     floor1Config,
     neg1FloorConfig,
     floor8thConfig,
     floor9thConfig,
     // Actions
     setBasisConfig,
-    getFloorConfig,
-    getFloorPerspective,
-    getFloorDirectionToLook,
     clearConfig
   }
 })
