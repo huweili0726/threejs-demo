@@ -51,21 +51,27 @@ let cleanupPopup: (() => void) | null = null // 清理双击弹窗事件的函�
 let wallConfig: any = null // 墙配置
 let threeDimensionalConfig: any = null // 三维模型弹窗信息配置
 
+// 监听窗口大小变化
+watchEffect(() => {
+  onWindowResize() // 窗口大小改变时更新相机和渲染器
+  handleResize(width.value, height.value) // 更新 CSS2DRenderer
+})
+
 onMounted(async () => {
   wallConfig = await getJsonFile(`${import.meta.env.BASE_URL}/config/wall.jsonc`)
   threeDimensionalConfig = await getJsonFile(`${import.meta.env.BASE_URL}/config/threeDimensionalDev.jsonc`)
 
-  // 1、初始化场景（使用基础配置中的1楼视角）
+  // 【1、初始化场景（使用基础配置中的1楼视角）】
   const floor1Config = basisStore.floor1Config
   const perspective = floor1Config?.perspective || { x: -9, y: 5, z: -15 }
   const cameraPosition = new THREE.Vector3(perspective?.x || -9, perspective?.y || 5, perspective?.z || -15) 
   initScene({ container: threeJsContainer, coordinateAxis: true, cameraPosition: cameraPosition }) 
 
-  // 2、加载天空盒
+  // 【2、加载天空盒】
   loadEnvironment( basisStore.skyboxUrlConfig, render ) 
-  // 3、初始化键盘事件监听
+  // 【3、初始化键盘事件监听】
   cleanupKeyboardEvents = initKeyboardEvents()
-  // 4、初始化双击选中功能
+  // 【4、初始化双击选中功能】
   cleanupSelection = initDoubleClickSelection(
     {
       onSelect: (object) => {
@@ -80,7 +86,7 @@ onMounted(async () => {
     }
   )
 
-  // 5、初始化双击弹窗功能
+  // 【5、初始化双击弹窗功能】
   cleanupPopup = initDoubleClickPopup({
     // 弹窗数据获取函数 return的内容就是要显示在弹窗上的数据
     getPopupData: (object: THREE.Object3D) => {
@@ -113,7 +119,7 @@ onMounted(async () => {
     }
   })
 
-  // 6、加载模型和包围盒
+  // 【6、加载模型和包围盒】
   // 加载配置文件中的需要添加包围盒的物体名称
   let _objectNames = wallConfig?.walls?.map((item: any) => item.name) || []
   // 加载模型并直接处理包围盒，避免重复遍历
@@ -130,10 +136,10 @@ onMounted(async () => {
     setBoundingBoxesFromLoadResult(boundingBoxes)
   }
 
-  // 7、加载漫游配置并启动自动漫游
+  // 【7、加载漫游配置并启动自动漫游】
   await loadRoamConfig()
   
-  // 8、设置动画更新回调
+  // 【8、设置动画更新回调】
   setAnimationUpdateCallback((deltaTime: number) => {
     updateAnimations(deltaTime, modelMixers.value)
     updateCharacterMovement({
@@ -152,31 +158,8 @@ onMounted(async () => {
     updateCSS2DRenderer()
   })
 
-  // 8、启动动画循环
+  // 【9、启动动画循环】
   startAnimationLoop()
-})
-
-// 监听窗口大小变化
-watchEffect(() => {
-  onWindowResize() // 窗口大小改变时更新相机和渲染器
-  handleResize(width.value, height.value) // 更新 CSS2DRenderer
-})
-
-// 组件卸载时清理
-onBeforeUnmount(() => {
-  stopAnimationLoop()
-  // 清理键盘事件监听
-  if (cleanupKeyboardEvents) {
-    cleanupKeyboardEvents()
-  }
-  // 清理双击选中功能
-  if (cleanupSelection) {
-    cleanupSelection()
-  }
-  // 清理双击弹窗功能
-  if (cleanupPopup) {
-    cleanupPopup()
-  }
 })
 
 // 为人物模型添加碰撞检测包围盒
@@ -206,6 +189,23 @@ const loadCharacterModelAndStartRoam = async () => {
     console.error('❌ 加载人物模型或启动自动漫游失败：', error)
   }
 }
+
+// 组件卸载时清理
+onBeforeUnmount(() => {
+  stopAnimationLoop()
+  // 清理键盘事件监听
+  if (cleanupKeyboardEvents) {
+    cleanupKeyboardEvents()
+  }
+  // 清理双击选中功能
+  if (cleanupSelection) {
+    cleanupSelection()
+  }
+  // 清理双击弹窗功能
+  if (cleanupPopup) {
+    cleanupPopup()
+  }
+})
 
 // 暴露方法给父组件
 defineExpose({
