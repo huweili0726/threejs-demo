@@ -50,6 +50,8 @@ export const useBasisStore = defineStore('basis', () => {
   const isLoaded = ref(false)
 
   // Getters
+  const modelUrlsConfig = computed(() => basisConfig.value?.modelUrls)
+  const skyboxUrlConfig = computed(() => basisConfig.value?.skybox)
   const characterModelMoveConfig = computed(() => basisConfig.value?.characterModelMove)
   const floor1Config = computed(() => basisConfig.value?.floor_1th)
   const neg1FloorConfig = computed(() => basisConfig.value?.floor_neg1)
@@ -79,6 +81,8 @@ export const useBasisStore = defineStore('basis', () => {
     basisConfig,
     isLoaded,
     // Getters
+    modelUrlsConfig,
+    skyboxUrlConfig,
     characterModelMoveConfig,
     floor1Config,
     neg1FloorConfig,

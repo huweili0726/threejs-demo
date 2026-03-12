@@ -47,12 +47,10 @@ let cleanupSelection: (() => void) | null = null // 清理双击选中事件的�
 let cleanupPopup: (() => void) | null = null // 清理双击弹窗事件的函数
 
 // 配置数据
-let basisConfig: any = null // 基础配置
 let wallConfig: any = null // 墙配置
 let threeDimensionalConfig: any = null // 三维模型弹窗信息配置
 
 onMounted(async () => {
-  basisConfig = await getJsonFile(`${import.meta.env.BASE_URL}/config/basis.jsonc`)
   wallConfig = await getJsonFile(`${import.meta.env.BASE_URL}/config/wall.jsonc`)
   threeDimensionalConfig = await getJsonFile(`${import.meta.env.BASE_URL}/config/threeDimensionalDev.jsonc`)
 
@@ -63,7 +61,7 @@ onMounted(async () => {
   initScene({ container: threeJsContainer, coordinateAxis: true, cameraPosition: cameraPosition }) 
 
   // 2、加载天空盒
-  loadEnvironment( basisConfig.skybox, render ) 
+  loadEnvironment( basisStore.skyboxUrlConfig, render ) 
   // 3、初始化键盘事件监听
   cleanupKeyboardEvents = initKeyboardEvents()
   // 4、初始化双击选中功能
@@ -120,7 +118,7 @@ onMounted(async () => {
   // 加载模型并直接处理包围盒，避免重复遍历
   const boundingBoxes = await loadModels({
     ...{
-      modelUrls: basisConfig?.modelUrls || [],
+      modelUrls: basisStore.modelUrlsConfig || [],
       scale: 1,
     },
     collisionObjectNames: _objectNames
