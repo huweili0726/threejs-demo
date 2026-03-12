@@ -53,11 +53,9 @@ let threeDimensionalConfig: any = null // 三维模型弹窗信息配置
 
 const props = withDefaults(
   defineProps<{
-    skyBoxUrl?: string  // 天空盒路径
     loadModel?: any | null // 加载单个模型指令
   }>(),
   {
-    skyBoxUrl: undefined,
     loadModel: null
   }
 )
@@ -92,7 +90,7 @@ watch(() => basisStore.isLoaded, async (isLoaded) => {
     initScene({ container: threeJsContainer, coordinateAxis: true, cameraPosition: cameraPosition }) 
 
     // 2、加载天空盒
-    loadEnvironment( `/hdr/sky.hdr`, render ) 
+    loadEnvironment( basisConfig.skybox, render ) 
     // 3、初始化键盘事件监听
     cleanupKeyboardEvents = initKeyboardEvents()
     // 4、初始化双击选中功能

@@ -1,4 +1,6 @@
 {
+  // 天空盒
+  "skybox": "hdr/sky.hdr",
   // 需要加载的模型集合
   "modelUrls": [
     "glb/groundFloorOfficeBuilding.glb",
