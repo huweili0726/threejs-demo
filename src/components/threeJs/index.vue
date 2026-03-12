@@ -42,7 +42,6 @@ const { initDoubleClickPopup, updateCSS2DRenderer, handleResize } = useObjectPop
 const { initAutoRoam, loadRoamConfig, startAutoRoam, stopAutoRoam, updateAutoRoam } = useAutoRoam()
 
 // 控制变量
-const peopleModelUrl = ref<string>('glb/man.glb') // 当前加载的人物模型URL
 const cameraOffset = new THREE.Vector3(0, 0.1, -0.12) // 相机偏移量（在模型后方，稍微上方）
 let cleanupKeyboardEvents: (() => void) | null = null // 清理键盘事件的函数
 let cleanupSelection: (() => void) | null = null // 清理双击选中事件的函数
@@ -139,15 +138,15 @@ onMounted(async () => {
     updateAnimations(deltaTime, modelMixers.value)
     updateCharacterMovement({
       deltaTime, // ✅ 把外层的时间增量传入
-      modelUrl: peopleModelUrl.value, // ✅ 把外层的模型URL传入
+      modelUrl: basisStore.characterModelUrlsConfig?.man || '', // ✅ 把外层的模型URL传入
       moveModel, // ✅ 把外层的移动模型的函数传入
       loadedModelMaps: loadedModelMaps.value // ✅ 把外层的模型Map传入
     })
     // 更新自动漫游
     updateAutoRoam(deltaTime)
     // 相机跟随人物
-    if (peopleModelUrl.value && camera.value) {
-      cameraFollowModel( peopleModelUrl.value, camera.value, cameraOffset )
+    if (basisStore.characterModelUrlsConfig?.man && camera.value) {
+      cameraFollowModel( basisStore.characterModelUrlsConfig?.man, camera.value, cameraOffset )
     }
     // 更新 CSS2DRenderer
     updateCSS2DRenderer()
@@ -185,7 +184,7 @@ const toAddCharacterBoundingBox = () => {
   if (scene.value) {
     addCharacterBoundingBox({
       scene: scene.value,
-      modelUrl: `glb/man.glb`,
+      modelUrl: basisStore.characterModelUrlsConfig?.man || '',
       loadedModelMaps: loadedModelMaps.value
     })
   }
@@ -194,9 +193,8 @@ const toAddCharacterBoundingBox = () => {
 // 加载人物模型并启动自动漫游
 const loadCharacterModelAndStartRoam = async () => {
   try {
-    const modelUrl = `glb/man.glb`
     // 获取加载的模型
-    const model = loadedModelMaps.value.get(modelUrl)
+    const model = loadedModelMaps.value.get(basisStore.characterModelUrlsConfig?.man || '')
     if (model && scene.value) {
       // 初始化自动漫游
       initAutoRoam(model)

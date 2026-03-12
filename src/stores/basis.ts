@@ -32,6 +32,7 @@ interface BasisConfig {
   skybox?: string
   // 需要加载的模型集合
   modelUrls?: string[]
+  characterModelUrls: Record<string, string>
   // 人物模型移动配置
   characterModelMove?: {
     MAX_SPEED_MULTIPLIER: number
@@ -50,6 +51,7 @@ export const useBasisStore = defineStore('basis', () => {
   const isLoaded = ref(false)
 
   // Getters
+  const characterModelUrlsConfig = computed(() => basisConfig.value?.characterModelUrls)
   const modelUrlsConfig = computed(() => basisConfig.value?.modelUrls)
   const skyboxUrlConfig = computed(() => basisConfig.value?.skybox)
   const characterModelMoveConfig = computed(() => basisConfig.value?.characterModelMove)
@@ -81,6 +83,7 @@ export const useBasisStore = defineStore('basis', () => {
     basisConfig,
     isLoaded,
     // Getters
+    characterModelUrlsConfig,
     modelUrlsConfig,
     skyboxUrlConfig,
     characterModelMoveConfig,

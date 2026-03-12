@@ -12,6 +12,11 @@
     "glb/配电干线.glb",
     "glb/消防给水.glb"
   ],
+  // 人物模型URL集合
+  "characterModelUrls": {
+    "man": "glb/man.glb",
+    "woman": "glb/woman.glb"
+  },
   // 人物模型移动配置
   "characterModelMove": {
     "MAX_SPEED_MULTIPLIER": 6,

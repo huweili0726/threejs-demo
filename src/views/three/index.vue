@@ -16,11 +16,13 @@ import * as THREE from 'three'
 import { ref } from 'vue'
 import ThreeJs from '@/components/threeJs/index.vue'
 import ThreeController from '@/views/three/threeController.vue'
+import { useBasisStore } from '@/stores/basis'
 
 const threeJsRef = ref<typeof ThreeJs>()
+const basisStore = useBasisStore()
 
 const handleToTheSurface = async (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3) => {
-  await threeJsRef.value?.removeModel('glb/man.glb')?.catch(console.error)
+  await threeJsRef.value?.removeModel(basisStore.characterModelUrlsConfig?.man || '')?.catch(console.error)
   await threeJsRef.value?.flyTo?.(targetPosition, targetTarget, 2000)?.catch(console.error)
 }
 
@@ -34,7 +36,7 @@ const handleToBottomfloorAndLoadcharacterModel = async (
 ) => {
   await threeJsRef.value?.flyTo?.(targetPosition, targetTarget, duration)?.catch(console.error)
   await threeJsRef.value?.loadModel({
-    modelUrl: 'glb/man.glb',
+    modelUrl: basisStore.characterModelUrlsConfig?.man || '',
     scale: 0.0005,
     modelInitPosition: modelInitPosition || { x: 0, y: 0, z: 0 },
     onLookAt: onLookAt || { x: 0, y: 0, z: 0 },
