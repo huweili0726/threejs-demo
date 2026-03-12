@@ -62,6 +62,8 @@ export function useAutoRoam() {
 
   // 模型引用
   let model: THREE.Group | null = null
+  // 清理键盘事件的函数
+  let cleanupKeyboardEvents: (() => void) | null = null
 
   /**
    * 初始化自动漫游
@@ -69,6 +71,28 @@ export function useAutoRoam() {
    */
   const initAutoRoam = (modelInstance: THREE.Group) => {
     model = modelInstance
+    // 初始化键盘事件监听
+    initKeyboardEvents()
+  }
+
+  /**
+   * 初始化键盘事件监听
+   */
+  const initKeyboardEvents = () => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Esc 键退出漫游
+      if (event.key === 'Escape') {
+        stopAutoRoam()
+        console.log('🚪 按下 Esc 键退出自动漫游')
+      }
+    }
+    
+    window.addEventListener('keydown', handleKeyDown)
+    
+    // 保存清理函数
+    cleanupKeyboardEvents = () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
   }
 
   /**
@@ -169,6 +193,35 @@ export function useAutoRoam() {
     velocity.value.set(0, 0, 0) // 停止移动
     currentPointIndex.value = 0 // 重置到第一个点
     stayStartTime.value = 0 // 重置停留计时
+    
+    // 将模型重置到第一个点的位置和旋转
+    if (model && roamPoints.value.length > 0) {
+      const firstPoint = roamPoints.value[0]
+      const targetPos = new THREE.Vector3(
+        firstPoint.position.x,
+        firstPoint.position.y,
+        firstPoint.position.z
+      )
+      
+      // 解析旋转值
+      let targetRotY = 0
+      try {
+        targetRotY = eval(firstPoint.rotation.y)
+      } catch (error) {
+        console.error('❌ 旋转值解析失败：', firstPoint.rotation.y)
+        targetRotY = 0
+      }
+      
+      model.position.copy(targetPos)
+      model.rotation.y = targetRotY
+      console.log('🔄 模型已重置到第一个点位置')
+    }
+    
+    // 清理键盘事件
+    if (cleanupKeyboardEvents) {
+      cleanupKeyboardEvents()
+      cleanupKeyboardEvents = null
+    }
     
     console.log('⏹️ 停止自动漫游')
   }
