@@ -141,32 +141,9 @@ watch(() => basisStore.isLoaded, async (isLoaded) => {
       }
     })
 
-    // 6、设置动画更新回调
-    setAnimationUpdateCallback((deltaTime: number) => {
-      updateAnimations(deltaTime, modelMixers.value)
-      updateCharacterMovement({
-        deltaTime, // ✅ 把外层的时间增量传入
-        modelUrl: peopleModelUrl.value, // ✅ 把外层的模型URL传入
-        moveModel, // ✅ 把外层的移动模型的函数传入
-        loadedModelMaps: loadedModelMaps.value // ✅ 把外层的模型Map传入
-      })
-      // 相机跟随人物
-      if (peopleModelUrl.value && camera.value) {
-        cameraFollowModel( peopleModelUrl.value, camera.value, cameraOffset )
-      }
-      // 更新 CSS2DRenderer
-      updateCSS2DRenderer()
-    })
-
-    // 7、启动动画循环
-    startAnimationLoop()
-
-
-
-
+    // 6、加载模型和包围盒
     // 加载配置文件中的需要添加包围盒的物体名称
     let _objectNames = wallConfig?.walls?.map((item: any) => item.name) || []
-
     // 加载模型并直接处理包围盒，避免重复遍历
     const boundingBoxes = await loadModels({
       ...{
@@ -183,13 +160,32 @@ watch(() => basisStore.isLoaded, async (isLoaded) => {
         scale: 1,
       },
       collisionObjectNames: _objectNames
-  
-    }).catch(console.error)
 
+    }).catch(console.error)
     // 将从 loadModels 返回的包围盒信息设置到碰撞检测模块
     if (boundingBoxes && boundingBoxes.length > 0) {
       setBoundingBoxesFromLoadResult(boundingBoxes)
     }
+
+    // 7、设置动画更新回调
+    setAnimationUpdateCallback((deltaTime: number) => {
+      updateAnimations(deltaTime, modelMixers.value)
+      updateCharacterMovement({
+        deltaTime, // ✅ 把外层的时间增量传入
+        modelUrl: peopleModelUrl.value, // ✅ 把外层的模型URL传入
+        moveModel, // ✅ 把外层的移动模型的函数传入
+        loadedModelMaps: loadedModelMaps.value // ✅ 把外层的模型Map传入
+      })
+      // 相机跟随人物
+      if (peopleModelUrl.value && camera.value) {
+        cameraFollowModel( peopleModelUrl.value, camera.value, cameraOffset )
+      }
+      // 更新 CSS2DRenderer
+      updateCSS2DRenderer()
+    })
+
+    // 8、启动动画循环
+    startAnimationLoop()
 
   }
 })
