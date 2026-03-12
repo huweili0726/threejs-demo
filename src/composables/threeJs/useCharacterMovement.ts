@@ -19,7 +19,7 @@ export function useCharacterMovement(
   // 按键按下时间记录
   const keyDownTime = ref<Record<string, number>>({})
   // 最大速度倍数
-  const MAX_SPEED_MULTIPLIER = 3
+  const MAX_SPEED_MULTIPLIER = 6
   // 加速时间阈值（毫秒）
   const ACCELERATION_THRESHOLD = 500
   // 加速度因子
