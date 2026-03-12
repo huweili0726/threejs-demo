@@ -2,7 +2,7 @@
   // 需要加载的模型集合
   "modelUrls": [
     "glb/groundFloorOfficeBuilding.glb",
-    "glb/underGround.glb",
+    "glb/underGround1.glb",
     "glb/shu.glb",
     "glb/8th_floor.glb",
     "glb/9th_floor.glb",
@@ -17,10 +17,10 @@
   },
   // -1楼初始视角配置
   "floor_neg1": {
-    "perspective": { "x": -2, "y": -1.7, "z": 3.06 }, 
+    "perspective": { "x": -2.8, "y": -1.7, "z": 3.06 }, 
     "directionToLook": { "x": 0, "y": -1.7, "z": 3.06 },
     "durationTime": 2000, // 切换视角的动画时长（毫秒）
-    "characterModelSetPosition": { "x": -1.8, "y": -1.8, "z": 3.06 }, // 人物模型位置（与视角同步）
+    "characterModelSetPosition": { "x": -2.6, "y": -1.8, "z": 3.06 }, // 人物模型位置（与视角同步）
     "characterModelToLook": { "x": 0, "y": -1.8, "z": 3.06 } // 人物模型看向方向（与视角同步）
   },
   // 8楼初始视角配置

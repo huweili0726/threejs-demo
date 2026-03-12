@@ -1,8 +1,29 @@
 {
   // 需要进行碰撞检测的物体
   "walls": [
-    // { "name": "Cube109_1" },
-    // { "name": "Cube072" },
-    // { "name": "Cube019_1" }
+    // { "name": "Cube099_1" },
+    // { "name": "Cube1531" },
+    // { "name": "Cube1536" },
+    // { "name": "Cube1541" },
+
+    { "name": "Cube080" },
+    { "name": "Cube1096" },
+    { "name": "Cube1095" },
+    { "name": "Cube069" },
+
+    { "name": "Cube072" },
+    { "name": "Cube074" },
+    { "name": "Cube073" },
+    { "name": "Cube070" },
+
+    { "name": "Cube1113" },
+    { "name": "Cube1115" },
+    { "name": "Cube1114" },
+    { "name": "Cube075" },
+
+    { "name": "Cube1118" },
+    { "name": "Cube1120" },
+    { "name": "Cube1119" },
+    { "name": "Cube1116" }
   ]
 }
