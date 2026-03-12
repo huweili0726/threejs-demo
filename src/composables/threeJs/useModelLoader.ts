@@ -51,10 +51,11 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
         return
       }
 
-      // 检查模型是否已经加载过，如果已加载则先移除旧模型
+      // 检查模型是否已经加载过，如果已加载则直接返回
       if (loadedModelMaps.value.has(modelUrl)) {
-        console.log(`⚠️ 模型 ${modelUrl} 已加载，先移除旧模型`)
-        removeModel(modelUrl)
+        console.log(`⚠️ 模型 ${modelUrl} 已加载，跳过重复加载`)
+        resolve([])
+        return
       }
 
       const loader = new GLTFLoader()
