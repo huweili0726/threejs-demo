@@ -7,6 +7,7 @@
 
     <!-- 渲染场景 -->
     <ThreeJs 
+      ref="threeJsRef"
       :loadModel="pendingLoadSingleModel" />
   </div>
 </template>
@@ -16,14 +17,15 @@ import * as THREE from 'three'
 import { ref } from 'vue'
 import ThreeJs from '@/components/threeJs/index.vue'
 import ThreeController from '@/views/three/threeController.vue'
-import { useThreeScene } from '@/composables/threeJs/useThreeScene' // 场景相关Hooks
-const { flyTo } = useThreeScene()
 
 // 定义需要加载的模型配置
 const pendingLoadSingleModel = ref<any>(null)
+const threeJsRef = ref<InstanceType<typeof ThreeJs>>()
 
 const handleToTheSurface = async (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3) => {
-  await flyTo(targetPosition, targetTarget, 2000).catch(console.error)
+  if (threeJsRef.value?.flyTo) {
+    await threeJsRef.value.flyTo(targetPosition, targetTarget, 2000).catch(console.error)
+  }
 }
 
 // 飞行到-1楼入口处 同时加载人物模型
@@ -43,7 +45,9 @@ const handleToBottomfloorAndLoadcharacterModel = async (
     frontAxis: new THREE.Vector3(0, 0, 1),
   }
 
-  await flyTo(targetPosition, targetTarget, duration).catch(console.error)
+  if (threeJsRef.value?.flyTo) {
+    await threeJsRef.value.flyTo(targetPosition, targetTarget, duration).catch(console.error)
+  }
 }
 
 </script>

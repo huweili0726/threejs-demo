@@ -31,7 +31,7 @@ const { width, height } = useWindowSize()
 // 使用基础配置 Store
 const basisStore = useBasisStore()
 
-const { scene, camera, initScene, render, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize } = useThreeScene()
+const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize } = useThreeScene()
 const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel, removeModel } = useModelLoader(scene as any, render)
 const { loadEnvironment } = useEnvironmentLoader(scene as any)
 const { checkCollision, updateBoundingBoxes, setBoundingBoxesFromLoadResult, addCharacterBoundingBox } = useCollisionDetection() 
@@ -206,7 +206,8 @@ onBeforeUnmount(() => {
 
 // 暴露方法给父组件
 defineExpose({
-  loadModel
+  loadModel,
+  flyTo
 })
 </script>
 
