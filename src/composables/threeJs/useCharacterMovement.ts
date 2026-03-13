@@ -10,10 +10,47 @@
 import * as THREE from 'three'
 import { ref } from 'vue'
 import { useBasisStore } from '@/stores/basis'
+import { jsonUtils } from '@/utils/json'
+
+// 三维设备配置接口
+interface ThreeDev {
+  id: string
+  meshName: string
+  type: string
+  popInfo?: {
+    title: string
+    content: Array<{ name: string; value: string }>
+  }
+}
+
+// 三维设备配置
+let threeDevs: ThreeDev[] = []
+
+// 加载三维设备配置
+const loadThreeDevConfig = async () => {
+  try {
+    const { getJsonFile } = jsonUtils()
+    const config = await getJsonFile(`${import.meta.env.BASE_URL}/config/threeDimensionalDev.jsonc`)
+    if (config && config.threeDevs) {
+      threeDevs = config.threeDevs
+      console.log('✅ 三维设备配置加载完成，共', threeDevs.length, '个设备')
+    } else {
+      console.error('❌ 三维设备配置加载失败：配置格式不正确')
+    }
+  } catch (error) {
+    console.error('❌ 三维设备配置加载失败：', error)
+  }
+}
+
+// 初始化时加载配置
+loadThreeDevConfig()
 
 export function useCharacterMovement( 
   checkCollision: (characterBox: THREE.Box3) => boolean, // 检查碰撞函数
-  updateBoundingBoxes: () => void // 更新碰撞框函数
+  updateBoundingBoxes: () => void, // 更新碰撞框函数
+  wallBoundingBoxes?: any, // 墙体包围盒数组
+  showPopup?: any, // 显示弹窗函数
+  closePopup?: any // 关闭弹窗函数
 ) {
   // 获取 store 实例（在函数内部获取，确保 Pinia 已初始化）
   const basisStore = useBasisStore()
@@ -22,6 +59,10 @@ export function useCharacterMovement(
   const keysPressed = ref<Set<string>>(new Set())
   // 按键按下时间记录
   const keyDownTime = ref<Record<string, number>>({})
+  // 记录与碰撞体的上一帧距离
+  const lastWallDistances = new Map<string, number>()
+  // 记录当前显示弹窗的物体
+  const visiblePopupObjects = ref<Set<string>>(new Set())
 
   // 最大速度倍数
   const MAX_SPEED_MULTIPLIER = basisStore.characterModelMoveConfig?.MAX_SPEED_MULTIPLIER || 6
@@ -29,6 +70,58 @@ export function useCharacterMovement(
   const ACCELERATION_THRESHOLD = basisStore.characterModelMoveConfig?.ACCELERATION_THRESHOLD || 500
   // 加速度因子
   const ACCELERATION_FACTOR = basisStore.characterModelMoveConfig?.ACCELERATION_FACTOR || 0.01
+
+  /**
+   * 碰撞检测（到达某个模型附近，自动弹窗）
+   * @param characterBox 人物的包围盒
+   * @param wallBoundingBoxes 墙体的包围盒数组
+   * @returns 碰撞检测结果
+   */
+  const isCloseToCollision = (characterBox: THREE.Box3, wallBoundingBoxes: Array<{ box: THREE.Box3; selectMode: { name: string; uuid: string }; isStairs?: boolean }>) => {
+    const threshold = 0.3; // 接近阈值（调整为与实际距离单位匹配）
+    const farThreshold = 0.35; // 离开阈值（需大于接近阈值，避免抖动）
+    const result = {
+      flag: false, // 是否在接近阈值内
+      boxes: [] as Array<{ box: any; distance: number }>, // 所有在阈值内的碰撞体
+      farBoxes: [] as Array<{ box: any; distance: number }>, // 所有在离开阈值外的碰撞体
+      distance: Infinity, // 当前距离
+      isApproaching: false, // 是否正在靠近（当前距离 < 上一帧距离）
+      isLeaving: false, // 是否正在离开（当前距离 > 上一帧距离）
+      isFullyLeft: false // 是否已完全离开（距离 > 离开阈值）
+    };
+
+    // 检查 wallBoundingBoxes 是否为空
+    if (!wallBoundingBoxes || wallBoundingBoxes.length === 0) {
+      console.log('⚠️  wallBoundingBoxes 为空，无法进行碰撞检测')
+      return result;
+    }
+
+    for (const wallBox of wallBoundingBoxes) {
+      // 计算人物与碰撞体中心的距离
+      const wallCenter = new THREE.Vector3();
+      wallBox.box.getCenter(wallCenter);
+      const characterCenter = new THREE.Vector3();
+      characterBox.getCenter(characterCenter);
+      const currentDistance = characterCenter.distanceTo(wallCenter);
+
+      // 用碰撞体的唯一标识作为key（这里用selectMode+索引，确保唯一）
+      const wallKey = `${wallBox.selectMode.name}_${wallBox.selectMode.uuid}`;
+
+      // 检查是否在接近阈值内
+      if (currentDistance < threshold) {
+        result.flag = true;
+        result.boxes.push({ box: wallBox, distance: currentDistance });
+      } 
+      // 检查是否在离开阈值外
+      else if (currentDistance > farThreshold) {
+        result.farBoxes.push({ box: wallBox, distance: currentDistance });
+      }
+
+      lastWallDistances.set(wallKey, currentDistance);
+    }
+
+    return result;
+  }
 
   // 初始化键盘事件监听
   const initKeyboardEvents = () => {
@@ -172,6 +265,95 @@ export function useCharacterMovement(
     
     // 更新所有包围盒的位置
     updateBoundingBoxes()
+    
+    // 碰撞检测（到达某个模型附近，自动弹窗）
+    if (model && wallBoundingBoxes && showPopup && closePopup) {
+      
+      // 计算人物模型的包围盒
+      const characterBox = new THREE.Box3().setFromObject(model)
+      // 执行碰撞检测
+      const collisionResult = isCloseToCollision(characterBox, wallBoundingBoxes.value)
+      
+      // 记录当前帧中接近的物体
+      const currentCloseObjects = new Set<string>()
+      // 记录当前帧中离开的物体（超过farThreshold）
+      const currentFarObjects = new Set<string>()
+      
+      if (collisionResult.flag) {
+        // 显示所有接近物体的弹窗
+        if (showPopup && model.parent) {
+          // 为每个接近的物体显示弹窗
+          for (const item of collisionResult.boxes) {
+            const wallBox = item.box
+            console.log('11接近物体：', wallBox.selectMode.name, wallBox)
+            const distance = item.distance
+            const objectUuid = wallBox.selectMode.uuid
+            
+            // 记录当前接近的物体
+            currentCloseObjects.add(objectUuid)
+            
+            // 从场景中找到对应的物体
+            const targetObject = model.parent.getObjectByProperty('uuid', objectUuid)
+            if (targetObject) {
+              // 显示弹窗
+              let popupData
+              if (wallBox.isStairs) {
+                console.log('楼梯', wallBox.selectMode.name)
+                // 楼梯特殊弹窗
+                popupData = {
+                  id: `popup-${objectUuid}`,
+                  title: '楼梯',
+                  content: [
+                    { name: '提示', value: '是否愿意上二楼？' }
+                  ]
+                }
+              } else {
+                // 查找三维设备配置
+                const threeDev = threeDevs.find(dev => dev.meshName === wallBox.selectMode.name)
+                if (threeDev && threeDev.popInfo) {
+                  // 使用三维设备配置的弹窗内容
+                  popupData = {
+                    id: `popup-${objectUuid}`,
+                    title: threeDev.popInfo.title,
+                    content: threeDev.popInfo.content
+                  }
+                } else {
+                  // 普通物体弹窗
+                  popupData = {
+                    id: `popup-${objectUuid}`,
+                    title: wallBox.selectMode.name,
+                    content: [
+                      { name: '距离', value: distance.toFixed(2) + ' 单位' },
+                      { name: 'UUID', value: objectUuid.slice(0, 8) + '...' }
+                    ]
+                  }
+                }
+              }
+              showPopup(popupData, targetObject)
+            }
+          }
+        }
+      }
+      
+      // 记录离开的物体（超过farThreshold）
+      if (collisionResult.farBoxes.length > 0) {
+        for (const item of collisionResult.farBoxes) {
+          const objectUuid = item.box.selectMode.uuid
+          currentFarObjects.add(objectUuid)
+        }
+      }
+      
+      // 关闭离开物体的弹窗（结合farThreshold阈值）
+      if (closePopup) {
+        // 关闭所有超过farThreshold的物体的弹窗
+        currentFarObjects.forEach(uuid => {
+          closePopup(`popup-${uuid}`)
+        })
+      }
+      
+      // 更新当前显示弹窗的物体集合
+      visiblePopupObjects.value = currentCloseObjects
+    }
   }
   
   return {

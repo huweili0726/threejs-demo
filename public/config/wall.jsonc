@@ -50,7 +50,7 @@
     { "name": "Cube2311_1", "thickness": 0.01 },
     { "name": "Cube2323_1", "thickness": 0.01 },
     { "name": "Cube1149", "isStairs": true },
-    { "name": "Cube056", "isStairs": true },
+    { "name": "Cube056" },
     { "name": "Cube1148" },
 
     // 一进去传过4个大铁门 T字路口往右前方走廊去的走廊的两边墙

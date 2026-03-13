@@ -77,7 +77,7 @@ export function useCollisionDetection() {
    * @param boundingBoxes 从 loadModels 返回的包围盒信息数组
    * @param scene 场景对象，用于添加包围盒辅助器
    */
-  const setBoundingBoxesFromLoadResult = (boundingBoxes: { name: string; box: THREE.Box3; uuid: string }[], scene?: THREE.Scene) => {
+  const setBoundingBoxesFromLoadResult = (boundingBoxes: { name: string; box: THREE.Box3; uuid: string, isStairs?: boolean }[], scene?: THREE.Scene) => {
     // 清空之前的包围盒数据
     wallBoundingBoxes.value = []
     
@@ -91,7 +91,8 @@ export function useCollisionDetection() {
     boundingBoxes.forEach(item => {
       wallBoundingBoxes.value.push({
         box: item.box,
-        selectMode: { name: item.name, uuid: item.uuid }
+        selectMode: { name: item.name, uuid: item.uuid },
+        ...(item && item?.isStairs !== undefined ? { isStairs: item.isStairs } : {})
       })
       
       // 创建包围盒辅助器

@@ -42,8 +42,8 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
     onLookAt?: { x: number; y: number; z: number }
     frontAxis?: THREE.Vector3
     enableAnimation?: boolean
-    collisionObjects?: Array<{ name: string; thickness?: number; width?: number; height?: number; depth?: number }>
-  }): Promise<{ name: string; box: THREE.Box3; uuid: string }[]> => {
+    collisionObjects?: Array<{ name: string; thickness?: number; width?: number; height?: number; depth?: number; isStairs?: boolean }>
+  }): Promise<{ name: string; box: THREE.Box3; uuid: string; isStairs?: boolean }[]> => {
     const { modelUrl, scale, modelInitPosition = { x: 0, y: 0, z: 0 }, onLookAt = { x: 0, y: 0, z: 0 }, enableAnimation = true, collisionObjects = [] } = options
     return new Promise((resolve, reject) => {
       if (!scene.value) {
@@ -92,7 +92,7 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
           scene.value!.add(group)
           
           // 在模型加载时直接处理包围盒，避免后续重复遍历
-          const boundingBoxes: { name: string; box: THREE.Box3; uuid: string }[] = []
+          const boundingBoxes: { name: string; box: THREE.Box3; uuid: string; isStairs?: boolean }[] = []
           if (collisionObjects.length > 0) {
             group.updateMatrixWorld(true)
             
@@ -150,7 +150,8 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
                 boundingBoxes.push({
                   name: child.name,
                   box: box,
-                  uuid: child.uuid
+                  uuid: child.uuid,
+                  ...(collisionObject && collisionObject.isStairs !== undefined ? { isStairs: collisionObject.isStairs } : {})
                 })
                 
                 console.log(`已为物体 ${child.name} 计算包围盒`)
@@ -196,8 +197,8 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
     modelInitPosition?: { x: number; y: number; z: number }
     onLookAt?: { x: number; y: number; z: number }
     enableAnimation?: boolean
-    collisionObjects?: Array<{ name: string; thickness?: number; width?: number; height?: number; depth?: number }>
-  }): Promise<{ name: string; box: THREE.Box3; uuid: string }[]> => {
+    collisionObjects?: Array<{ name: string; thickness?: number; width?: number; height?: number; depth?: number; isStairs?: boolean }>
+  }): Promise<{ name: string; box: THREE.Box3; uuid: string; isStairs?: boolean }[]> => {
     const { modelUrls, scale, modelInitPosition, onLookAt, enableAnimation, collisionObjects = [] } = options
     return new Promise(async (resolve, reject) => {
       try {
