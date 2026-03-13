@@ -74,34 +74,6 @@ export function useCollisionDetection() {
   }
 
   /**
-   * 为指定名称的物体添加红色包围盒（多个模型）
-   * @param options.scene 场景对象
-   * @param options.objectNames 要添加包围盒的物体名称数组
-   * @param options.loadedModelMaps 已加载的模型Map
-   */
-  const addBoundingBoxesToObjects = (options: {
-    scene: THREE.Scene
-    objectNames: string[]
-    loadedModelMaps: Map<string, THREE.Group>
-  }) => {
-    const { scene, objectNames, loadedModelMaps } = options
-    
-    // 清空之前的包围盒和辅助对象
-    wallBoundingBoxes.value = []
-    wallHelpers.value.forEach(helper => scene.remove(helper))
-    wallHelpers.value = []
-    
-    // 遍历所有加载的模型
-    loadedModelMaps.forEach(model => {
-      addBoundingBoxesToModel({
-        scene,
-        objectNames,
-        model
-      })
-    })
-  }
-
-  /**
    * 直接从 loadModels 返回的包围盒信息设置碰撞检测数据
    * @param boundingBoxes 从 loadModels 返回的包围盒信息数组
    * @param scene 场景对象，用于添加包围盒辅助器
@@ -219,7 +191,6 @@ export function useCollisionDetection() {
   return {
     wallBoundingBoxes,
     addBoundingBoxesToModel,
-    addBoundingBoxesToObjects,
     setBoundingBoxesFromLoadResult,
     addCharacterBoundingBox,
     updateBoundingBoxes,

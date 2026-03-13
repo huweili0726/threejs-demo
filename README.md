@@ -204,7 +204,6 @@ npm run preview
 ### useCollisionDetection
 - **功能**：碰撞检测、包围盒管理、碰撞边界可视化
 - **主要方法**：
-  - `addBoundingBoxesToObjects`：为指定名称的物体添加红色包围盒
   - `addCharacterBoundingBox`：为人物模型添加红色包围盒
   - `updateBoundingBoxes`：更新所有包围盒的位置
   - `checkCollision`：检测人物是否与墙体发生碰撞
