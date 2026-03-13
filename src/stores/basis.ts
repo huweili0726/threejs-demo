@@ -61,12 +61,24 @@ interface ThreeDevConfig {
   threeDevs: ThreeDev[]
 }
 
+// 墙体配置接口
+interface WallConfig {
+  walls: Array<{
+    name: string
+    thickness?: number
+    isStairs?: boolean
+  }>
+}
+
 export const useBasisStore = defineStore('basis', () => {
   // State
   const basisConfig = ref<BasisConfig | null>(null)
   const threeDevConfig = ref<ThreeDevConfig | null>(null)
+  const wallConfig = ref<WallConfig | null>(null)
+  
   const isLoaded = ref(false)
   const isThreeDevLoaded = ref(false)
+  const isWallLoaded = ref(false)
 
   // Getters
   const characterModelUrlsConfig = computed(() => basisConfig.value?.characterModelUrls)
@@ -78,6 +90,7 @@ export const useBasisStore = defineStore('basis', () => {
   const floor8thConfig = computed(() => basisConfig.value?.floor_8th)
   const floor9thConfig = computed(() => basisConfig.value?.floor_9th)
   const threeDevs = computed(() => threeDevConfig.value?.threeDevs || [])
+  const wallsConfig = computed(() => wallConfig.value?.walls || [])
 
   // Actions
   /**
@@ -99,21 +112,34 @@ export const useBasisStore = defineStore('basis', () => {
   }
 
   /**
+   * 设置墙体配置
+   * @param config 墙体配置对象
+   */
+  function setWallConfig(config: WallConfig) {
+    wallConfig.value = config
+    isWallLoaded.value = true
+  }
+
+  /**
    * 清除配置
    */
   function clearConfig() {
     basisConfig.value = null
     threeDevConfig.value = null
+    wallConfig.value = null
     isLoaded.value = false
     isThreeDevLoaded.value = false
+    isWallLoaded.value = false
   }
 
   return {
     // State
     basisConfig,
     threeDevConfig,
+    wallConfig,
     isLoaded,
     isThreeDevLoaded,
+    isWallLoaded,
     // Getters
     characterModelUrlsConfig,
     modelUrlsConfig,
@@ -124,9 +150,11 @@ export const useBasisStore = defineStore('basis', () => {
     floor8thConfig,
     floor9thConfig,
     threeDevs,
+    wallsConfig,
     // Actions
     setBasisConfig,
     setThreeDevConfig,
+    setWallConfig,
     clearConfig
   }
 })

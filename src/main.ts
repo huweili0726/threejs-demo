@@ -39,12 +39,24 @@ async function loadThreeDevConfig() {
   }
 }
 
+// 加载墙体配置
+async function loadWallConfig() {
+  try {
+    const config = await getJsonFile(`${import.meta.env.BASE_URL}/config/wall.jsonc`)
+    basisStore.setWallConfig(config)
+    console.log('✅ 墙体配置加载完成，共', config?.walls?.length || 0, '个墙体')
+  } catch (error) {
+    console.error('❌ 墙体配置加载失败:', error)
+  }
+}
+
 // 执行配置加载
 async function loadConfigs() {
   // 并行加载配置
   await Promise.all([
     loadBasisConfig(),
-    loadThreeDevConfig()
+    loadThreeDevConfig(),
+    loadWallConfig()
   ])
   // 配置加载完成后挂载应用
   app.mount('#app')

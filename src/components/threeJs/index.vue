@@ -47,9 +47,6 @@ let cleanupKeyboardEvents: (() => void) | null = null // 清理键盘事件的�
 let cleanupSelection: (() => void) | null = null // 清理双击选中事件的函数
 let cleanupPopup: (() => void) | null = null // 清理双击弹窗事件的函数
 
-// 配置数据
-let wallConfig: any = null // 墙配置
-
 // 监听窗口大小变化
 watchEffect(() => {
   onWindowResize() // 窗口大小改变时更新相机和渲染器
@@ -57,8 +54,6 @@ watchEffect(() => {
 })
 
 onMounted(async () => {
-  wallConfig = await getJsonFile(`${import.meta.env.BASE_URL}/config/wall.jsonc`)
-
   // 【1、初始化场景（使用基础配置中的1楼视角）】
   const floor1Config = basisStore.floor1Config
   const perspective = floor1Config?.perspective || { x: -9, y: 5, z: -15 }
@@ -119,7 +114,7 @@ onMounted(async () => {
 
   // 【3、加载模型和包围盒】
   // 加载配置文件中的需要添加包围盒的物体配置
-  let _collisionObjects = wallConfig?.walls || []
+  let _collisionObjects = basisStore.wallsConfig || []
   // 加载模型并直接处理包围盒，避免重复遍历
   const boundingBoxes = await loadModels({
     ...{
