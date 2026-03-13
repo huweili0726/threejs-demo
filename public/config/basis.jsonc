@@ -4,7 +4,7 @@
   // 需要加载的模型集合
   "modelUrls": [
     "glb/groundFloorOfficeBuilding.glb",
-    "glb/underGround3.glb",
+    "glb/underGround.glb",
     "glb/shu.glb",
     "glb/8th_floor.glb",
     "glb/9th_floor.glb",
