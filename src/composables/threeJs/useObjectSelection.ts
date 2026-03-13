@@ -49,8 +49,8 @@ export function useObjectSelection(camera: ShallowRef<THREE.PerspectiveCamera>, 
       const intersects = performRaycast(camera, scene, container, event)
 
       if (intersects && intersects.length > 0) {
-        // 使用工具函数过滤射线检测结果（只过滤 BoxHelper）
-        const filteredIntersects = filterIntersects(intersects, ['BoxHelper'])
+        // 使用工具函数过滤射线检测结果（默认过滤 BoxHelper、Box3Helper 和 CSS2DObject）
+        const filteredIntersects = filterIntersects(intersects)
 
         if (filteredIntersects.length > 0) {
           // 获取第一个交点的物体（最接近相机的最细分子物体）
