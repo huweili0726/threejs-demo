@@ -25,7 +25,8 @@ interface PopupContentItem {
 interface PopupData {
   id: string
   title: string
-  content: PopupContentItem[]
+  content: PopupContentItem[],
+  type?: 'confirm' | 'info'
 }
 
 // 单个弹窗实例接口
@@ -89,6 +90,15 @@ export function useObjectPopup(
     } else {
       // 如果没有内容，显示默认提示
       htmlContent += `<div class="dev-params"><span>提示:</span><span>无内容</span></div>`
+    }
+
+    if(data.type === 'confirm'){
+      htmlContent += `
+        <div class="dev-buttons">
+          <button class="devPop-confirm-btn" data-type="confirm-btn" onclick="closePopup('${data.id}')">确定</button>
+          <button class="devPop-cancel-btn" data-type="cancel-btn" onclick="closePopup('${data.id}')">取消</button>
+        </div>
+      `
     }
 
     htmlContent += `</div><div class="dev-bottom"></div></div>`

@@ -246,7 +246,6 @@ export function useCharacterMovement(
     
     // 碰撞检测（到达某个模型附近，自动弹窗）
     if (model && wallBoundingBoxes && showPopup && closePopup) {
-      
       // 计算人物模型的包围盒
       const characterBox = new THREE.Box3().setFromObject(model)
       // 执行碰撞检测
@@ -278,14 +277,14 @@ export function useCharacterMovement(
                 // 楼梯特殊弹窗
                 popupData = {
                   id: `popup-${objectUuid}`,
-                  title: '楼梯',
+                  title: '系统提示',
                   content: [
-                    { name: '提示', value: '是否愿意上二楼？' }
-                  ]
+                    { name: '提示', value: '是否上二楼？' }
+                  ],
+                  type: 'confirm'
                 }
                 showPopup(popupData, targetObject)
-              } 
-           
+              }
             }
           }
         }
