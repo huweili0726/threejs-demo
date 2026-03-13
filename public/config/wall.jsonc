@@ -1,6 +1,11 @@
 {
   // 需要进行碰撞检测的物体
   "walls": [
+    // 楼梯
+    { "name": "Cube058", "isStairs": true },
+    { "name": "Circle021", "isStairs": true },
+    { "name": "Circle024", "isStairs": true },
+
     // 1-4号门
     { "name": "Cube099_1", "width": 0.18, "height": 0.22, "depth": 0.001 },
     { "name": "Cube1536_1", "width": 0.18, "height": 0.22, "depth": 0.001 },
