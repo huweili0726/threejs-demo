@@ -32,7 +32,7 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
    * @param options.onLookAt 模型初始朝向
    * @param options.frontAxis 模型前方向量（默认：0,0,1，可根据不同模型自定义）
    * @param options.enableAnimation 是否启用动画
-   * @param options.collisionObjectNames 需要添加碰撞检测的物体名称数组（可选）
+   * @param options.collisionObjects 需要添加碰撞检测的物体配置数组（可选）
    * @returns 加载完成后的 Promise，返回包含包围盒信息的数组
    */
   const loadModel = (options: {
@@ -42,9 +42,9 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
     onLookAt?: { x: number; y: number; z: number }
     frontAxis?: THREE.Vector3
     enableAnimation?: boolean
-    collisionObjectNames?: string[]
+    collisionObjects?: Array<{ name: string; thickness?: number }>
   }): Promise<{ name: string; box: THREE.Box3; uuid: string }[]> => {
-    const { modelUrl, scale, modelInitPosition = { x: 0, y: 0, z: 0 }, onLookAt = { x: 0, y: 0, z: 0 }, enableAnimation = true, collisionObjectNames = [] } = options
+    const { modelUrl, scale, modelInitPosition = { x: 0, y: 0, z: 0 }, onLookAt = { x: 0, y: 0, z: 0 }, enableAnimation = true, collisionObjects = [] } = options
     return new Promise((resolve, reject) => {
       if (!scene.value) {
         reject(new Error('Scene not initialized'))
@@ -93,16 +93,33 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
           
           // 在模型加载时直接处理包围盒，避免后续重复遍历
           const boundingBoxes: { name: string; box: THREE.Box3; uuid: string }[] = []
-          if (collisionObjectNames.length > 0) {
+          if (collisionObjects.length > 0) {
             group.updateMatrixWorld(true)
             
             group.traverse((child) => {
               if (child instanceof THREE.Mesh && 
-                  collisionObjectNames.some(name => child.name === name)) {
+                  collisionObjects.some(obj => obj.name === child.name)) {
                 
                 const worldMatrix = child.matrixWorld
                 const box = new THREE.Box3().setFromBufferAttribute(child.geometry.attributes.position)
                 box.applyMatrix4(worldMatrix)
+                
+                // 检查是否有厚度配置
+                const collisionObject = collisionObjects.find(obj => obj.name === child.name)
+                if (collisionObject && collisionObject.thickness) {
+                  // 为平面添加厚度
+                  const thickness = collisionObject.thickness
+                  const center = new THREE.Vector3()
+                  box.getCenter(center)
+                  const size = new THREE.Vector3()
+                  box.getSize(size)
+                  
+                  // 扩展包围盒，添加厚度
+                  const halfThickness = thickness / 2
+                  box.expandByVector(new THREE.Vector3(halfThickness, halfThickness, halfThickness))
+                  
+                  console.log(`为物体 ${child.name} 添加厚度: ${thickness}`)
+                }
                 
                 boundingBoxes.push({
                   name: child.name,
@@ -152,7 +169,7 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
    * @param options.modelInitPosition 模型初始位置
    * @param options.onLookAt 模型初始朝向
    * @param options.enableAnimation 是否启用动画
-   * @param options.collisionObjectNames 需要添加碰撞检测的物体名称数组（可选）
+   * @param options.collisionObjects 需要添加碰撞检测的物体配置数组（可选）
    * @returns 加载完成后的 Promise，返回所有模型的包围盒信息
    */
   const loadModels = (options: {
@@ -161,9 +178,9 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
     modelInitPosition?: { x: number; y: number; z: number }
     onLookAt?: { x: number; y: number; z: number }
     enableAnimation?: boolean
-    collisionObjectNames?: string[]
+    collisionObjects?: Array<{ name: string; thickness?: number }>
   }): Promise<{ name: string; box: THREE.Box3; uuid: string }[]> => {
-    const { modelUrls, scale, modelInitPosition, onLookAt, enableAnimation, collisionObjectNames = [] } = options
+    const { modelUrls, scale, modelInitPosition, onLookAt, enableAnimation, collisionObjects = [] } = options
     return new Promise(async (resolve, reject) => {
       try {
         isLoading.value = true
@@ -176,7 +193,7 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
           modelInitPosition,
           onLookAt,
           enableAnimation,
-          collisionObjectNames
+          collisionObjects
         }))
         const results = await Promise.all(loadPromises)
         

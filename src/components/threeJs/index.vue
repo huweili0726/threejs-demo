@@ -119,16 +119,16 @@ onMounted(async () => {
     }
   })
 
-  // 【6、加载模型和包围盒】
-  // 加载配置文件中的需要添加包围盒的物体名称
-  let _objectNames = wallConfig?.walls?.map((item: any) => item.name) || []
+  // 【3、加载模型和包围盒】
+  // 加载配置文件中的需要添加包围盒的物体配置
+  let _collisionObjects = wallConfig?.walls || []
   // 加载模型并直接处理包围盒，避免重复遍历
   const boundingBoxes = await loadModels({
     ...{
       modelUrls: basisStore.modelUrlsConfig || [],
       scale: 1,
     },
-    collisionObjectNames: _objectNames
+    collisionObjects: _collisionObjects
 
   }).catch(console.error)
   // 将从 loadModels 返回的包围盒信息设置到碰撞检测模块

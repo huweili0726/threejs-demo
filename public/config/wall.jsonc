@@ -14,7 +14,7 @@
     // 一进去传过4个大铁门 T字路口附近的墙
     { "name": "Cube1830_1" },
     { "name": "Cube1972_1" },
-    { "name": "Cube2310" },
+    { "name": "Cube2310", "thickness": 0.1 },
     { "name": "Cube2311" },
     { "name": "Cube2133_1" },
     { "name": "Cube2134_1" },
@@ -68,6 +68,7 @@
     { "name": "Cube2289_2" },
     { "name": "Cube2287_2" },
     { "name": "Cube2415_1" },
+    { "name": "Cube1855" },
 
 
     // 配电室外的木头门
