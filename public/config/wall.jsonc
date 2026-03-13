@@ -20,7 +20,7 @@
     { "name": "Cube2134_1" },
 
     // 一进去传过4个大铁门 T字路口往右前方走廊去的走廊的两边墙
-    { "name": "Cube2286_1" },
+    { "name": "Cube2286_1", "thickness": 0.1 },
     { "name": "Cube2298_1" },
     { "name": "Cube2744" },
     { "name": "Cube2296_1" },
