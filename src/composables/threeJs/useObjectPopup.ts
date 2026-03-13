@@ -81,10 +81,15 @@ export function useObjectPopup(
         <div class="dev-content">
     `
 
-    // 添加内容项
-    data.content.forEach((item) => {
-      htmlContent += `<div class="dev-params"><span>${item.name}:</span><span title="${item.value}">${item.value}</span></div>`
-    })
+    // 只有当 data.content 存在且不为空时才添加内容项
+    if (data.content && data.content.length > 0) {
+      data.content.forEach((item) => {
+        htmlContent += `<div class="dev-params"><span>${item.name}:</span><span title="${item.value}">${item.value}</span></div>`
+      })
+    } else {
+      // 如果没有内容，显示默认提示
+      htmlContent += `<div class="dev-params"><span>提示:</span><span>无内容</span></div>`
+    }
 
     htmlContent += `</div><div class="dev-bottom"></div></div>`
 

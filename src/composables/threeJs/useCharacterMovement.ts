@@ -285,8 +285,6 @@ export function useCharacterMovement(
           // 为每个接近的物体显示弹窗
           for (const item of collisionResult.boxes) {
             const wallBox = item.box
-            console.log('11接近物体：', wallBox.selectMode.name, wallBox)
-            const distance = item.distance
             const objectUuid = wallBox.selectMode.uuid
             
             // 记录当前接近的物体
@@ -296,7 +294,7 @@ export function useCharacterMovement(
             const targetObject = model.parent.getObjectByProperty('uuid', objectUuid)
             if (targetObject) {
               // 显示弹窗
-              let popupData
+              let popupData = {}
               if (wallBox.isStairs) {
                 console.log('楼梯', wallBox.selectMode.name)
                 // 楼梯特殊弹窗
@@ -307,29 +305,9 @@ export function useCharacterMovement(
                     { name: '提示', value: '是否愿意上二楼？' }
                   ]
                 }
-              } else {
-                // 查找三维设备配置
-                const threeDev = threeDevs.find(dev => dev.meshName === wallBox.selectMode.name)
-                if (threeDev && threeDev.popInfo) {
-                  // 使用三维设备配置的弹窗内容
-                  popupData = {
-                    id: `popup-${objectUuid}`,
-                    title: threeDev.popInfo.title,
-                    content: threeDev.popInfo.content
-                  }
-                } else {
-                  // 普通物体弹窗
-                  popupData = {
-                    id: `popup-${objectUuid}`,
-                    title: wallBox.selectMode.name,
-                    content: [
-                      { name: '距离', value: distance.toFixed(2) + ' 单位' },
-                      { name: 'UUID', value: objectUuid.slice(0, 8) + '...' }
-                    ]
-                  }
-                }
-              }
-              showPopup(popupData, targetObject)
+                showPopup(popupData, targetObject)
+              } 
+           
             }
           }
         }
