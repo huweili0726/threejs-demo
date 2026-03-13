@@ -1,11 +1,10 @@
 {
   // 需要进行碰撞检测的物体
   "walls": [
-    // { "name": "Cube099_1" },
-    // { "name": "Cube1531_1" },
-    // { "name": "Cube1536_1" },
-    // { "name": "Cube1541_1" },
-    { "name": "Cube1082" },
+    { "name": "Cube099_1", "width": 0.16, "height": 0.22, "depth": 0.001 },
+    { "name": "Cube1536_1", "width": 0.16, "height": 0.22, "depth": 0.001 },
+    { "name": "Cube1531_1", "width": 0.16, "height": 0.22, "depth": 0.001 },
+    { "name": "Cube1541_1", "width": 0.16, "height": 0.22, "depth": 0.001 },
 
     // 一进去传过4个大铁门 右转后 右手边的敞开的木头门
     { "name": "Cube1142" },

@@ -42,7 +42,7 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
     onLookAt?: { x: number; y: number; z: number }
     frontAxis?: THREE.Vector3
     enableAnimation?: boolean
-    collisionObjects?: Array<{ name: string; thickness?: number }>
+    collisionObjects?: Array<{ name: string; thickness?: number; width?: number; height?: number; depth?: number }>
   }): Promise<{ name: string; box: THREE.Box3; uuid: string }[]> => {
     const { modelUrl, scale, modelInitPosition = { x: 0, y: 0, z: 0 }, onLookAt = { x: 0, y: 0, z: 0 }, enableAnimation = true, collisionObjects = [] } = options
     return new Promise((resolve, reject) => {
@@ -100,25 +100,51 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
               if (child instanceof THREE.Mesh && 
                   collisionObjects.some(obj => obj.name === child.name)) {
                 
-                const worldMatrix = child.matrixWorld
-                const box = new THREE.Box3().setFromBufferAttribute(child.geometry.attributes.position)
-                box.applyMatrix4(worldMatrix)
+                // 计算初始包围盒（使用 setFromObject 更通用，支持不同类型的几何体）
+                const box = new THREE.Box3().setFromObject(child)
                 
                 // 检查是否有厚度配置
                 const collisionObject = collisionObjects.find(obj => obj.name === child.name)
-                if (collisionObject && collisionObject.thickness) {
-                  // 为平面添加厚度
-                  const thickness = collisionObject.thickness
-                  const center = new THREE.Vector3()
-                  box.getCenter(center)
-                  const size = new THREE.Vector3()
-                  box.getSize(size)
+                
+                // 获取当前尺寸
+                const currentSize = new THREE.Vector3()
+                box.getSize(currentSize)
+                
+                if (collisionObject) {
+                  if (collisionObject.thickness) {
+                    // 为平面添加厚度
+                    const thickness = collisionObject.thickness
+                    const center = new THREE.Vector3()
+                    box.getCenter(center)
+                    
+                    // 扩展包围盒，添加厚度
+                    const halfThickness = thickness / 2
+                    box.expandByVector(new THREE.Vector3(halfThickness, halfThickness, halfThickness))
+                    
+                    console.log(`为物体 ${child.name} 添加厚度: ${thickness}`)
+                  }
                   
-                  // 扩展包围盒，添加厚度
-                  const halfThickness = thickness / 2
-                  box.expandByVector(new THREE.Vector3(halfThickness, halfThickness, halfThickness))
-                  
-                  console.log(`为物体 ${child.name} 添加厚度: ${thickness}`)
+                  // 检查是否手动指定了包围盒尺寸
+                  if (collisionObject.width !== undefined || collisionObject.height !== undefined || collisionObject.depth !== undefined) {
+                    const center = new THREE.Vector3()
+                    box.getCenter(center)
+                    
+                    // 计算新尺寸
+                    const newSize = new THREE.Vector3(
+                      collisionObject.width !== undefined ? collisionObject.width : currentSize.x,
+                      collisionObject.height !== undefined ? collisionObject.height : currentSize.y,
+                      collisionObject.depth !== undefined ? collisionObject.depth : currentSize.z
+                    )
+                    
+                    // 重新计算包围盒
+                    const halfSize = newSize.multiplyScalar(0.5)
+                    box.set(
+                      center.clone().sub(halfSize),
+                      center.clone().add(halfSize)
+                    )
+                    
+                    console.log(`为物体 ${child.name} 手动设置包围盒尺寸:`, newSize)
+                  }
                 }
                 
                 boundingBoxes.push({
@@ -128,12 +154,27 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
                 })
                 
                 // 添加红色包围盒可视化
-                const helper = new THREE.BoxHelper(child, 0xff0000)
-                helper.visible = true
-                helper.renderOrder = 1000
-                helper.material.depthTest = false
-                helper.update()
-                scene.value!.add(helper)
+                if (collisionObject && (collisionObject.width !== undefined || collisionObject.height !== undefined || collisionObject.depth !== undefined)) {
+                  // 当有手动设置的尺寸时，使用手动计算的 box 对象来创建包围盒辅助器
+                  // 直接创建一个基于手动计算的 box 的辅助器
+                  const helper = new THREE.Box3Helper(box, 0xff0000)
+                  helper.visible = true
+                  helper.renderOrder = 1000
+                  if (helper.material instanceof THREE.Material) {
+                    helper.material.depthTest = false
+                  }
+                  scene.value!.add(helper)
+                } else {
+                  // 当没有手动设置的尺寸时，使用默认的 BoxHelper
+                  const helper = new THREE.BoxHelper(child, 0xff0000)
+                  helper.visible = true
+                  helper.renderOrder = 1000
+                  if (helper.material instanceof THREE.Material) {
+                    helper.material.depthTest = false
+                  }
+                  helper.update()
+                  scene.value!.add(helper)
+                }
                 
                 console.log(`已添加红色包围盒，名称:`, child.name)
               }
@@ -178,7 +219,7 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
     modelInitPosition?: { x: number; y: number; z: number }
     onLookAt?: { x: number; y: number; z: number }
     enableAnimation?: boolean
-    collisionObjects?: Array<{ name: string; thickness?: number }>
+    collisionObjects?: Array<{ name: string; thickness?: number; width?: number; height?: number; depth?: number }>
   }): Promise<{ name: string; box: THREE.Box3; uuid: string }[]> => {
     const { modelUrls, scale, modelInitPosition, onLookAt, enableAnimation, collisionObjects = [] } = options
     return new Promise(async (resolve, reject) => {
