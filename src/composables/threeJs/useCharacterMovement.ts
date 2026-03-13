@@ -23,28 +23,6 @@ interface ThreeDev {
   }
 }
 
-// 三维设备配置
-let threeDevs: ThreeDev[] = []
-
-// 加载三维设备配置
-const loadThreeDevConfig = async () => {
-  try {
-    const { getJsonFile } = jsonUtils()
-    const config = await getJsonFile(`${import.meta.env.BASE_URL}/config/threeDimensionalDev.jsonc`)
-    if (config && config.threeDevs) {
-      threeDevs = config.threeDevs
-      console.log('✅ 三维设备配置加载完成，共', threeDevs.length, '个设备')
-    } else {
-      console.error('❌ 三维设备配置加载失败：配置格式不正确')
-    }
-  } catch (error) {
-    console.error('❌ 三维设备配置加载失败：', error)
-  }
-}
-
-// 初始化时加载配置
-loadThreeDevConfig()
-
 export function useCharacterMovement( 
   checkCollision: (characterBox: THREE.Box3) => boolean, // 检查碰撞函数
   updateBoundingBoxes: () => void, // 更新碰撞框函数

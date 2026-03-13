@@ -17,19 +17,37 @@ app.use(router)
 const { getJsonFile } = jsonUtils()
 const basisStore = useBasisStore()
 
+// 加载基础配置
 async function loadBasisConfig() {
   try {
     const config = await getJsonFile(`${import.meta.env.BASE_URL}/config/basis.jsonc`)
     basisStore.setBasisConfig(config)
-    console.log('✅ 基础配置加载完成:', config)
-    // 配置加载完成后挂载应用
-    app.mount('#app')
+    console.log('✅ 基础配置加载完成')
   } catch (error) {
     console.error('❌ 基础配置加载失败:', error)
-    // 即使配置加载失败，也挂载应用
-    app.mount('#app')
+  }
+}
+
+// 加载三维设备配置
+async function loadThreeDevConfig() {
+  try {
+    const config = await getJsonFile(`${import.meta.env.BASE_URL}/config/threeDimensionalDev.jsonc`)
+    basisStore.setThreeDevConfig(config)
+    console.log('✅ 三维设备配置加载完成，共', config?.threeDevs?.length || 0, '个设备')
+  } catch (error) {
+    console.error('❌ 三维设备配置加载失败:', error)
   }
 }
 
 // 执行配置加载
-loadBasisConfig()
+async function loadConfigs() {
+  // 并行加载配置
+  await Promise.all([
+    loadBasisConfig(),
+    loadThreeDevConfig()
+  ])
+  // 配置加载完成后挂载应用
+  app.mount('#app')
+}
+
+loadConfigs()

@@ -26,6 +26,17 @@ interface FloorConfig {
   characterModelToLook?: PerspectiveConfig
 }
 
+// 三维设备配置接口
+interface ThreeDev {
+  id: string
+  meshName: string
+  type: string
+  popInfo?: {
+    title: string
+    content: Array<{ name: string; value: string }>
+  }
+}
+
 // 基础配置接口
 interface BasisConfig {
   // 天空盒
@@ -45,10 +56,17 @@ interface BasisConfig {
   floor_9th: FloorConfig
 }
 
+// 三维设备配置接口
+interface ThreeDevConfig {
+  threeDevs: ThreeDev[]
+}
+
 export const useBasisStore = defineStore('basis', () => {
   // State
   const basisConfig = ref<BasisConfig | null>(null)
+  const threeDevConfig = ref<ThreeDevConfig | null>(null)
   const isLoaded = ref(false)
+  const isThreeDevLoaded = ref(false)
 
   // Getters
   const characterModelUrlsConfig = computed(() => basisConfig.value?.characterModelUrls)
@@ -59,6 +77,7 @@ export const useBasisStore = defineStore('basis', () => {
   const neg1FloorConfig = computed(() => basisConfig.value?.floor_neg1)
   const floor8thConfig = computed(() => basisConfig.value?.floor_8th)
   const floor9thConfig = computed(() => basisConfig.value?.floor_9th)
+  const threeDevs = computed(() => threeDevConfig.value?.threeDevs || [])
 
   // Actions
   /**
@@ -71,17 +90,30 @@ export const useBasisStore = defineStore('basis', () => {
   }
 
   /**
+   * 设置三维设备配置
+   * @param config 三维设备配置对象
+   */
+  function setThreeDevConfig(config: ThreeDevConfig) {
+    threeDevConfig.value = config
+    isThreeDevLoaded.value = true
+  }
+
+  /**
    * 清除配置
    */
   function clearConfig() {
     basisConfig.value = null
+    threeDevConfig.value = null
     isLoaded.value = false
+    isThreeDevLoaded.value = false
   }
 
   return {
     // State
     basisConfig,
+    threeDevConfig,
     isLoaded,
+    isThreeDevLoaded,
     // Getters
     characterModelUrlsConfig,
     modelUrlsConfig,
@@ -91,8 +123,10 @@ export const useBasisStore = defineStore('basis', () => {
     neg1FloorConfig,
     floor8thConfig,
     floor9thConfig,
+    threeDevs,
     // Actions
     setBasisConfig,
+    setThreeDevConfig,
     clearConfig
   }
 })

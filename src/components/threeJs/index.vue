@@ -49,7 +49,6 @@ let cleanupPopup: (() => void) | null = null // 清理双击弹窗事件的函�
 
 // 配置数据
 let wallConfig: any = null // 墙配置
-let threeDimensionalConfig: any = null // 三维模型弹窗信息配置
 
 // 监听窗口大小变化
 watchEffect(() => {
@@ -59,7 +58,6 @@ watchEffect(() => {
 
 onMounted(async () => {
   wallConfig = await getJsonFile(`${import.meta.env.BASE_URL}/config/wall.jsonc`)
-  threeDimensionalConfig = await getJsonFile(`${import.meta.env.BASE_URL}/config/threeDimensionalDev.jsonc`)
 
   // 【1、初始化场景（使用基础配置中的1楼视角）】
   const floor1Config = basisStore.floor1Config
@@ -93,7 +91,7 @@ onMounted(async () => {
       // 根据物体名称返回弹窗数据（渲染在弹窗里面的内容）
       if (object.name) {
         // 从配置文件中查找对应的弹窗数据
-        const devItem = threeDimensionalConfig?.threeDevs?.find((item: any) => item.meshName === object.name)
+        const devItem = basisStore.threeDevConfig?.threeDevs?.find((item: any) => item.meshName === object.name)
         // 如果找到对应配置，返回弹窗数据
         if (devItem && devItem.popInfo) {
           return {
