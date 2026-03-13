@@ -106,11 +106,12 @@ export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?
    * @returns 碰撞检测结果
    */
   const isCloseToCollision = (characterBox: THREE.Box3, wallBoundingBoxes: Array<{ box: THREE.Box3; selectMode: { name: string; uuid: string } }>) => {
-    const threshold = 0.5; // 接近阈值（调整为与实际距离单位匹配）
-    const farThreshold = 0.8; // 离开阈值（需大于接近阈值，避免抖动）
+    const threshold = 0.3; // 接近阈值（调整为与实际距离单位匹配）
+    const farThreshold = 0.35; // 离开阈值（需大于接近阈值，避免抖动）
     const result = {
       flag: false, // 是否在接近阈值内
       boxes: [] as Array<{ box: any; distance: number }>, // 所有在阈值内的碰撞体
+      farBoxes: [] as Array<{ box: any; distance: number }>, // 所有在离开阈值外的碰撞体
       distance: Infinity, // 当前距离
       isApproaching: false, // 是否正在靠近（当前距离 < 上一帧距离）
       isLeaving: false, // 是否正在离开（当前距离 > 上一帧距离）
@@ -139,11 +140,16 @@ export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?
       const wallKey = `${wallBox.selectMode.name}_${wallBox.selectMode.uuid}`;
       const lastDistance = lastWallDistances.get(wallKey) || Infinity;
 
-      // 检查是否在阈值内
+      // 检查是否在接近阈值内
       if (currentDistance < threshold) {
         result.flag = true;
         result.boxes.push({ box: wallBox, distance: currentDistance });
         console.log('🎯 检测到物体接近:', wallBox.selectMode.name, '距离:', currentDistance)
+      } 
+      // 检查是否在离开阈值外
+      else if (currentDistance > farThreshold) {
+        result.farBoxes.push({ box: wallBox, distance: currentDistance });
+        console.log('🚶 检测到物体离开:', wallBox.selectMode.name, '距离:', currentDistance)
       }
 
       lastWallDistances.set(wallKey, currentDistance);
@@ -366,6 +372,8 @@ export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?
         
         // 记录当前帧中接近的物体
         const currentCloseObjects = new Set<string>()
+        // 记录当前帧中离开的物体（超过farThreshold）
+        const currentFarObjects = new Set<string>()
         
         if (collisionResult.flag) {
           console.log('🚨 检测到碰撞体接近，物体数量:', collisionResult.boxes.length)
@@ -400,18 +408,19 @@ export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?
           }
         }
         
-        // 关闭离开物体的弹窗
+        // 记录离开的物体（超过farThreshold）
+        if (collisionResult.farBoxes.length > 0) {
+          console.log('🚶 检测到物体离开，物体数量:', collisionResult.farBoxes.length)
+          for (const item of collisionResult.farBoxes) {
+            const objectUuid = item.box.selectMode.uuid
+            currentFarObjects.add(objectUuid)
+          }
+        }
+        
+        // 关闭离开物体的弹窗（结合farThreshold阈值）
         if (closePopup) {
-          // 找出需要关闭弹窗的物体
-          const objectsToClose = new Set<string>()
-          visiblePopupObjects.value.forEach(uuid => {
-            if (!currentCloseObjects.has(uuid)) {
-              objectsToClose.add(uuid)
-            }
-          })
-          
-          // 关闭弹窗
-          objectsToClose.forEach(uuid => {
+          // 关闭所有超过farThreshold的物体的弹窗
+          currentFarObjects.forEach(uuid => {
             closePopup(`popup-${uuid}`)
             console.log('❌ 关闭物体弹窗:', uuid)
           })
