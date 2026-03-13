@@ -106,11 +106,11 @@ export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?
    * @returns 碰撞检测结果
    */
   const isCloseToCollision = (characterBox: THREE.Box3, wallBoundingBoxes: Array<{ box: THREE.Box3; selectMode: { name: string; uuid: string } }>) => {
-    const threshold = 0.5; // 接近阈值（缩小阈值，更容易检测到物体）
+    const threshold = 0.5; // 接近阈值（调整为与实际距离单位匹配）
     const farThreshold = 0.8; // 离开阈值（需大于接近阈值，避免抖动）
     const result = {
       flag: false, // 是否在接近阈值内
-      box: null as any, // 对应的碰撞体
+      boxes: [] as Array<{ box: any; distance: number }>, // 所有在阈值内的碰撞体
       distance: Infinity, // 当前距离
       isApproaching: false, // 是否正在靠近（当前距离 < 上一帧距离）
       isLeaving: false, // 是否正在离开（当前距离 > 上一帧距离）
@@ -125,9 +125,6 @@ export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?
 
     console.log('🔍 开始碰撞检测，物体数量:', wallBoundingBoxes.length)
     
-    let closestDistance = Infinity
-    let closestBox = null
-
     for (const wallBox of wallBoundingBoxes) {
       // 计算人物与碰撞体中心的距离
       const wallCenter = new THREE.Vector3();
@@ -142,28 +139,14 @@ export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?
       const wallKey = `${wallBox.selectMode.name}_${wallBox.selectMode.uuid}`;
       const lastDistance = lastWallDistances.get(wallKey) || Infinity;
 
-      // 记录最近的物体
-      if (currentDistance < closestDistance) {
-        closestDistance = currentDistance
-        closestBox = wallBox
+      // 检查是否在阈值内
+      if (currentDistance < threshold) {
+        result.flag = true;
+        result.boxes.push({ box: wallBox, distance: currentDistance });
+        console.log('🎯 检测到物体接近:', wallBox.selectMode.name, '距离:', currentDistance)
       }
 
-      // 判断是否已完全离开
-      result.isFullyLeft = currentDistance > farThreshold;
-
       lastWallDistances.set(wallKey, currentDistance);
-    }
-
-    // 选择最近的物体进行弹窗
-    if (closestBox && closestDistance < threshold) {
-      result.flag = true;
-      result.box = closestBox;
-      result.distance = closestDistance;
-      const wallKey = `${closestBox.selectMode.name}_${closestBox.selectMode.uuid}`;
-      const lastDistance = lastWallDistances.get(wallKey) || Infinity;
-      result.isApproaching = closestDistance < lastDistance;
-      result.isLeaving = closestDistance > lastDistance;
-      console.log('🎯 检测到最近物体:', closestBox.selectMode.name, '距离:', closestDistance)
     }
 
     return result;
@@ -382,42 +365,31 @@ export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?
         const collisionResult = isCloseToCollision(characterBox, wallBoundingBoxes.value)
         
         if (collisionResult.flag) {
-          console.log('🚨 检测到碰撞体接近，距离:', collisionResult.distance)
-          console.log('碰撞体信息:', collisionResult.box.selectMode.name)
+          console.log('🚨 检测到碰撞体接近，物体数量:', collisionResult.boxes.length)
           
-          // 显示弹窗
+          // 显示所有接近物体的弹窗
           if (showPopup && model.parent) {
-            // 从场景中找到对应的物体
-            const targetObject = model.parent.getObjectByProperty('uuid', collisionResult.box.selectMode.uuid)
-
-            if (targetObject) {
-              // 检查是否已经显示了该物体的弹窗
-              if (currentPopupObject.value !== collisionResult.box.selectMode.uuid) {
-                // 关闭之前的弹窗
-                if (currentPopupObject.value && closePopup) {
-                  closePopup(`popup-${currentPopupObject.value}`)
-                }
-                // 显示新的弹窗
+            // 为每个接近的物体显示弹窗
+            for (const item of collisionResult.boxes) {
+              const wallBox = item.box
+              const distance = item.distance
+              
+              // 从场景中找到对应的物体
+              const targetObject = model.parent.getObjectByProperty('uuid', wallBox.selectMode.uuid)
+              if (targetObject) {
+                // 显示弹窗
                 const popupData = {
-                  id: `popup-${collisionResult.box.selectMode.uuid}`,
-                  title: collisionResult.box.selectMode.name,
+                  id: `popup-${wallBox.selectMode.uuid}`,
+                  title: wallBox.selectMode.name,
                   content: [
-                    { name: '距离', value: collisionResult.distance.toFixed(2) + ' 单位' },
-                    { name: 'UUID', value: collisionResult.box.selectMode.uuid.slice(0, 8) + '...' }
+                    { name: '距离', value: distance.toFixed(2) + ' 单位' },
+                    { name: 'UUID', value: wallBox.selectMode.uuid.slice(0, 8) + '...' }
                   ]
                 }
                 showPopup(popupData, targetObject)
-                currentPopupObject.value = collisionResult.box.selectMode.uuid
-                console.log('📌 显示物体弹窗:', collisionResult.box.selectMode.name)
+                console.log('📌 显示物体弹窗:', wallBox.selectMode.name, '距离:', distance)
               }
             }
-          }
-        } else {
-          // 离开物体，关闭弹窗
-          if (currentPopupObject.value && closePopup) {
-            closePopup(`popup-${currentPopupObject.value}`)
-            console.log('❌ 关闭物体弹窗:', currentPopupObject.value)
-            currentPopupObject.value = null
           }
         }
       }
