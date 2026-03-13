@@ -30,44 +30,6 @@ export function useCollisionDetection() {
   const characterHelper = ref<MeshBoxHelper | null>(null)
   
   /**
-   * 直接从 loadModels 返回的包围盒信息设置碰撞检测数据
-   * @param boundingBoxes 从 loadModels 返回的包围盒信息数组
-   * @param scene 场景对象，用于添加包围盒辅助器
-   */
-  const setBoundingBoxesFromLoadResult = (boundingBoxes: { name: string; box: THREE.Box3; uuid: string }[], scene?: THREE.Scene) => {
-    // 清空之前的包围盒数据
-    wallBoundingBoxes.value = []
-    
-    // 清空之前的包围盒辅助器
-    if (scene) {
-      wallHelpers.value.forEach(helper => scene.remove(helper))
-      wallHelpers.value = []
-    }
-    
-    // 直接使用从 loadModels 返回的包围盒信息
-    boundingBoxes.forEach(item => {
-      wallBoundingBoxes.value.push({
-        box: item.box,
-        selectMode: { name: item.name, uuid: item.uuid }
-      })
-      
-      // 创建包围盒辅助器
-      if (scene) {
-        const helper = new THREE.Box3Helper(item.box, 0xff0000) as MeshBoxHelper
-        helper.visible = true
-        helper.renderOrder = 1000
-        if (helper.material instanceof THREE.Material) {
-          helper.material.depthTest = false
-        }
-        wallHelpers.value.push(helper)
-        scene.add(helper)
-      }
-    })
-    
-    console.log(`已设置 ${boundingBoxes.length} 个碰撞包围盒`)
-  }
-  
-  /**
    * 为人物模型添加红色包围盒
    * @param options.scene 场景对象
    * @param options.modelUrl 人物模型URL
@@ -108,6 +70,44 @@ export function useCollisionDetection() {
     characterBoundingBox.value = box
     
     console.log(`已添加人物模型红色包围盒`)
+  }
+
+  /**
+   * 直接从 loadModels 返回的包围盒信息设置碰撞检测数据
+   * @param boundingBoxes 从 loadModels 返回的包围盒信息数组
+   * @param scene 场景对象，用于添加包围盒辅助器
+   */
+  const setBoundingBoxesFromLoadResult = (boundingBoxes: { name: string; box: THREE.Box3; uuid: string }[], scene?: THREE.Scene) => {
+    // 清空之前的包围盒数据
+    wallBoundingBoxes.value = []
+    
+    // 清空之前的包围盒辅助器
+    if (scene) {
+      wallHelpers.value.forEach(helper => scene.remove(helper))
+      wallHelpers.value = []
+    }
+    
+    // 直接使用从 loadModels 返回的包围盒信息
+    boundingBoxes.forEach(item => {
+      wallBoundingBoxes.value.push({
+        box: item.box,
+        selectMode: { name: item.name, uuid: item.uuid }
+      })
+      
+      // 创建包围盒辅助器
+      if (scene) {
+        const helper = new THREE.Box3Helper(item.box, 0xff0000) as MeshBoxHelper
+        helper.visible = true
+        helper.renderOrder = 1000
+        if (helper.material instanceof THREE.Material) {
+          helper.material.depthTest = false
+        }
+        wallHelpers.value.push(helper)
+        scene.add(helper)
+      }
+    })
+    
+    console.log(`已设置 ${boundingBoxes.length} 个碰撞包围盒`)
   }
   
   /**
