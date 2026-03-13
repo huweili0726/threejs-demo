@@ -7,7 +7,7 @@
     },
 		{
 			"id": "door_1",
-			"meshName": "Cube099_1",
+			"meshName": "Cube2788",
 			"type": "door",
 			"popInfo": {
 				"title": "1号门",
@@ -23,7 +23,7 @@
 		},
 		{
 			"id": "door_2",
-			"meshName": "Cube107_1",
+			"meshName": "Cube2789",
 			"type": "door",
 			"popInfo": {
 				"title": "2号门",
@@ -39,7 +39,7 @@
 		},
 		{
 			"id": "door_3",
-			"meshName": "Cube109_1",
+			"meshName": "Cube2790",
 			"type": "door",
 			"popInfo": {
 				"title": "3号门",
@@ -55,7 +55,7 @@
 		},
 		{
 			"id": "door_4",
-			"meshName": "Cube111_1",
+			"meshName": "Cube2791",
 			"type": "door",
 			"popInfo": {
 				"title": "4号门",
