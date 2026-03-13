@@ -67,7 +67,7 @@ export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?
   // 记录与碰撞体的上一帧距离
   const lastWallDistances = new Map<string, number>()
   // 记录当前显示弹窗的物体
-  const currentPopupObject = ref<string | null>(null)
+  const visiblePopupObjects = ref<Set<string>>(new Set())
 
   /**
    * 初始化自动漫游
@@ -364,6 +364,9 @@ export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?
         // 执行碰撞检测
         const collisionResult = isCloseToCollision(characterBox, wallBoundingBoxes.value)
         
+        // 记录当前帧中接近的物体
+        const currentCloseObjects = new Set<string>()
+        
         if (collisionResult.flag) {
           console.log('🚨 检测到碰撞体接近，物体数量:', collisionResult.boxes.length)
           
@@ -373,17 +376,21 @@ export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?
             for (const item of collisionResult.boxes) {
               const wallBox = item.box
               const distance = item.distance
+              const objectUuid = wallBox.selectMode.uuid
+              
+              // 记录当前接近的物体
+              currentCloseObjects.add(objectUuid)
               
               // 从场景中找到对应的物体
-              const targetObject = model.parent.getObjectByProperty('uuid', wallBox.selectMode.uuid)
+              const targetObject = model.parent.getObjectByProperty('uuid', objectUuid)
               if (targetObject) {
                 // 显示弹窗
                 const popupData = {
-                  id: `popup-${wallBox.selectMode.uuid}`,
+                  id: `popup-${objectUuid}`,
                   title: wallBox.selectMode.name,
                   content: [
                     { name: '距离', value: distance.toFixed(2) + ' 单位' },
-                    { name: 'UUID', value: wallBox.selectMode.uuid.slice(0, 8) + '...' }
+                    { name: 'UUID', value: objectUuid.slice(0, 8) + '...' }
                   ]
                 }
                 showPopup(popupData, targetObject)
@@ -392,6 +399,26 @@ export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?
             }
           }
         }
+        
+        // 关闭离开物体的弹窗
+        if (closePopup) {
+          // 找出需要关闭弹窗的物体
+          const objectsToClose = new Set<string>()
+          visiblePopupObjects.value.forEach(uuid => {
+            if (!currentCloseObjects.has(uuid)) {
+              objectsToClose.add(uuid)
+            }
+          })
+          
+          // 关闭弹窗
+          objectsToClose.forEach(uuid => {
+            closePopup(`popup-${uuid}`)
+            console.log('❌ 关闭物体弹窗:', uuid)
+          })
+        }
+        
+        // 更新当前显示弹窗的物体集合
+        visiblePopupObjects.value = currentCloseObjects
       }
 
       // 到达目标点，进入停留状态
