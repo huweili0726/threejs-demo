@@ -133,7 +133,7 @@ onMounted(async () => {
   }).catch(console.error)
   // 将从 loadModels 返回的包围盒信息设置到碰撞检测模块
   if (boundingBoxes && boundingBoxes.length > 0) {
-    setBoundingBoxesFromLoadResult(boundingBoxes)
+    setBoundingBoxesFromLoadResult(boundingBoxes, scene.value)
   }
 
   // 【7、加载漫游配置并启动自动漫游】

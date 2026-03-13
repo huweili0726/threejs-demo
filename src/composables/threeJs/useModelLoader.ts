@@ -153,30 +153,7 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
                   uuid: child.uuid
                 })
                 
-                // 添加红色包围盒可视化
-                if (collisionObject && (collisionObject.width !== undefined || collisionObject.height !== undefined || collisionObject.depth !== undefined)) {
-                  // 当有手动设置的尺寸时，使用手动计算的 box 对象来创建包围盒辅助器
-                  // 直接创建一个基于手动计算的 box 的辅助器
-                  const helper = new THREE.Box3Helper(box, 0xff0000)
-                  helper.visible = true
-                  helper.renderOrder = 1000
-                  if (helper.material instanceof THREE.Material) {
-                    helper.material.depthTest = false
-                  }
-                  scene.value!.add(helper)
-                } else {
-                  // 当没有手动设置的尺寸时，使用默认的 BoxHelper
-                  const helper = new THREE.BoxHelper(child, 0xff0000)
-                  helper.visible = true
-                  helper.renderOrder = 1000
-                  if (helper.material instanceof THREE.Material) {
-                    helper.material.depthTest = false
-                  }
-                  helper.update()
-                  scene.value!.add(helper)
-                }
-                
-                console.log(`已添加红色包围盒，名称:`, child.name)
+                console.log(`已为物体 ${child.name} 计算包围盒`)
               }
             })
           }
