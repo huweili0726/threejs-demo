@@ -1,10 +1,31 @@
 {
   // 需要进行碰撞检测的物体
   "walls": [
-    { "name": "Cube099_1", "width": 0.16, "height": 0.22, "depth": 0.001 },
-    { "name": "Cube1536_1", "width": 0.16, "height": 0.22, "depth": 0.001 },
-    { "name": "Cube1531_1", "width": 0.16, "height": 0.22, "depth": 0.001 },
-    { "name": "Cube1541_1", "width": 0.16, "height": 0.22, "depth": 0.001 },
+    // 1-4号门
+    { "name": "Cube099_1", "width": 0.18, "height": 0.22, "depth": 0.001 },
+    { "name": "Cube1536_1", "width": 0.18, "height": 0.22, "depth": 0.001 },
+    { "name": "Cube1531_1", "width": 0.18, "height": 0.22, "depth": 0.001 },
+    { "name": "Cube1541_1", "width": 0.18, "height": 0.22, "depth": 0.001 },
+
+    // 1-4号门左右两边的墙
+    { "name": "Cube1568", "thickness": 0.01 },
+    { "name": "Cube2300", "thickness": 0.01 },
+    { "name": "Cube1539", "thickness": 0.01 },
+    { "name": "Cube1528" },
+    { "name": "Cube1575" },
+    { "name": "Cube1581" },
+    { "name": "Cube1571", "thickness": 0.01 },
+    { "name": "Cube1563", "thickness": 0.01 },
+    { "name": "Cube1577", "thickness": 0.01 },
+    { "name": "Cube1524", "thickness": 0.01 },
+    { "name": "Cube1544" },
+    { "name": "Cube1540" },
+    { "name": "Cube1353" },
+    { "name": "Cube1551", "thickness": 0.01 },
+    { "name": "Cube1556", "thickness": 0.01 },
+    { "name": "Cube1553" },
+    { "name": "Cube1583", "thickness": 0.01 },
+    { "name": "Cube1582", "thickness": 0.01 },
 
     // 一进去传过4个大铁门 右转后 右手边的敞开的木头门
     { "name": "Cube1142" },
@@ -17,6 +38,11 @@
     { "name": "Cube2311" },
     { "name": "Cube2133_1" },
     { "name": "Cube2134_1" },
+    { "name": "Cube2311_1", "thickness": 0.01 },
+    { "name": "Cube2323_1", "thickness": 0.01 },
+    { "name": "Cube1149" },
+    { "name": "Cube056" },
+    { "name": "Cube1148" },
 
     // 一进去传过4个大铁门 T字路口往右前方走廊去的走廊的两边墙
     { "name": "Cube2286_1", "thickness": 0.01 },
