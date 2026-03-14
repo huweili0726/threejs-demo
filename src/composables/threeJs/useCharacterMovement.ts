@@ -10,25 +10,14 @@
 import * as THREE from 'three'
 import { ref } from 'vue'
 import { useBasisStore } from '@/stores/basis'
-import { jsonUtils } from '@/utils/json'
-
-// 三维设备配置接口
-interface ThreeDev {
-  id: string
-  meshName: string
-  type: string
-  popInfo?: {
-    title: string
-    content: Array<{ name: string; value: string }>
-  }
-}
 
 export function useCharacterMovement( 
   checkCollision: (characterBox: THREE.Box3) => boolean, // 检查碰撞函数
   updateBoundingBoxes: () => void, // 更新碰撞框函数
   wallBoundingBoxes?: any, // 墙体包围盒数组
   showPopup?: any, // 显示弹窗函数
-  closePopup?: any // 关闭弹窗函数
+  closePopup?: any, // 关闭弹窗函数
+  onStairConfirm?: () => void // 楼梯确认回调函数
 ) {
   // 获取 store 实例（在函数内部获取，确保 Pinia 已初始化）
   const basisStore = useBasisStore()
@@ -273,7 +262,6 @@ export function useCharacterMovement(
               // 显示弹窗
               let popupData = {}
               if (wallBox.isStairs) {
-                console.log('楼梯', wallBox.selectMode.name)
                 // 楼梯特殊弹窗
                 popupData = {
                   id: `popup-${objectUuid}`,
@@ -281,7 +269,8 @@ export function useCharacterMovement(
                   content: [
                     { name: '提示', value: '是否上二楼？' }
                   ],
-                  type: 'confirm'
+                  type: 'confirm',
+                  onConfirm: onStairConfirm
                 }
                 showPopup(popupData, targetObject)
               }

@@ -20,12 +20,9 @@ import { useObjectSelection } from '@/composables/threeJs/useObjectSelection' //
 import { useObjectPopup } from '@/composables/threeJs/useObjectPopup' // 物体弹窗相关Hooks
 import { useAutoRoam } from '@/composables/threeJs/useAutoRoam' // 自动漫游相关Hooks
 import { useBasisStore } from '@/stores/basis' // 基础配置 Store
-import { jsonUtils } from '@/utils/json' // JSON工具相关
 import '@/assets/css/object-popup.css' // 弹窗样式
 
 const threeJsContainer = ref<HTMLDivElement>()
-// json工具
-const { getJsonFile } = jsonUtils()
 // 获取窗口尺寸
 const { width, height } = useWindowSize()
 
@@ -37,7 +34,19 @@ const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadMod
 const { loadEnvironment } = useEnvironmentLoader(scene as any)
 const { wallBoundingBoxes, checkCollision, updateBoundingBoxes, setBoundingBoxesFromLoadResult, addCharacterBoundingBox } = useCollisionDetection() 
 const { initDoubleClickPopup, showPopup, closePopup, updateCSS2DRenderer, handleResize } = useObjectPopup(camera as any, scene as any, threeJsContainer)
-const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes, wallBoundingBoxes, showPopup, closePopup)
+
+// 楼梯确认回调函数 - 切换到8楼视角
+const onStairConfirm = () => {
+  const floor8thConfig = basisStore.floor8thConfig
+  const perspective = floor8thConfig?.perspective || { x: 0, y: 0, z: 0 }
+  const directionToLook = floor8thConfig?.directionToLook || { x: 0, y: 0, z: 0 }
+  const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+  const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+  flyTo(targetPosition, targetTarget, 2000)
+  console.log('🚀 切换到8楼视角')
+}
+
+const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes, wallBoundingBoxes, showPopup, closePopup, onStairConfirm)
 const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any, threeJsContainer)
 const { loadRoamConfig, initAutoRoam, startAutoRoam, pauseAutoRoam, resumeAutoRoam, stopAutoRoam, updateAutoRoam } = useAutoRoam(wallBoundingBoxes, showPopup, closePopup)
 

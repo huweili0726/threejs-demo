@@ -26,7 +26,8 @@ interface PopupData {
   id: string
   title: string
   content: PopupContentItem[],
-  type?: 'confirm' | 'info'
+  type?: 'confirm' | 'info',
+  onConfirm?: () => void
 }
 
 // 单个弹窗实例接口
@@ -44,6 +45,8 @@ export function useObjectPopup(
   let labelRenderer: CSS2DRenderer | null = null
   // 所有显示的弹窗列表
   const popups = ref<PopupInstance[]>([])
+  // 存储弹窗回调函数
+  const popupCallbacks = new Map<string, () => void>()
 
   /**
    * 初始化 CSS2DRenderer
@@ -95,7 +98,7 @@ export function useObjectPopup(
     if(data.type === 'confirm'){
       htmlContent += `
         <div class="dev-buttons">
-          <button class="devPop-confirm-btn" data-type="confirm-btn" onclick="closePopup('${data.id}')">确定</button>
+          <button class="devPop-confirm-btn" data-type="confirm-btn" onclick="confirmPopup('${data.id}')">确定</button>
           <button class="devPop-cancel-btn" data-type="cancel-btn" onclick="closePopup('${data.id}')">取消</button>
         </div>
       `
@@ -121,6 +124,11 @@ export function useObjectPopup(
     if (existingPopup) {
       console.log('⚠️ 该物体已显示弹窗:', data.title)
       return
+    }
+
+    // 存储回调函数
+    if (data.onConfirm) {
+      popupCallbacks.set(data.id, data.onConfirm)
     }
 
     // 创建弹窗元素
@@ -158,6 +166,21 @@ export function useObjectPopup(
   }
 
   /**
+   * 确定弹窗并执行回调
+   * @param id 弹窗 ID
+   */
+  const confirmPopup = (id: string): void => {
+    // 执行回调函数
+    const callback = popupCallbacks.get(id)
+    if (callback) {
+      callback()
+      console.log('✅ 执行弹窗回调:', id)
+    }
+    // 关闭弹窗
+    closePopup(id)
+  }
+
+  /**
    * 关闭指定ID的弹窗
    * @param id 弹窗 ID
    */
@@ -182,6 +205,8 @@ export function useObjectPopup(
         popup.label.parent.remove(popup.label)
       }
       popups.value.splice(index, 1)
+      // 清除回调函数
+      popupCallbacks.delete(id)
       console.log('❌ 关闭弹窗:', id, '剩余弹窗数:', popups.value.length)
     }
   }
@@ -189,6 +214,8 @@ export function useObjectPopup(
   // 将关闭函数挂载到 window 对象，供 HTML onclick 调用
   if (typeof window !== 'undefined') {
     (window as any).closePopup = closePopup
+    const win = window as any
+    win.confirmPopup = confirmPopup
   }
 
   /**

@@ -138,7 +138,6 @@ export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?
 
       // 用碰撞体的唯一标识作为key（这里用selectMode+索引，确保唯一）
       const wallKey = `${wallBox.selectMode.name}_${wallBox.selectMode.uuid}`;
-      const lastDistance = lastWallDistances.get(wallKey) || Infinity;
 
       // 检查是否在接近阈值内
       if (currentDistance < threshold) {
@@ -291,9 +290,9 @@ export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?
 
   /**
    * 计算自动漫游的位置和朝向过渡
-   * @param delta 时间增量
+   * @param _delta 时间增量
    */
-  const updateAutoRoam = (delta: number) => {
+  const updateAutoRoam = (_delta: number) => {
     if (!model || roamPoints.value.length === 0) {
       return
     }
