@@ -52,6 +52,7 @@ interface BasisConfig {
   }
   floor_1th: FloorConfig
   floor_neg1: FloorConfig
+  floor_neg1_2layers: FloorConfig
   floor_8th: FloorConfig
   floor_9th: FloorConfig
 }
@@ -87,6 +88,7 @@ export const useBasisStore = defineStore('basis', () => {
   const characterModelMoveConfig = computed(() => basisConfig.value?.characterModelMove)
   const floor1Config = computed(() => basisConfig.value?.floor_1th)
   const neg1FloorConfig = computed(() => basisConfig.value?.floor_neg1)
+  const neg12LayersFloorConfig = computed(() => basisConfig.value?.floor_neg1_2layers)
   const floor8thConfig = computed(() => basisConfig.value?.floor_8th)
   const floor9thConfig = computed(() => basisConfig.value?.floor_9th)
   const threeDevs = computed(() => threeDevConfig.value?.threeDevs || [])
@@ -147,6 +149,7 @@ export const useBasisStore = defineStore('basis', () => {
     characterModelMoveConfig,
     floor1Config,
     neg1FloorConfig,
+    neg12LayersFloorConfig,
     floor8thConfig,
     floor9thConfig,
     threeDevs,
