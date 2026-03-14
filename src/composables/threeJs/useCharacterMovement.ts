@@ -225,6 +225,8 @@ export function useCharacterMovement(
           direction: moveDirection,
           speed
         })
+        // 输出人物当前位置
+        console.log('📍 人物当前位置:', `x: ${model.position.x.toFixed(2)}, y: ${model.position.y.toFixed(2)}, z: ${model.position.z.toFixed(2)}`)
       } else {
         console.log('碰撞检测：阻止移动')
       }
