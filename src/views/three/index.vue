@@ -51,7 +51,7 @@ const handleToBottomfloorAndLoadcharacterModel = async (
   threeJsRef.value?.toAddCharacterBoundingBox()
 
   // 启动自动漫游
-  await threeJsRef.value?.loadCharacterModelAndStartRoam()
+  // await threeJsRef.value?.loadCharacterModelAndStartRoam()
 }
 
 // 开始自动漫游
