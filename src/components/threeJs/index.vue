@@ -36,13 +36,30 @@ const { wallBoundingBoxes, checkCollision, updateBoundingBoxes, setBoundingBoxes
 const { initDoubleClickPopup, showPopup, closePopup, updateCSS2DRenderer, handleResize } = useObjectPopup(camera as any, scene as any, threeJsContainer)
 
 // 楼梯确认回调函数 - 切换到8楼视角
-const onStairConfirm = () => {
-  const floor8thConfig = basisStore.floor8thConfig
-  const perspective = floor8thConfig?.perspective || { x: 0, y: 0, z: 0 }
-  const directionToLook = floor8thConfig?.directionToLook || { x: 0, y: 0, z: 0 }
+const onStairConfirm = async() => {
+  const neg12LayersFloorConfig = basisStore.neg12LayersFloorConfig
+  const perspective = neg12LayersFloorConfig?.perspective || { x: 0, y: 0, z: 0 }
+  const directionToLook = neg12LayersFloorConfig?.directionToLook || { x: 0, y: 0, z: 0 }
   const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
   const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
-  flyTo(targetPosition, targetTarget, 2000)
+  const duration = neg12LayersFloorConfig?.durationTime || 2000 // 飞行时间
+  const modelInitPosition = neg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
+  const onLookAt = neg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼2层入口处
+
+  
+  // 1、先移除人物模型
+  removeModel(basisStore.characterModelUrlsConfig?.man || '');
+
+  await loadModel({
+    modelUrl: basisStore.characterModelUrlsConfig?.man || '',
+    scale: 0.0005,
+    modelInitPosition: modelInitPosition || { x: 0, y: 0, z: 0 },
+    onLookAt: onLookAt || { x: 0, y: 0, z: 0 },
+    frontAxis: new THREE.Vector3(0, 0, 1),
+  })?.catch(console.error)
+
+  // 2、再把视角飞到-1楼2层入口处
+  await flyTo(targetPosition, targetTarget, duration)
   console.log('🚀 切换到8楼视角')
 }
 
