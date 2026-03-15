@@ -43,7 +43,7 @@ interface CollisionResult {
 export function useProximityPopup(
   showPopup: (data: PopupData, object: THREE.Object3D) => void,
   closePopup: (id?: string) => void,
-  onStairConfirm?: () => void
+  onConfirm?: () => void
 ) {
   // 记录与碰撞体的上一帧距离
   const lastWallDistances = new Map<string, number>()
@@ -140,7 +140,7 @@ export function useProximityPopup(
                 { name: '提示', value: '是否上二楼？' }
               ],
               type: 'confirm',
-              onConfirm: onStairConfirm
+              onConfirm: onConfirm
             }
           } else {
             const threeDev = wallBox.selectMode.name

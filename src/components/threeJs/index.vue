@@ -35,24 +35,8 @@ const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadMod
 const { loadEnvironment } = useEnvironmentLoader(scene as any) // 环境贴图加载相关Hooks
 const { wallBoundingBoxes, checkCollision, updateBoundingBoxes, setBoundingBoxesFromLoadResult, addCharacterBoundingBox } = useCollisionDetection() // 碰撞检测相关Hooks
 const { initDoubleClickPopup, showPopup, closePopup, updateCSS2DRenderer, handleResize } = useObjectPopup(camera as any, scene as any, threeJsContainer) // 物体弹窗相关Hooks
-const { switchToFloor } = useFloorSwitch(flyTo, loadModel as any, removeModel) // 楼层切换相关Hooks 
-
-// 楼梯确认回调函数 - 切换到-1楼2层视角
-const onStairConfirm = async() => {
-  const neg12LayersFloorConfig = basisStore.neg12LayersFloorConfig
-  const perspective = neg12LayersFloorConfig?.perspective || { x: 0, y: 0, z: 0 }
-  const directionToLook = neg12LayersFloorConfig?.directionToLook || { x: 0, y: 0, z: 0 }
-  const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
-  const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
-  const duration = neg12LayersFloorConfig?.durationTime || 2000 // 飞行时间
-  const modelInitPosition = neg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
-  const onLookAt = neg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼2层入口处
-
-  // 使用封装的楼层切换函数
-  await switchToFloor(targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
-}
-
-const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes, wallBoundingBoxes, showPopup, closePopup, onStairConfirm) // 人物移动控制相关Hooks
+const { switchToFloor, toControlCommandRoom } = useFloorSwitch(flyTo, loadModel as any, removeModel) // 楼层切换相关Hooks 
+const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes, wallBoundingBoxes, showPopup, closePopup, toControlCommandRoom) // 人物移动控制相关Hooks
 const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any, threeJsContainer) // 物体选择相关Hooks
 const { loadRoamConfig, initAutoRoam, startAutoRoam, pauseAutoRoam, resumeAutoRoam, stopAutoRoam, updateAutoRoam } = useAutoRoam(wallBoundingBoxes, showPopup, closePopup) // 自动漫游相关Hooks
 

@@ -18,13 +18,13 @@ export function useCharacterMovement(
   wallBoundingBoxes?: any, // 墙体包围盒数组
   showPopup?: any, // 显示弹窗函数
   closePopup?: any, // 关闭弹窗函数
-  onStairConfirm?: () => void // 楼梯确认回调函数
+  toControlCommandRoom?: () => void // 切换到-1楼2层视角回调函数
 ) {
   // 获取 store 实例（在函数内部获取，确保 Pinia 已初始化）
   const basisStore = useBasisStore()
 
   // 使用接近弹窗模块
-  const { updateProximityPopups } = useProximityPopup(showPopup, closePopup, onStairConfirm)
+  const { updateProximityPopups } = useProximityPopup(showPopup, closePopup, toControlCommandRoom)
 
   // 控制变量
   const keysPressed = ref<Set<string>>(new Set())

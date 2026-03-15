@@ -51,7 +51,31 @@ export function useFloorSwitch(
     ])
   }
 
+  /**
+   * 楼梯确认回调函数 - 切换到-1楼2层视角
+   * 当用户确认上楼时，切换到二楼视角
+   */
+  const toControlCommandRoom = async () => {
+    const neg12LayersFloorConfig = basisStore.neg12LayersFloorConfig
+    const perspective = neg12LayersFloorConfig?.perspective || { x: 0, y: 0, z: 0 }
+    const directionToLook = neg12LayersFloorConfig?.directionToLook || { x: 0, y: 0, z: 0 }
+    const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+    const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+    const duration = neg12LayersFloorConfig?.durationTime || 2000 // 飞行时间
+    const modelInitPosition = neg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
+    const onLookAt = neg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼2层入口处
+
+    await switchToFloor(
+      targetPosition,
+      targetTarget,
+      duration,
+      modelInitPosition,
+      onLookAt
+    )
+  }
+
   return {
-    switchToFloor
+    switchToFloor,
+    toControlCommandRoom
   }
 }
