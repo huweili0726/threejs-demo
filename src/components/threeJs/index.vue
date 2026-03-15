@@ -55,41 +55,40 @@ watchEffect(() => {
   handleResize(width.value, height.value) // 更新 CSS2DRenderer
 })
 
-onMounted(async () => {
-  // 【1、初始化场景（使用基础配置中的1楼视角）】
+// ==================== 初始化函数 ====================
+
+/**
+ * 初始化场景
+ */
+const initSceneAndEnvironment = () => {
   const floor1Config = basisStore.floor1Config
   const perspective = floor1Config?.perspective || { x: -9, y: 5, z: -15 }
-  const cameraPosition = new THREE.Vector3(perspective?.x || -9, perspective?.y || 5, perspective?.z || -15) 
-  initScene({ container: threeJsContainer, coordinateAxis: true, cameraPosition: cameraPosition }) 
+  const cameraPosition = new THREE.Vector3(perspective?.x || -9, perspective?.y || 5, perspective?.z || -15)
+  initScene({ container: threeJsContainer, coordinateAxis: true, cameraPosition: cameraPosition })
+  loadEnvironment(basisStore.skyboxUrlConfig, render)
+}
 
-  // 【2、加载天空盒】
-  loadEnvironment( basisStore.skyboxUrlConfig, render ) 
-  // 【3、初始化键盘事件监听】
+/**
+ * 初始化交互功能
+ */
+const initInteractions = () => {
   cleanupKeyboardEvents = initKeyboardEvents()
-  // 【4、初始化双击选中功能】
-  cleanupSelection = initDoubleClickSelection(
-    {
-      onSelect: (object) => {
-        if (object) {
-          console.log('🎉 双击选中了物体：', object.name)
-          // 这里可以加你自己的逻辑：比如触发开门动画、弹出详情面板、跳转场景等
-        } else {
-          console.log('🗑️  取消选中')
-        }
-      },
-      highlightEnabled: true // 开启蓝色高亮效果
-    }
-  )
-
-  // 【5、初始化双击弹窗功能】
+  // 初始化双击选中功能
+  cleanupSelection = initDoubleClickSelection({
+    onSelect: (object) => {
+      if (object) {
+        console.log('🎉 双击选中了物体：', object.name)
+      } else {
+        console.log('🗑️  取消选中')
+      }
+    },
+    highlightEnabled: true
+  })
+  // 初始化双击弹窗功能
   cleanupPopup = initDoubleClickPopup({
-    // 弹窗数据获取函数 return的内容就是要显示在弹窗上的数据
     getPopupData: (object: THREE.Object3D) => {
-      // 根据物体名称返回弹窗数据（渲染在弹窗里面的内容）
       if (object.name) {
-        // 从配置文件中查找对应的弹窗数据
         const devItem = basisStore.threeDevConfig?.threeDevs?.find((item: any) => item.meshName === object.name)
-        // 如果找到对应配置，返回弹窗数据
         if (devItem && devItem.popInfo) {
           return {
             id: `popup-${Date.now()}`,
@@ -97,63 +96,75 @@ onMounted(async () => {
             content: devItem.popInfo.content
           }
         }
-        // 如果没有找到对应配置，返回默认弹窗数据
-        else{
-          // 默认弹窗数据
-          return {
-            id: `popup-${Date.now()}`,
-            title: object.name,
-            content: [
-              { name: '类型', value: object.type },
-              { name: 'UUID', value: object.uuid.slice(0, 8) + '...' }
-            ]
-          }
+        return {
+          id: `popup-${Date.now()}`,
+          title: object.name,
+          content: [
+            { name: '类型', value: object.type },
+            { name: 'UUID', value: object.uuid.slice(0, 8) + '...' }
+          ]
         }
       }
       return null
     }
   })
+}
 
-  // 【3、加载模型和包围盒】
-  // 加载配置文件中的需要添加包围盒的物体配置
-  let _collisionObjects = basisStore.wallsConfig || []
-  // 加载模型并直接处理包围盒，避免重复遍历
+/**
+ * 加载模型和碰撞包围盒
+ */
+const loadSceneModels = async () => {
+  const _collisionObjects = basisStore.wallsConfig || []
   const boundingBoxes = await loadModels({
-    ...{
-      modelUrls: basisStore.modelUrlsConfig || [],
-      scale: 1,
-    },
+    modelUrls: basisStore.modelUrlsConfig || [],
+    scale: 1,
     collisionObjects: _collisionObjects
-
   }).catch(console.error)
-  // 将从 loadModels 返回的包围盒信息设置到碰撞检测模块
+
   if (boundingBoxes && boundingBoxes.length > 0) {
     setBoundingBoxesFromLoadResult(boundingBoxes, scene.value)
   }
+}
 
-  // 【7、加载漫游配置并启动自动漫游】
-  await loadRoamConfig()
-  
-  // 【8、设置动画更新回调】
+/**
+ * 设置动画循环回调
+ */
+const setupAnimationLoop = () => {
   setAnimationUpdateCallback((deltaTime: number) => {
     updateAnimations(deltaTime, modelMixers.value)
     updateCharacterMovement({
-      deltaTime, // ✅ 把外层的时间增量传入
-      modelUrl: basisStore.characterModelUrlsConfig?.man || '', // ✅ 把外层的模型URL传入
-      moveModel, // ✅ 把外层的移动模型的函数传入
-      loadedModelMaps: loadedModelMaps.value // ✅ 把外层的模型Map传入
+      deltaTime,
+      modelUrl: basisStore.characterModelUrlsConfig?.man || '',
+      moveModel,
+      loadedModelMaps: loadedModelMaps.value
     })
-    // 更新自动漫游
     updateAutoRoam(deltaTime)
-    // 相机跟随人物
     if (basisStore.characterModelUrlsConfig?.man && camera.value) {
-      cameraFollowModel( basisStore.characterModelUrlsConfig?.man, camera.value, cameraOffset )
+      cameraFollowModel(basisStore.characterModelUrlsConfig?.man, camera.value, cameraOffset)
     }
-    // 更新 CSS2DRenderer
     updateCSS2DRenderer()
   })
+}
 
-  // 【9、启动动画循环】
+// ==================== 主入口 ====================
+
+onMounted(async () => {
+  // 1. 初始化场景和环境
+  initSceneAndEnvironment()
+
+  // 2. 初始化交互功能 【双击选中功能 + 双击弹窗功能】
+  initInteractions()
+
+  // 3. 加载模型和碰撞包围盒
+  await loadSceneModels()
+
+  // 4. 加载漫游配置
+  await loadRoamConfig()
+
+  // 5. 设置动画循环
+  setupAnimationLoop()
+
+  // 6. 启动动画循环
   startAnimationLoop()
 })
 
