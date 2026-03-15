@@ -30,12 +30,12 @@ const { width, height } = useWindowSize()
 // 使用基础配置 Store
 const basisStore = useBasisStore()
 
-const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize } = useThreeScene()
-const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel, removeModel } = useModelLoader(scene as any, render)
-const { loadEnvironment } = useEnvironmentLoader(scene as any)
-const { wallBoundingBoxes, checkCollision, updateBoundingBoxes, setBoundingBoxesFromLoadResult, addCharacterBoundingBox } = useCollisionDetection() 
-const { initDoubleClickPopup, showPopup, closePopup, updateCSS2DRenderer, handleResize } = useObjectPopup(camera as any, scene as any, threeJsContainer)
-const { switchToFloor } = useFloorSwitch(flyTo, loadModel as any, removeModel)
+const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize } = useThreeScene() // 场景相关Hooks
+const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel, removeModel } = useModelLoader(scene as any, render) // 模型加载相关Hooks
+const { loadEnvironment } = useEnvironmentLoader(scene as any) // 环境贴图加载相关Hooks
+const { wallBoundingBoxes, checkCollision, updateBoundingBoxes, setBoundingBoxesFromLoadResult, addCharacterBoundingBox } = useCollisionDetection() // 碰撞检测相关Hooks
+const { initDoubleClickPopup, showPopup, closePopup, updateCSS2DRenderer, handleResize } = useObjectPopup(camera as any, scene as any, threeJsContainer) // 物体弹窗相关Hooks
+const { switchToFloor } = useFloorSwitch(flyTo, loadModel as any, removeModel) // 楼层切换相关Hooks 
 
 // 楼梯确认回调函数 - 切换到-1楼2层视角
 const onStairConfirm = async() => {
@@ -50,12 +50,11 @@ const onStairConfirm = async() => {
 
   // 使用封装的楼层切换函数
   await switchToFloor(targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
-  console.log('🚀 切换到-1楼2层视角')
 }
 
-const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes, wallBoundingBoxes, showPopup, closePopup, onStairConfirm)
-const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any, threeJsContainer)
-const { loadRoamConfig, initAutoRoam, startAutoRoam, pauseAutoRoam, resumeAutoRoam, stopAutoRoam, updateAutoRoam } = useAutoRoam(wallBoundingBoxes, showPopup, closePopup)
+const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes, wallBoundingBoxes, showPopup, closePopup, onStairConfirm) // 人物移动控制相关Hooks
+const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any, threeJsContainer) // 物体选择相关Hooks
+const { loadRoamConfig, initAutoRoam, startAutoRoam, pauseAutoRoam, resumeAutoRoam, stopAutoRoam, updateAutoRoam } = useAutoRoam(wallBoundingBoxes, showPopup, closePopup) // 自动漫游相关Hooks
 
 // 控制变量
 const cameraOffset = new THREE.Vector3(0, 0.1, -0.12) // 相机偏移量（在模型后方，稍微上方）
