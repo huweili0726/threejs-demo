@@ -238,6 +238,12 @@ export function useAutoRoam(wallBoundingBoxes: any, updateProximityPopups?: (opt
     const currentTime = performance.now()
     const currentPoint = roamPoints.value[currentPointIndex.value]
 
+    // 自动漫游不需要碰撞检测的原因：
+    // 1. 自动漫游使用预设路径，避开了障碍物
+    // 2. 平滑的插值移动不会导致穿墙
+    // 3. 移除碰撞检测可以提高性能
+    // 因此，自动漫游不需要调用 checkCollision 函数 【人物是否与墙体发生碰撞】
+
     // --------------------------
     // 1. 处理【用户主动暂停】
     // --------------------------
