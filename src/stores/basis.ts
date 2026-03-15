@@ -76,10 +76,12 @@ export const useBasisStore = defineStore('basis', () => {
   const basisConfig = ref<BasisConfig | null>(null)
   const threeDevConfig = ref<ThreeDevConfig | null>(null)
   const wallConfig = ref<WallConfig | null>(null)
+  const roamConfig = ref<any | null>(null)
   
   const isLoaded = ref(false)
   const isThreeDevLoaded = ref(false)
   const isWallLoaded = ref(false)
+  const isRoamLoaded = ref(false)
 
   // Getters
   const characterModelUrlsConfig = computed(() => basisConfig.value?.characterModelUrls)
@@ -93,6 +95,7 @@ export const useBasisStore = defineStore('basis', () => {
   const floor9thConfig = computed(() => basisConfig.value?.floor_9th)
   const threeDevs = computed(() => threeDevConfig.value?.threeDevs || [])
   const wallsConfig = computed(() => wallConfig.value?.walls || [])
+  const roamPathConfig = computed(() => roamConfig.value || null)
 
   // Actions
   /**
@@ -123,15 +126,26 @@ export const useBasisStore = defineStore('basis', () => {
   }
 
   /**
+   * 设置漫游路径配置
+   * @param config 漫游路径配置对象
+   */
+  function setRoamConfig(config: any) {
+    roamConfig.value = config
+    isRoamLoaded.value = true
+  }
+
+  /**
    * 清除配置
    */
   function clearConfig() {
     basisConfig.value = null
     threeDevConfig.value = null
     wallConfig.value = null
+    roamConfig.value = null
     isLoaded.value = false
     isThreeDevLoaded.value = false
     isWallLoaded.value = false
+    isRoamLoaded.value = false
   }
 
   return {
@@ -139,9 +153,11 @@ export const useBasisStore = defineStore('basis', () => {
     basisConfig,
     threeDevConfig,
     wallConfig,
+    roamConfig,
     isLoaded,
     isThreeDevLoaded,
     isWallLoaded,
+    isRoamLoaded,
     // Getters
     characterModelUrlsConfig,
     modelUrlsConfig,
@@ -154,10 +170,12 @@ export const useBasisStore = defineStore('basis', () => {
     floor9thConfig,
     threeDevs,
     wallsConfig,
+    roamPathConfig,
     // Actions
     setBasisConfig,
     setThreeDevConfig,
     setWallConfig,
+    setRoamConfig,
     clearConfig
   }
 })

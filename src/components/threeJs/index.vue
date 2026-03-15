@@ -41,7 +41,7 @@ const { switchToFloor, toControlCommandRoom } = useFloorSwitch(flyTo, loadModel 
 const { wallBoundingBoxes, checkCollision, updateBoundingBoxes, setBoundingBoxesFromLoadResult, addCharacterBoundingBox } = useCollisionDetection() // 碰撞检测相关Hooks
 const { updateProximityPopups } = useProximityPopup(showPopup, closePopup, toControlCommandRoom) // 使用接近弹窗模块（统一管理弹窗逻辑）
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes, wallBoundingBoxes, updateProximityPopups) // 人物移动控制相关Hooks
-const { loadRoamConfig, initAutoRoam, startAutoRoam, pauseAutoRoam, resumeAutoRoam, stopAutoRoam, updateAutoRoam } = useAutoRoam(wallBoundingBoxes, updateProximityPopups) // 自动漫游相关Hooks
+const { initAutoRoam, startAutoRoam, pauseAutoRoam, resumeAutoRoam, stopAutoRoam, updateAutoRoam } = useAutoRoam(wallBoundingBoxes, updateProximityPopups) // 自动漫游相关Hooks
 
 // 控制变量
 const cameraOffset = new THREE.Vector3(0, 0.1, -0.12) // 相机偏移量（在模型后方，稍微上方）
@@ -160,13 +160,10 @@ onMounted(async () => {
   // 3. 加载模型和碰撞包围盒
   await loadSceneModels()
 
-  // 4. 加载漫游配置
-  await loadRoamConfig()
-
-  // 5. 设置动画循环
+  // 4. 设置动画循环
   setupAnimationLoop()
 
-  // 6. 启动动画循环
+  // 5. 启动动画循环
   startAnimationLoop()
 })
 

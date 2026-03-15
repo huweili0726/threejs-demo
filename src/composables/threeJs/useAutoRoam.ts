@@ -9,7 +9,7 @@
  */
 import * as THREE from 'three'
 import { ref } from 'vue'
-import { jsonUtils } from '@/utils/json'
+import { useBasisStore } from '@/stores/basis'
 
 // 漫游点接口
 interface RoamPoint {
@@ -64,6 +64,9 @@ export function useAutoRoam(wallBoundingBoxes: any, updateProximityPopups?: (opt
   let model: THREE.Group | null = null
   // 清理键盘事件的函数
   let cleanupKeyboardEvents: (() => void) | null = null
+  
+  // 基础配置 store
+  const basisStore = useBasisStore()
 
   /**
    * 初始化自动漫游
@@ -96,29 +99,6 @@ export function useAutoRoam(wallBoundingBoxes: any, updateProximityPopups?: (opt
   }
 
   /**
-   * 加载漫游路径配置
-   * @param configPath 配置文件路径
-   */
-  const loadRoamConfig = async (configPath: string = `${import.meta.env.BASE_URL}/config/roamingPathPoint.jsonc`) => {
-    try {
-      const { getJsonFile } = jsonUtils()
-      const config = await getJsonFile(configPath)
-      // 默认加载 allRoom 路径
-      if (config && config.allRoom && config.allRoom.points) {
-        roamPoints.value = config.allRoom.points
-        console.log('✅ 自动漫游配置加载完成，共', roamPoints.value.length, '个点位')
-        return true
-      } else {
-        console.error('❌ 自动漫游配置加载失败：配置格式不正确')
-        return false
-      }
-    } catch (error) {
-      console.error('❌ 自动漫游配置加载失败：', error)
-      return false
-    }
-  }
-
-  /**
    * 开始自动漫游
    * @param points 自定义路径点
    * @param autoShowPop 是否自动显示弹窗
@@ -132,6 +112,15 @@ export function useAutoRoam(wallBoundingBoxes: any, updateProximityPopups?: (opt
     // 支持自定义路径点
     if (points) {
       roamPoints.value = points
+    } else {
+      // 从 basisStore 获取漫游路径配置
+      const roamConfig = basisStore.roamPathConfig?.allRoom?.points
+      if (roamConfig && roamConfig.length > 0) {
+        roamPoints.value = roamConfig
+      } else {
+        console.error('❌ 自动漫游失败：未找到有效的漫游路径配置')
+        return
+      }
     }
     if (autoShowPopParam) {
       autoShowPop.value = autoShowPopParam
@@ -381,7 +370,6 @@ export function useAutoRoam(wallBoundingBoxes: any, updateProximityPopups?: (opt
     // 方法
     initAutoRoam,
     startAutoRoam,
-    loadRoamConfig,
     pauseAutoRoam,
     resumeAutoRoam,
     stopAutoRoam,
