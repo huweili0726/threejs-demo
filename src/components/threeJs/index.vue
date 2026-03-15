@@ -20,6 +20,7 @@ import { useObjectSelection } from '@/composables/threeJs/useObjectSelection' //
 import { useObjectPopup } from '@/composables/threeJs/useObjectPopup' // 物体弹窗相关Hooks
 import { useAutoRoam } from '@/composables/threeJs/useAutoRoam' // 自动漫游相关Hooks
 import { useBasisStore } from '@/stores/basis' // 基础配置 Store
+import { useFloorSwitch } from '@/composables/threeJs/useFloorSwitch' // 楼层切换相关Hooks
 import '@/assets/css/object-popup.css' // 弹窗样式
 
 const threeJsContainer = ref<HTMLDivElement>()
@@ -34,6 +35,7 @@ const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadMod
 const { loadEnvironment } = useEnvironmentLoader(scene as any)
 const { wallBoundingBoxes, checkCollision, updateBoundingBoxes, setBoundingBoxesFromLoadResult, addCharacterBoundingBox } = useCollisionDetection() 
 const { initDoubleClickPopup, showPopup, closePopup, updateCSS2DRenderer, handleResize } = useObjectPopup(camera as any, scene as any, threeJsContainer)
+const { switchToFloor } = useFloorSwitch(flyTo, loadModel as any, removeModel)
 
 // 楼梯确认回调函数 - 切换到-1楼2层视角
 const onStairConfirm = async() => {
@@ -46,20 +48,8 @@ const onStairConfirm = async() => {
   const modelInitPosition = neg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
   const onLookAt = neg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼2层入口处
 
-  // 1、先移除人物模型
-  removeModel(basisStore.characterModelUrlsConfig?.man || '');
-
-  // 3、重新加载人物模型
-  await loadModel({
-    modelUrl: basisStore.characterModelUrlsConfig?.man || '',
-    scale: 0.0005,
-    modelInitPosition: modelInitPosition || { x: 0, y: 0, z: 0 },
-    onLookAt: onLookAt || { x: 0, y: 0, z: 0 },
-    frontAxis: new THREE.Vector3(0, 0, 1),
-  })?.catch(console.error)
-
-  // 3、再把视角飞到-1楼2层入口处
-  await flyTo(targetPosition, targetTarget, duration)
+  // 使用封装的楼层切换函数
+  await switchToFloor(targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   console.log('🚀 切换到-1楼2层视角')
 }
 
@@ -234,7 +224,8 @@ defineExpose({
   stopAutoRoam,
   toAddCharacterBoundingBox,
   pauseAutoRoam,
-  resumeAutoRoam
+  resumeAutoRoam,
+  switchToFloor
 })
 </script>
 
