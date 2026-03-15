@@ -104,12 +104,14 @@ export function useProximityPopup(
    * 更新接近弹窗
    * @param options.model 人物模型
    * @param options.wallBoundingBoxes 墙体包围盒数组
+   * @param options.onlyShowUpDownStairsPopup 仅显示上楼梯/下楼梯弹窗的标志
    */
   const updateProximityPopups = (options: { 
       model: THREE.Group; 
-      wallBoundingBoxes: WallBoundingBox[] 
+      wallBoundingBoxes: WallBoundingBox[],
+      onlyShowUpDownStairsPopup?: boolean, 
     }) => {
-    const { model, wallBoundingBoxes } = options
+    const { model, wallBoundingBoxes, onlyShowUpDownStairsPopup } = options
 
     if (!model || !wallBoundingBoxes || !showPopup || !closePopup) {
       return
@@ -132,29 +134,35 @@ export function useProximityPopup(
         if (targetObject) {
           let popupData: PopupData
 
-          if (wallBox.isStairs) {
-            popupData = {
-              id: `popup-${objectUuid}`,
-              title: '系统提示',
-              content: [
-                { name: '提示', value: '是否上二楼？' }
-              ],
-              type: 'confirm',
-              onConfirm: onConfirm
+          if (onlyShowUpDownStairsPopup) {
+            // onlyShowUpDownStairsPopup = true 时，只显示楼梯弹窗
+            if (wallBox.isStairs) {
+              popupData = {
+                id: `popup-${objectUuid}`,
+                title: '系统提示',
+                content: [
+                  { name: '提示', value: '是否上二楼？' }
+                ],
+                type: 'confirm',
+                onConfirm: onConfirm
+              }
+              showPopup(popupData, targetObject)
             }
           } else {
-            const threeDev = wallBox.selectMode.name
-            popupData = {
-              id: `popup-${objectUuid}`,
-              title: threeDev,
-              content: [
-                { name: '距离', value: item.distance.toFixed(2) + ' 单位' },
-                { name: 'UUID', value: objectUuid.slice(0, 8) + '...' }
-              ]
+            // onlyShowUpDownStairsPopup = false 时，只显示普通物体弹窗
+            if (!wallBox.isStairs) {
+              const threeDev = wallBox.selectMode.name
+              popupData = {
+                id: `popup-${objectUuid}`,
+                title: threeDev,
+                content: [
+                  { name: '距离', value: item.distance.toFixed(2) + ' 单位' },
+                  { name: 'UUID', value: objectUuid.slice(0, 8) + '...' }
+                ]
+              }
+              showPopup(popupData, targetObject)
             }
           }
-
-          showPopup(popupData, targetObject)
         }
       }
     }

@@ -15,7 +15,7 @@ export function useCharacterMovement(
   checkCollision: (characterBox: THREE.Box3) => boolean, // 检查碰撞函数
   updateBoundingBoxes: () => void, // 更新碰撞框函数
   wallBoundingBoxes?: any, // 墙体包围盒数组
-  updateProximityPopups?: (options: { model: THREE.Group; wallBoundingBoxes: any[] }) => void // 更新接近弹窗函数
+  updateProximityPopups?: (options: { model: THREE.Group; wallBoundingBoxes: any[]; onlyShowUpDownStairsPopup?: boolean }) => void // 更新接近弹窗函数
 ) {
   // 获取 store 实例（在函数内部获取，确保 Pinia 已初始化）
   const basisStore = useBasisStore()
@@ -179,7 +179,7 @@ export function useCharacterMovement(
     
     // 更新接近弹窗
     if (model && wallBoundingBoxes) {
-      updateProximityPopups?.({ model: model, wallBoundingBoxes: wallBoundingBoxes?.value || wallBoundingBoxes })
+      updateProximityPopups?.({ model: model, wallBoundingBoxes: wallBoundingBoxes?.value || wallBoundingBoxes, onlyShowUpDownStairsPopup: true })
     }
   }
   

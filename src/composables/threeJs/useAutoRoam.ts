@@ -35,7 +35,7 @@ interface RoamStart {
   rotationY: number
 }
 
-export function useAutoRoam(wallBoundingBoxes: any, updateProximityPopups?: (options: { model: THREE.Group; wallBoundingBoxes: any[] }) => void) {
+export function useAutoRoam(wallBoundingBoxes: any, updateProximityPopups?: (options: { model: THREE.Group; wallBoundingBoxes: any[]; onlyShowUpDownStairsPopup?: boolean }) => void) {
   // 漫游路径点
   const roamPoints = ref<RoamPoint[]>([])
   // 当前漫游点索引
@@ -308,7 +308,7 @@ export function useAutoRoam(wallBoundingBoxes: any, updateProximityPopups?: (opt
 
       // 使用接近弹窗模块更新弹窗
       if (model) {
-        updateProximityPopups?.({ model, wallBoundingBoxes: wallBoundingBoxes.value })
+        updateProximityPopups?.({ model, wallBoundingBoxes: wallBoundingBoxes.value, onlyShowUpDownStairsPopup: false })
       }
 
       // 到达目标点，进入停留状态
