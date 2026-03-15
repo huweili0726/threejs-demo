@@ -185,7 +185,7 @@ export function useCharacterMovement(
     
     // 更新接近弹窗
     if (model && wallBoundingBoxes) {
-      updateProximityPopups(model, wallBoundingBoxes.value)
+      updateProximityPopups({ model: model, wallBoundingBoxes: wallBoundingBoxes.value })
     }
   }
   

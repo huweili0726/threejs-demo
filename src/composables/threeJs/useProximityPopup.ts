@@ -52,11 +52,14 @@ export function useProximityPopup(
 
   /**
    * 碰撞检测（到达某个模型附近，自动弹窗）
-   * @param characterBox 人物的包围盒
-   * @param wallBoundingBoxes 墙体的包围盒数组
+   * @param options.characterBox 人物的包围盒
+   * @param options.wallBoundingBoxes 墙体的包围盒数组
    * @returns 碰撞检测结果
    */
-  const isCloseToCollision = (characterBox: THREE.Box3, wallBoundingBoxes: WallBoundingBox[]): CollisionResult => {
+  const isCloseToCollision = (options: { 
+    characterBox: THREE.Box3; 
+    wallBoundingBoxes: WallBoundingBox[] 
+  }): CollisionResult => {
     const threshold = 0.3
     const farThreshold = 0.35
     const result: CollisionResult = {
@@ -68,6 +71,7 @@ export function useProximityPopup(
       isLeaving: false,
       isFullyLeft: false
     }
+    const { characterBox, wallBoundingBoxes } = options
 
     if (!wallBoundingBoxes || wallBoundingBoxes.length === 0) {
       console.log('⚠️  wallBoundingBoxes 为空，无法进行碰撞检测')
@@ -98,16 +102,21 @@ export function useProximityPopup(
 
   /**
    * 更新接近弹窗
-   * @param model 人物模型
-   * @param wallBoundingBoxes 墙体包围盒数组
+   * @param options.model 人物模型
+   * @param options.wallBoundingBoxes 墙体包围盒数组
    */
-  const updateProximityPopups = (model: THREE.Group, wallBoundingBoxes: WallBoundingBox[]) => {
+  const updateProximityPopups = (options: { 
+      model: THREE.Group; 
+      wallBoundingBoxes: WallBoundingBox[] 
+    }) => {
+    const { model, wallBoundingBoxes } = options
+
     if (!model || !wallBoundingBoxes || !showPopup || !closePopup) {
       return
     }
 
     const characterBox = new THREE.Box3().setFromObject(model)
-    const collisionResult = isCloseToCollision(characterBox, wallBoundingBoxes)
+    const collisionResult = isCloseToCollision({ characterBox: characterBox, wallBoundingBoxes: wallBoundingBoxes })
 
     const currentCloseObjects = new Set<string>()
     const currentFarObjects = new Set<string>()
