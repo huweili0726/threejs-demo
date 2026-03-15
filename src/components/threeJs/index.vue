@@ -19,6 +19,7 @@ import { useCollisionDetection } from '@/composables/threeJs/useCollisionDetecti
 import { useObjectSelection } from '@/composables/threeJs/useObjectSelection' // 物体选择相关Hooks
 import { useObjectPopup } from '@/composables/threeJs/useObjectPopup' // 物体弹窗相关Hooks
 import { useAutoRoam } from '@/composables/threeJs/useAutoRoam' // 自动漫游相关Hooks
+import { useProximityPopup } from '@/composables/threeJs/useProximityPopup' // 接近弹窗相关Hooks
 import { useBasisStore } from '@/stores/basis' // 基础配置 Store
 import { useFloorSwitch } from '@/composables/threeJs/useFloorSwitch' // 楼层切换相关Hooks
 import '@/assets/css/object-popup.css' // 弹窗样式
@@ -36,9 +37,13 @@ const { loadEnvironment } = useEnvironmentLoader(scene as any) // 环境贴图�
 const { wallBoundingBoxes, checkCollision, updateBoundingBoxes, setBoundingBoxesFromLoadResult, addCharacterBoundingBox } = useCollisionDetection() // 碰撞检测相关Hooks
 const { initDoubleClickPopup, showPopup, closePopup, updateCSS2DRenderer, handleResize } = useObjectPopup(camera as any, scene as any, threeJsContainer) // 物体弹窗相关Hooks
 const { switchToFloor, toControlCommandRoom } = useFloorSwitch(flyTo, loadModel as any, removeModel) // 楼层切换相关Hooks 
-const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes, wallBoundingBoxes, showPopup, closePopup, toControlCommandRoom) // 人物移动控制相关Hooks
+
+// 使用接近弹窗模块（统一管理弹窗逻辑）
+const { updateProximityPopups } = useProximityPopup(showPopup, closePopup, toControlCommandRoom)
+
+const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes, wallBoundingBoxes, updateProximityPopups) // 人物移动控制相关Hooks
 const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any, threeJsContainer) // 物体选择相关Hooks
-const { loadRoamConfig, initAutoRoam, startAutoRoam, pauseAutoRoam, resumeAutoRoam, stopAutoRoam, updateAutoRoam } = useAutoRoam(wallBoundingBoxes, showPopup, closePopup, toControlCommandRoom) // 自动漫游相关Hooks
+const { loadRoamConfig, initAutoRoam, startAutoRoam, pauseAutoRoam, resumeAutoRoam, stopAutoRoam, updateAutoRoam } = useAutoRoam(wallBoundingBoxes, updateProximityPopups) // 自动漫游相关Hooks
 
 // 控制变量
 const cameraOffset = new THREE.Vector3(0, 0.1, -0.12) // 相机偏移量（在模型后方，稍微上方）

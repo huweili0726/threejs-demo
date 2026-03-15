@@ -10,7 +10,6 @@
 import * as THREE from 'three'
 import { ref } from 'vue'
 import { jsonUtils } from '@/utils/json'
-import { useProximityPopup } from './useProximityPopup'
 
 // 漫游点接口
 interface RoamPoint {
@@ -36,7 +35,7 @@ interface RoamStart {
   rotationY: number
 }
 
-export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?: any, onConfirm?: () => void) {
+export function useAutoRoam(wallBoundingBoxes: any, updateProximityPopups?: (options: { model: THREE.Group; wallBoundingBoxes: any[] }) => void) {
   // 漫游路径点
   const roamPoints = ref<RoamPoint[]>([])
   // 当前漫游点索引
@@ -65,9 +64,6 @@ export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?
   let model: THREE.Group | null = null
   // 清理键盘事件的函数
   let cleanupKeyboardEvents: (() => void) | null = null
-
-  // 使用接近弹窗模块
-  const { updateProximityPopups } = useProximityPopup(showPopup, closePopup, onConfirm)
 
   /**
    * 初始化自动漫游
@@ -306,7 +302,7 @@ export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?
 
       // 使用接近弹窗模块更新弹窗
       if (model) {
-        updateProximityPopups({ model, wallBoundingBoxes: wallBoundingBoxes.value })
+        updateProximityPopups?.({ model, wallBoundingBoxes: wallBoundingBoxes.value })
       }
 
       // 到达目标点，进入停留状态
