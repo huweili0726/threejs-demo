@@ -36,7 +36,10 @@ export function useFloorSwitch(
     // 1、先移除人物模型
     removeModel(characterModelUrl)
 
-    // 2、重新加载人物模型
+    // 2、视角飞转到目标位置
+    await flyTo(targetPosition, targetTarget, duration)
+
+    // 3、重新加载人物模型
     await loadModel({
       modelUrl: characterModelUrl,
       scale: 0.0005,
@@ -44,9 +47,6 @@ export function useFloorSwitch(
       onLookAt: onLookAt || { x: 0, y: 0, z: 0 },
       frontAxis: new THREE.Vector3(0, 0, 1),
     })?.catch(console.error)
-
-    // 3、视角飞转到目标位置
-    await flyTo(targetPosition, targetTarget, duration)
   }
 
   return {
