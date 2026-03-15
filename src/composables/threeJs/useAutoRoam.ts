@@ -10,6 +10,7 @@
 import * as THREE from 'three'
 import { ref } from 'vue'
 import { jsonUtils } from '@/utils/json'
+import { useProximityPopup } from './useProximityPopup'
 
 // 漫游点接口
 interface RoamPoint {
@@ -35,7 +36,7 @@ interface RoamStart {
   rotationY: number
 }
 
-export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?: any) {
+export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?: any, onConfirm?: () => void) {
   // 漫游路径点
   const roamPoints = ref<RoamPoint[]>([])
   // 当前漫游点索引
@@ -64,10 +65,9 @@ export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?
   let model: THREE.Group | null = null
   // 清理键盘事件的函数
   let cleanupKeyboardEvents: (() => void) | null = null
-  // 记录与碰撞体的上一帧距离
-  const lastWallDistances = new Map<string, number>()
-  // 记录当前显示弹窗的物体
-  const visiblePopupObjects = ref<Set<string>>(new Set())
+
+  // 使用接近弹窗模块
+  const { updateProximityPopups } = useProximityPopup(showPopup, closePopup, onConfirm)
 
   /**
    * 初始化自动漫游
@@ -97,64 +97,6 @@ export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?
     cleanupKeyboardEvents = () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }
-
-  /**
-   * 碰撞检测（到达某个模型附近，自动弹窗）
-   * @param characterBox 人物的包围盒
-   * @param wallBoundingBoxes 墙体的包围盒数组
-   * @returns 碰撞检测结果
-   */
-  const isCloseToCollision = (characterBox: THREE.Box3, wallBoundingBoxes: Array<{ box: THREE.Box3; selectMode: { name: string; uuid: string } }>) => {
-    const threshold = 0.3; // 接近阈值（调整为与实际距离单位匹配）
-    const farThreshold = 0.35; // 离开阈值（需大于接近阈值，避免抖动）
-    const result = {
-      flag: false, // 是否在接近阈值内
-      boxes: [] as Array<{ box: any; distance: number }>, // 所有在阈值内的碰撞体
-      farBoxes: [] as Array<{ box: any; distance: number }>, // 所有在离开阈值外的碰撞体
-      distance: Infinity, // 当前距离
-      isApproaching: false, // 是否正在靠近（当前距离 < 上一帧距离）
-      isLeaving: false, // 是否正在离开（当前距离 > 上一帧距离）
-      isFullyLeft: false // 是否已完全离开（距离 > 离开阈值）
-    };
-
-    // 检查 wallBoundingBoxes 是否为空
-    if (!wallBoundingBoxes || wallBoundingBoxes.length === 0) {
-      console.log('⚠️  wallBoundingBoxes 为空，无法进行碰撞检测')
-      return result;
-    }
-
-    console.log('🔍 开始碰撞检测，物体数量:', wallBoundingBoxes.length)
-    
-    for (const wallBox of wallBoundingBoxes) {
-      // 计算人物与碰撞体中心的距离
-      const wallCenter = new THREE.Vector3();
-      wallBox.box.getCenter(wallCenter);
-      const characterCenter = new THREE.Vector3();
-      characterBox.getCenter(characterCenter);
-      const currentDistance = characterCenter.distanceTo(wallCenter);
-
-      console.log('📏 物体:', wallBox.selectMode.name, '距离:', currentDistance)
-
-      // 用碰撞体的唯一标识作为key（这里用selectMode+索引，确保唯一）
-      const wallKey = `${wallBox.selectMode.name}_${wallBox.selectMode.uuid}`;
-
-      // 检查是否在接近阈值内
-      if (currentDistance < threshold) {
-        result.flag = true;
-        result.boxes.push({ box: wallBox, distance: currentDistance });
-        console.log('🎯 检测到物体接近:', wallBox.selectMode.name, '距离:', currentDistance)
-      } 
-      // 检查是否在离开阈值外
-      else if (currentDistance > farThreshold) {
-        result.farBoxes.push({ box: wallBox, distance: currentDistance });
-        console.log('🚶 检测到物体离开:', wallBox.selectMode.name, '距离:', currentDistance)
-      }
-
-      lastWallDistances.set(wallKey, currentDistance);
-    }
-
-    return result;
   }
 
   /**
@@ -362,71 +304,9 @@ export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?
       model.position.copy(newPos)
       model.rotation.y = newRotY
 
-      // 碰撞检测（到达某个模型附近，自动弹窗）
+      // 使用接近弹窗模块更新弹窗
       if (model) {
-        // 计算人物模型的包围盒
-        const characterBox = new THREE.Box3().setFromObject(model)
-        // 执行碰撞检测
-        const collisionResult = isCloseToCollision(characterBox, wallBoundingBoxes.value)
-        
-        // 记录当前帧中接近的物体
-        const currentCloseObjects = new Set<string>()
-        // 记录当前帧中离开的物体（超过farThreshold）
-        const currentFarObjects = new Set<string>()
-        
-        if (collisionResult.flag) {
-          console.log('🚨 检测到碰撞体接近，物体数量:', collisionResult.boxes.length)
-          
-          // 显示所有接近物体的弹窗
-          if (showPopup && model.parent) {
-            // 为每个接近的物体显示弹窗
-            for (const item of collisionResult.boxes) {
-              const wallBox = item.box
-              const distance = item.distance
-              const objectUuid = wallBox.selectMode.uuid
-              
-              // 记录当前接近的物体
-              currentCloseObjects.add(objectUuid)
-              
-              // 从场景中找到对应的物体
-              const targetObject = model.parent.getObjectByProperty('uuid', objectUuid)
-              if (targetObject) {
-                // 显示弹窗
-                const popupData = {
-                  id: `popup-${objectUuid}`,
-                  title: wallBox.selectMode.name,
-                  content: [
-                    { name: '距离', value: distance.toFixed(2) + ' 单位' },
-                    { name: 'UUID', value: objectUuid.slice(0, 8) + '...' }
-                  ]
-                }
-                showPopup(popupData, targetObject)
-                console.log('📌 显示物体弹窗:', wallBox.selectMode.name, '距离:', distance)
-              }
-            }
-          }
-        }
-        
-        // 记录离开的物体（超过farThreshold）
-        if (collisionResult.farBoxes.length > 0) {
-          console.log('🚶 检测到物体离开，物体数量:', collisionResult.farBoxes.length)
-          for (const item of collisionResult.farBoxes) {
-            const objectUuid = item.box.selectMode.uuid
-            currentFarObjects.add(objectUuid)
-          }
-        }
-        
-        // 关闭离开物体的弹窗（结合farThreshold阈值）
-        if (closePopup) {
-          // 关闭所有超过farThreshold的物体的弹窗
-          currentFarObjects.forEach(uuid => {
-            closePopup(`popup-${uuid}`)
-            console.log('❌ 关闭物体弹窗:', uuid)
-          })
-        }
-        
-        // 更新当前显示弹窗的物体集合
-        visiblePopupObjects.value = currentCloseObjects
+        updateProximityPopups({ model, wallBoundingBoxes: wallBoundingBoxes.value })
       }
 
       // 到达目标点，进入停留状态
@@ -503,7 +383,6 @@ export function useAutoRoam(wallBoundingBoxes: any, showPopup?: any, closePopup?
     pauseAutoRoam,
     resumeAutoRoam,
     stopAutoRoam,
-    updateAutoRoam,
-    isCloseToCollision
+    updateAutoRoam
   }
 }

@@ -122,7 +122,6 @@ export function useObjectPopup(
     // 检查是否已在该物体上显示过弹窗（使用uuid确保唯一性）
     const existingPopup = popups.value.find(p => p.object.uuid === object.uuid)
     if (existingPopup) {
-      console.log('⚠️ 该物体已显示弹窗:', data.title)
       return
     }
 

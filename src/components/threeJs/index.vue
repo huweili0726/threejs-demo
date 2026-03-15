@@ -38,7 +38,7 @@ const { initDoubleClickPopup, showPopup, closePopup, updateCSS2DRenderer, handle
 const { switchToFloor, toControlCommandRoom } = useFloorSwitch(flyTo, loadModel as any, removeModel) // 楼层切换相关Hooks 
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes, wallBoundingBoxes, showPopup, closePopup, toControlCommandRoom) // 人物移动控制相关Hooks
 const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any, threeJsContainer) // 物体选择相关Hooks
-const { loadRoamConfig, initAutoRoam, startAutoRoam, pauseAutoRoam, resumeAutoRoam, stopAutoRoam, updateAutoRoam } = useAutoRoam(wallBoundingBoxes, showPopup, closePopup) // 自动漫游相关Hooks
+const { loadRoamConfig, initAutoRoam, startAutoRoam, pauseAutoRoam, resumeAutoRoam, stopAutoRoam, updateAutoRoam } = useAutoRoam(wallBoundingBoxes, showPopup, closePopup, toControlCommandRoom) // 自动漫游相关Hooks
 
 // 控制变量
 const cameraOffset = new THREE.Vector3(0, 0.1, -0.12) // 相机偏移量（在模型后方，稍微上方）
@@ -170,6 +170,7 @@ const loadCharacterModelAndStartRoam = async () => {
   try {
     // 获取加载的模型
     const model = loadedModelMaps.value.get(basisStore.characterModelUrlsConfig?.man || '')
+    debugger
     if (model && scene.value) {
       // 初始化自动漫游
       initAutoRoam(model)

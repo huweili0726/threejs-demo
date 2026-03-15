@@ -38,12 +38,12 @@ const handleToBottomfloorAndLoadcharacterModel = async (
   modelInitPosition?: {x: number, y: number, z: number}, // 人物模型初始位置
   onLookAt?: {x: number, y: number, z: number} // 人物模型看向位置
 ) => {
-  threeJsRef.value?.switchToFloor(targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
+  await threeJsRef.value?.switchToFloor(targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   // 为人物模型添加碰撞检测包围盒
   threeJsRef.value?.toAddCharacterBoundingBox()
 
   // 启动自动漫游
-  // await threeJsRef.value?.loadCharacterModelAndStartRoam()
+  await threeJsRef.value?.loadCharacterModelAndStartRoam()
 }
 
 // 开始自动漫游
