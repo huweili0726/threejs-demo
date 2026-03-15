@@ -36,17 +36,19 @@ export function useFloorSwitch(
     // 1、先移除人物模型
     removeModel(characterModelUrl)
 
-    // 2、视角飞转到目标位置
-    await flyTo(targetPosition, targetTarget, duration)
-
-    // 3、重新加载人物模型
-    await loadModel({
-      modelUrl: characterModelUrl,
-      scale: 0.0005,
-      modelInitPosition: modelInitPosition || { x: 0, y: 0, z: 0 },
-      onLookAt: onLookAt || { x: 0, y: 0, z: 0 },
-      frontAxis: new THREE.Vector3(0, 0, 1),
-    })?.catch(console.error)
+    // 2、并行执行视角飞转和模型加载
+    await Promise.all([
+      // 视角飞转到目标位置
+      flyTo(targetPosition, targetTarget, duration),
+      // 重新加载人物模型
+      loadModel({
+        modelUrl: characterModelUrl,
+        scale: 0.0005,
+        modelInitPosition: modelInitPosition || { x: 0, y: 0, z: 0 },
+        onLookAt: onLookAt || { x: 0, y: 0, z: 0 },
+        frontAxis: new THREE.Vector3(0, 0, 1),
+      })?.catch(console.error)
+    ])
   }
 
   return {

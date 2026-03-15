@@ -38,14 +38,6 @@ const handleToBottomfloorAndLoadcharacterModel = async (
   modelInitPosition?: {x: number, y: number, z: number}, // 人物模型初始位置
   onLookAt?: {x: number, y: number, z: number} // 人物模型看向位置
 ) => {
-  // await threeJsRef.value?.flyTo?.(targetPosition, targetTarget, duration)?.catch(console.error)
-  // await threeJsRef.value?.loadModel({
-  //   modelUrl: basisStore.characterModelUrlsConfig?.man || '',
-  //   scale: 0.0005,
-  //   modelInitPosition: modelInitPosition || { x: 0, y: 0, z: 0 },
-  //   onLookAt: onLookAt || { x: 0, y: 0, z: 0 },
-  //   frontAxis: new THREE.Vector3(0, 0, 1),
-  // })?.catch(console.error)
   threeJsRef.value?.switchToFloor(targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   // 为人物模型添加碰撞检测包围盒
   threeJsRef.value?.toAddCharacterBoundingBox()
