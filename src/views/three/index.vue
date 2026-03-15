@@ -41,13 +41,12 @@ const handleToBottomfloorAndLoadcharacterModel = async (
   await threeJsRef.value?.switchToFloor(targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   // 为人物模型添加碰撞检测包围盒
   threeJsRef.value?.toAddCharacterBoundingBox()
-
-  // 启动自动漫游
-  await threeJsRef.value?.loadCharacterModelAndStartRoam()
 }
 
 // 开始自动漫游
-const handleStartAutoRoam = () => {
+const handleStartAutoRoam = async () => {
+  // 启动自动漫游
+  await threeJsRef.value?.loadCharacterModelAndStartRoam()
   threeJsRef.value?.startAutoRoam()
 }
 

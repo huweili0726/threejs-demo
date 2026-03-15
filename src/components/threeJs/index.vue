@@ -170,7 +170,7 @@ const loadCharacterModelAndStartRoam = async () => {
   try {
     // 获取加载的模型
     const model = loadedModelMaps.value.get(basisStore.characterModelUrlsConfig?.man || '')
-    debugger
+    
     if (model && scene.value) {
       // 初始化自动漫游
       initAutoRoam(model)
