@@ -65,6 +65,8 @@ const initSceneAndEnvironment = () => {
   const perspective = floor1Config?.perspective || { x: -9, y: 5, z: -15 }
   const cameraPosition = new THREE.Vector3(perspective?.x || -9, perspective?.y || 5, perspective?.z || -15)
   initScene({ container: threeJsContainer, coordinateAxis: true, cameraPosition: cameraPosition })
+  
+  // 加载环境贴图
   loadEnvironment(basisStore.skyboxUrlConfig, render)
 }
 
