@@ -7,7 +7,8 @@
       @pauseAutoRoam="handlePauseAutoRoam" 
       @continueAutoRoam="handleContinueAutoRoam"
       @startAutoRoam="handleStartAutoRoam" 
-      @stopAutoRoam="handleStopAutoRoam" />
+      @stopAutoRoam="handleStopAutoRoam"
+      @toRoom="handleToRoom" />
 
     <!-- 渲染场景 -->
     <ThreeJs 
@@ -63,6 +64,11 @@ const handleContinueAutoRoam = () => {
 // 停止自动漫游
 const handleStopAutoRoam = () => {
   threeJsRef.value?.stopAutoRoam()
+}
+
+// 快速导航到指定房间
+const handleToRoom = async (value: any, toRoomEnable?: boolean) => {
+  await threeJsRef.value?.toRoom?.(value, toRoomEnable)
 }
 
 

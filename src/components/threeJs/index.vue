@@ -195,6 +195,50 @@ const loadCharacterModelAndStartRoam = async () => {
   }
 }
 
+// 快速导航到指定房间
+const toRoom = async (value: any, toRoomEnable?: boolean) => {
+  if(toRoomEnable){
+    // 这里可以根据需要设置房间索引
+    // 暂时使用 value 作为房间索引
+    
+    // 自定义漫游路径点
+    let roamPoints = await loadRoamingPoints(value === 0 ? "initLocation" : "generatorRoom")
+    if (roamPoints.length > 0) {
+      // 确保人物模型已加载并初始化自动漫游
+      const model = loadedModelMaps.value.get(basisStore.characterModelUrlsConfig?.man || '')
+      if (model) {
+        initAutoRoam(model)
+        startAutoRoam(roamPoints)
+      } else {
+        console.log("人物模型未加载，自动漫游未启动")
+      }
+    }
+    else {
+      if (roamPoints.length === 0) {
+        console.log("未获取到有效的漫游点，自动漫游未启动")
+      }
+    }
+  }
+}
+
+// 加载漫游点配置
+const loadRoamingPoints = async (roomName: string): Promise<any[]> => {
+  try {
+    const response = await fetch(`${import.meta.env.BASE_URL}/config/quickNavigation.js`)
+    const config = await response.json()
+    
+    // 检查指定房间的配置
+    if (config[roomName] && config[roomName].points) {
+      return config[roomName].points
+    }
+    
+    return []
+  } catch (error) {
+    console.error('加载漫游点配置失败：', error)
+    return []
+  }
+}
+
 // 组件卸载时清理
 onBeforeUnmount(() => {
   stopAnimationLoop()
@@ -223,7 +267,8 @@ defineExpose({
   toAddCharacterBoundingBox,
   pauseAutoRoam,
   resumeAutoRoam,
-  switchToFloor
+  switchToFloor,
+  toRoom
 })
 </script>
 

@@ -19,6 +19,9 @@
         <div class="controls-content">
           <button @click="toFloor('-1_1')" class="control-btn">下楼</button>
         </div>
+        <div class="controls-content">
+          <button @click="toroom()" class="control-btn">发电机房</button>
+        </div>
       </div>
 
       <!-- 图片点位控制按钮组 -->
@@ -61,6 +64,7 @@ const emit = defineEmits<{
   (e: 'continueAutoRoam'): void
   (e: 'startAutoRoam'): void
   (e: 'stopAutoRoam'): void
+  (e: 'toRoom', value: any, toRoomEnable?: boolean): void
 }>()
 
 // 切换楼层
@@ -105,6 +109,10 @@ const toFloor = (floor: string) => {
     emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   } 
   
+}
+
+const toroom = () => {
+  emit('toRoom', 1, true)
 }
 
 // 开始自动漫游
