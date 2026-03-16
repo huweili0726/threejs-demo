@@ -29,6 +29,12 @@
       { "position": { "x": 3.30, "y": -1.78, "z": 1.48 }, "rotation": { "y": "Math.PI" }, "duration": 0, "stayTime": 0, "sta": "微波卫星通信室入口" }
     ]
   },
+  // 综合管理区
+  "managementAreaRoom": {
+    "points": [
+      { "position": { "x": 3.13, "y": -1.78, "z": 1.57 }, "rotation": { "y": "0" }, "duration": 0, "stayTime": 0, "sta": "综合管理区入口" }
+    ]
+  },
   "initLocation": { 
     "points": [
       { "position": { "x": 0, "y": 0, "z": 0 }, "rotation": { "y": "0" }, "duration": 1000, "stayTime": 500, "sta": "初始位置" }
