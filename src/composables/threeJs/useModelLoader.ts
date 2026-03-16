@@ -121,7 +121,7 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
                     const halfThickness = thickness / 2
                     box.expandByVector(new THREE.Vector3(halfThickness, halfThickness, halfThickness))
                     
-                    console.log(`为物体 ${child.name} 添加厚度: ${thickness}`)
+                    // console.log(`为物体 ${child.name} 添加厚度: ${thickness}`)
                   }
                   
                   // 检查是否手动指定了包围盒尺寸
@@ -143,7 +143,7 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
                       center.clone().add(halfSize)
                     )
                     
-                    console.log(`为物体 ${child.name} 手动设置包围盒尺寸:`, newSize)
+                    // console.log(`为物体 ${child.name} 手动设置包围盒尺寸:`, newSize)
                   }
                 }
                 
@@ -154,7 +154,7 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
                   ...(collisionObject && collisionObject.isStairs !== undefined ? { isStairs: collisionObject.isStairs } : {})
                 })
                 
-                console.log(`已为物体 ${child.name} 计算包围盒`)
+                // console.log(`已为物体 ${child.name} 计算包围盒`)
               }
             })
           }
