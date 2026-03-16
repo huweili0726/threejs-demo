@@ -135,6 +135,11 @@ export function useCollisionDetection() {
    * @returns 是否发生碰撞
    */
   const checkCollision = (characterBox: THREE.Box3): boolean => {
+    // 防御性检查：确保wallBoundingBoxes存在且有值
+    if (!wallBoundingBoxes?.value || wallBoundingBoxes.value.length === 0) {
+      return false
+    }
+
     // 遍历所有目标墙体的包围盒
     for (const wallBox of wallBoundingBoxes.value) {
       // 检测人物碰撞盒是否与墙体包围盒重叠
