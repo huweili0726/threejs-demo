@@ -171,6 +171,16 @@ export function useCharacterMovement(
         console.log('📍 人物当前位置:', `x: ${model.position.x.toFixed(2)}, y: ${model.position.y.toFixed(2)}, z: ${model.position.z.toFixed(2)}`)
       } else {
         console.log('碰撞检测：阻止移动')
+        // 如果发生碰撞，重置加速状态
+        // 清空所有方向键的按下时间记录
+        if (keysPressed.value.has('w') || keysPressed.value.has('arrowup')) {
+          delete keyDownTime.value['w']
+          delete keyDownTime.value['arrowup']
+        }
+        if (keysPressed.value.has('s') || keysPressed.value.has('arrowdown')) {
+          delete keyDownTime.value['s']
+          delete keyDownTime.value['arrowdown']
+        }
       }
     }
     
