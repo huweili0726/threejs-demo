@@ -52,7 +52,7 @@
           <button @click="toTargetRoom('generatorRoom')" class="control-btn">通信电源配电室</button>
           <button @click="toTargetRoom('generatorRoom')" class="control-btn">作战指挥大厅</button>
           <button @click="toTargetRoom('generatorRoom')" class="control-btn">有线通信室</button>
-          <button @click="toTargetRoom('generatorRoom')" class="control-btn">防化室</button>
+          <button @click="toTargetRoom('chemicalPreventionDutyRoom')" class="control-btn">防化值班室</button>
         </div>
       </div>
 
