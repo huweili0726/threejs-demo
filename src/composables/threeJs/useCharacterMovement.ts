@@ -24,6 +24,14 @@ export function useCharacterMovement(
   const keysPressed = ref<Set<string>>(new Set())
   // 按键按下时间记录
   const keyDownTime = ref<Record<string, number>>({})
+  // 鼠标左键是否按下
+  const isLeftMouseDown = ref(false)
+  // 上一帧鼠标X坐标
+  const lastMouseX = ref(0)
+  // 鼠标旋转灵敏度
+  const MOUSE_ROTATION_SENSITIVITY = 0.005
+  // 鼠标移动累计值（用于旋转人物）
+  const mouseDeltaX = ref(0)
 
   // 最大速度倍数
   const MAX_SPEED_MULTIPLIER = basisStore.characterModelMoveConfig?.MAX_SPEED_MULTIPLIER || 6
@@ -39,7 +47,7 @@ export function useCharacterMovement(
   // 碰撞检测安全距离（提前检测距离）
   const COLLISION_SAFE_DISTANCE = 0.02
 
-  // 初始化键盘事件监听
+  // 初始化键盘和鼠标事件监听
   const initKeyboardEvents = () => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const key = event.key.toLowerCase()
@@ -55,12 +63,39 @@ export function useCharacterMovement(
       delete keyDownTime.value[key]
     }
     
+    const handleMouseDown = (event: MouseEvent) => {
+      if (event.button === 0) {
+        isLeftMouseDown.value = true
+        lastMouseX.value = event.clientX
+      }
+    }
+    
+    const handleMouseUp = (event: MouseEvent) => {
+      if (event.button === 0) {
+        isLeftMouseDown.value = false
+      }
+    }
+    
+    const handleMouseMove = (event: MouseEvent) => {
+      if (isLeftMouseDown.value) {
+        const deltaX = event.clientX - lastMouseX.value
+        lastMouseX.value = event.clientX
+        mouseDeltaX.value += deltaX
+      }
+    }
+    
     window.addEventListener('keydown', handleKeyDown)
     window.addEventListener('keyup', handleKeyUp)
+    window.addEventListener('mousedown', handleMouseDown)
+    window.addEventListener('mouseup', handleMouseUp)
+    window.addEventListener('mousemove', handleMouseMove)
     
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
       window.removeEventListener('keyup', handleKeyUp)
+      window.removeEventListener('mousedown', handleMouseDown)
+      window.removeEventListener('mouseup', handleMouseUp)
+      window.removeEventListener('mousemove', handleMouseMove)
     }
   }
   
@@ -299,6 +334,12 @@ export function useCharacterMovement(
     }
     if (keysPressed.value.has('d') || keysPressed.value.has('arrowright')) {
       model.rotation.y -= rotationSpeed
+    }
+    
+    // 鼠标左键拖拽旋转人物
+    if (mouseDeltaX.value !== 0) {
+      model.rotation.y -= mouseDeltaX.value * MOUSE_ROTATION_SENSITIVITY
+      mouseDeltaX.value = 0
     }
     
     // 归一化方向向量，确保斜向移动速度一致
