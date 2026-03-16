@@ -196,27 +196,22 @@ const loadCharacterModelAndStartRoam = async () => {
 }
 
 // 快速导航到指定房间
-const toRoom = async (value: any, toRoomEnable?: boolean) => {
-  if(toRoomEnable){
-    // 这里可以根据需要设置房间索引
-    // 暂时使用 value 作为房间索引
-    
-    // 自定义漫游路径点
-    let roamPoints = await loadRoamingPoints(value === 0 ? "initLocation" : "generatorRoom")
-    if (roamPoints.length > 0) {
-      // 确保人物模型已加载并初始化自动漫游
-      const model = loadedModelMaps.value.get(basisStore.characterModelUrlsConfig?.man || '')
-      if (model) {
-        initAutoRoam(model)
-        startAutoRoam(roamPoints)
-      } else {
-        console.log("人物模型未加载，自动漫游未启动")
-      }
+const toRoom = async (value: any) => {
+  // 自定义漫游路径点
+  let roamPoints = await loadRoamingPoints(value === 0 ? "initLocation" : "generatorRoom")
+  if (roamPoints.length > 0) {
+    // 确保人物模型已加载并初始化自动漫游
+    const model = loadedModelMaps.value.get(basisStore.characterModelUrlsConfig?.man || '')
+    if (model) {
+      initAutoRoam(model)
+      startAutoRoam(roamPoints)
+    } else {
+      console.log("人物模型未加载，自动漫游未启动")
     }
-    else {
-      if (roamPoints.length === 0) {
-        console.log("未获取到有效的漫游点，自动漫游未启动")
-      }
+  }
+  else {
+    if (roamPoints.length === 0) {
+      console.log("未获取到有效的漫游点，自动漫游未启动")
     }
   }
 }

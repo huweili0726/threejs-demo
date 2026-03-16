@@ -19,9 +19,6 @@
         <div class="controls-content">
           <button @click="toFloor('-1_1')" class="control-btn">下楼</button>
         </div>
-        <div class="controls-content">
-          <button @click="toroom()" class="control-btn">发电机房</button>
-        </div>
       </div>
 
       <!-- 图片点位控制按钮组 -->
@@ -42,6 +39,17 @@
           <button @click="toStop()" class="control-btn">停止</button>
         </div>
       </div>
+
+      <!-- 快速导航控制按钮组 -->
+      <div class="button-group model-controls">
+        <div class="group-title">
+          快速导航
+        </div>
+        <div class="controls-content">
+          <button @click="toTargetRoom('generatorRoom')" class="control-btn">发电机房</button>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -59,25 +67,25 @@ const emit = defineEmits<{
   (e: 'toTheSurface', targetPosition: THREE.Vector3, targetTarget: THREE.Vector3): void
   (e: 'changeModel', modelUrl: string): void
   (e: 'loadBothModels'): void
-  (e: 'toBottomfloorAndLoadcharacterModel', targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration?: number, modelInitPosition?: {x: number, y: number, z: number}, onLookAt?: {x: number, y: number, z: number}): void
+  (e: 'toBottomfloorAndLoadcharacterModel', targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration?: number, modelInitPosition?: { x: number, y: number, z: number }, onLookAt?: { x: number, y: number, z: number }): void
   (e: 'pauseAutoRoam'): void
   (e: 'continueAutoRoam'): void
   (e: 'startAutoRoam'): void
   (e: 'stopAutoRoam'): void
-  (e: 'toRoom', value: any, toRoomEnable?: boolean): void
+  (e: 'goToTargetRoom', targetRoom: string): void
 }>()
 
 // 切换楼层
 const toFloor = (floor: string) => {
   // 切换模型
-  if(floor === '0') {
+  if (floor === '0') {
     const floor1Config = basisStore.floor1Config
     const perspective = floor1Config?.perspective || { x: 0, y: 0, z: 0 }
     const directionToLook = floor1Config?.directionToLook || { x: 0, y: 0, z: 0 }
     const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
     const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
     emit('toTheSurface', targetPosition, targetTarget)
-  } else if(floor === '-1') {
+  } else if (floor === '-1') {
     const floorNeg1Config = basisStore.neg1FloorConfig
     const perspective = floorNeg1Config?.perspective || { x: 0, y: 0, z: 0 }
     const directionToLook = floorNeg1Config?.directionToLook || { x: 0, y: 0, z: 0 }
@@ -87,7 +95,7 @@ const toFloor = (floor: string) => {
     const modelInitPosition = floorNeg1Config?.characterModelSetPosition // 人物模型初始位置
     const onLookAt = floorNeg1Config?.characterModelToLook // 人物模型看向-1楼入口处
     emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
-  } else if(floor === '-1_2') {
+  } else if (floor === '-1_2') {
     const neg12LayersFloorConfig = basisStore.neg12LayersFloorConfig
     const perspective = neg12LayersFloorConfig?.perspective || { x: 0, y: 0, z: 0 }
     const directionToLook = neg12LayersFloorConfig?.directionToLook || { x: 0, y: 0, z: 0 }
@@ -97,7 +105,7 @@ const toFloor = (floor: string) => {
     const modelInitPosition = neg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
     const onLookAt = neg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼2层入口处
     emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
-  } else if(floor === '-1_1') {
+  } else if (floor === '-1_1') {
     const beforeNeg12LayersFloorConfig = basisStore.beforeNeg12LayersFloorConfig
     const perspective = beforeNeg12LayersFloorConfig?.perspective || { x: 0, y: 0, z: 0 }
     const directionToLook = beforeNeg12LayersFloorConfig?.directionToLook || { x: 0, y: 0, z: 0 }
@@ -107,12 +115,13 @@ const toFloor = (floor: string) => {
     const modelInitPosition = beforeNeg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
     const onLookAt = beforeNeg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼1层入口处
     emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
-  } 
-  
+  }
+
 }
 
-const toroom = () => {
-  emit('toRoom', 1, true)
+// 快速导航到指定房间
+const toTargetRoom = (targetRoom: string) => {
+  emit('goToTargetRoom', targetRoom)
 }
 
 // 开始自动漫游
