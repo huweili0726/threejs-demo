@@ -16,6 +16,9 @@
         <div class="controls-content">
           <button @click="toFloor('-1_2')" class="control-btn">-1楼2层</button>
         </div>
+        <div class="controls-content">
+          <button @click="toFloor('-1_1')" class="control-btn">下楼</button>
+        </div>
       </div>
 
       <!-- 图片点位控制按钮组 -->
@@ -90,7 +93,18 @@ const toFloor = (floor: string) => {
     const modelInitPosition = neg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
     const onLookAt = neg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼2层入口处
     emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
+  } else if(floor === '-1_1') {
+    const beforeNeg12LayersFloorConfig = basisStore.beforeNeg12LayersFloorConfig
+    const perspective = beforeNeg12LayersFloorConfig?.perspective || { x: 0, y: 0, z: 0 }
+    const directionToLook = beforeNeg12LayersFloorConfig?.directionToLook || { x: 0, y: 0, z: 0 }
+    const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+    const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+    const duration = beforeNeg12LayersFloorConfig?.durationTime || 2000 // 飞行时间
+    const modelInitPosition = beforeNeg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
+    const onLookAt = beforeNeg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼1层入口处
+    emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   } 
+  
 }
 
 // 开始自动漫游
