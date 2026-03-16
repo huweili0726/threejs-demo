@@ -33,9 +33,11 @@ export function useCharacterMovement(
   const ACCELERATION_FACTOR = basisStore.characterModelMoveConfig?.ACCELERATION_FACTOR || 0.01
   
   // 每次碰撞检测的最大步长（防止高速穿墙，应小于墙体厚度）
-  const MAX_STEP_SIZE = 0.004 // 小于墙体厚度 0.005
+  const MAX_STEP_SIZE = 0.002 // 小于墙体厚度 0.005，更精细检测
   // 每帧最大移动距离（核心修复：限制最高速度的绝对移动距离）
-  const MAX_FRAME_MOVE_DISTANCE = 0.08
+  const MAX_FRAME_MOVE_DISTANCE = 0.05
+  // 碰撞检测安全距离（提前检测距离）
+  const COLLISION_SAFE_DISTANCE = 0.02
 
   // 初始化键盘事件监听
   const initKeyboardEvents = () => {
@@ -63,41 +65,154 @@ export function useCharacterMovement(
   }
   
   /**
+   * 检测人物是否卡在碰撞体内，如果是则推出到安全位置
+   * 只在水平方向（XZ平面）推出，不影响Y轴高度
+   */
+  const checkAndPushOut = (model: THREE.Group): boolean => {
+    model.updateMatrixWorld(true)
+    const currentBox = new THREE.Box3().setFromObject(model)
+    
+    const walls = wallBoundingBoxes?.value || wallBoundingBoxes
+    if (!walls || walls.length === 0) return false
+    
+    let stuckInWall = false
+    let pushDirection = new THREE.Vector3()
+    let minPenetration = Infinity
+    
+    for (const wallBox of walls) {
+      if (wallBox.box && currentBox.intersectsBox(wallBox.box)) {
+        stuckInWall = true
+        
+        const wallCenter = new THREE.Vector3()
+        const characterCenter = new THREE.Vector3()
+        wallBox.box.getCenter(wallCenter)
+        currentBox.getCenter(characterCenter)
+        
+        const direction = characterCenter.clone().sub(wallCenter)
+        
+        const intersection = currentBox.clone().intersect(wallBox.box)
+        const intersectionSize = new THREE.Vector3()
+        intersection.getSize(intersectionSize)
+        
+        const penetration = Math.min(intersectionSize.x, intersectionSize.z)
+        
+        if (penetration < minPenetration) {
+          minPenetration = penetration
+          pushDirection.copy(direction).normalize()
+        }
+      }
+    }
+    
+    if (stuckInWall) {
+      console.log('⚠️ 检测到人物卡在碰撞体内，正在推出...')
+      
+      // 保存原始Y坐标，防止被推到地面以下
+      const originalY = model.position.y
+      
+      // 只在XZ平面推出，Y轴设为0
+      pushDirection.y = 0
+      pushDirection.normalize()
+      
+      const pushStep = 0.002
+      const maxPushSteps = 100
+      
+      for (let i = 0; i < maxPushSteps; i++) {
+        model.position.add(pushDirection.clone().multiplyScalar(pushStep))
+        // 保持Y坐标不变
+        model.position.y = originalY
+        model.updateMatrixWorld(true)
+        
+        const newBox = new THREE.Box3().setFromObject(model)
+        let stillColliding = false
+        
+        for (const wallBox of walls) {
+          if (wallBox.box && newBox.intersectsBox(wallBox.box)) {
+            stillColliding = true
+            break
+          }
+        }
+        
+        if (!stillColliding) {
+          console.log(`✅ 已将人物推出碰撞体，推出距离: ${((i + 1) * pushStep).toFixed(3)}`)
+          return true
+        }
+      }
+      
+      return false
+    }
+    
+    return false
+  }
+  
+  /**
+   * 使用射线检测移动方向上是否有障碍物
+   * 只检测移动方向，不检测其他方向
+   */
+  const checkDirectionCollision = (
+    model: THREE.Group,
+    direction: THREE.Vector3,
+    distance: number
+  ): boolean => {
+    const walls = wallBoundingBoxes?.value || wallBoundingBoxes
+    if (!walls || walls.length === 0) return false
+    
+    const modelBox = new THREE.Box3().setFromObject(model)
+    const modelCenter = new THREE.Vector3()
+    modelBox.getCenter(modelCenter)
+    
+    const raycaster = new THREE.Raycaster()
+    raycaster.set(modelCenter, direction.clone().normalize())
+    
+    // 检测距离 = 移动距离 + 安全距离
+    const checkDistance = distance + COLLISION_SAFE_DISTANCE
+    
+    for (const wallBox of walls) {
+      if (wallBox.box) {
+        const intersection = raycaster.ray.intersectBox(wallBox.box, new THREE.Vector3())
+        if (intersection) {
+          const dist = modelCenter.distanceTo(intersection)
+          if (dist < checkDistance) {
+            return true
+          }
+        }
+      }
+    }
+    
+    return false
+  }
+  
+  /**
    * 分步移动并检测碰撞
-   * @param model 模型
-   * @param direction 移动方向
-   * @param totalSpeed 总移动距离
-   * @returns 是否成功移动
    */
   const moveWithStepCollision = (
     model: THREE.Group,
     direction: THREE.Vector3,
     totalSpeed: number
   ): boolean => {
-    // 计算需要分多少步
-    const stepCount = Math.ceil(totalSpeed / MAX_STEP_SIZE)
-    const stepSize = totalSpeed / stepCount
+    // 首先检查是否卡在碰撞体内，如果是则推出
+    checkAndPushOut(model)
     
-    for (let i = 0; i < stepCount; i++) {
-      // 保存当前位置
-      const originalPosition = model.position.clone()
+    // 使用射线检测移动方向上是否有障碍物
+    if (checkDirectionCollision(model, direction, totalSpeed)) {
+      // 有障碍物，使用分步移动检测
+      const stepCount = Math.ceil(totalSpeed / MAX_STEP_SIZE)
+      const stepSize = totalSpeed / stepCount
       
-      // 移动一小步
-      model.position.add(direction.clone().multiplyScalar(stepSize))
-      model.updateMatrixWorld(true)
-      
-      // 创建当前位置的包围盒
-      const currentBox = new THREE.Box3().setFromObject(model)
-      
-      // 检测是否发生碰撞
-      const hasCollision = checkCollision(currentBox)
-      
-      if (hasCollision) {
-        // 发生碰撞，回退到上一步位置
-        model.position.copy(originalPosition)
+      for (let i = 0; i < stepCount; i++) {
+        const originalPosition = model.position.clone()
+        
+        model.position.add(direction.clone().multiplyScalar(stepSize))
         model.updateMatrixWorld(true)
-        console.log(`碰撞检测：在第 ${i + 1} 步检测到碰撞，已阻止移动`)
-        return false
+        
+        const currentBox = new THREE.Box3().setFromObject(model)
+        const hasCollision = checkCollision(currentBox)
+        
+        if (hasCollision) {
+          model.position.copy(originalPosition)
+          model.updateMatrixWorld(true)
+          console.log(`碰撞检测：在第 ${i + 1} 步检测到碰撞，已阻止移动`)
+          return false
+        }
       }
     }
     
