@@ -41,6 +41,60 @@
       { "position": { "x": 1.35, "y": -1.78, "z": 1.59 }, "rotation": { "y": "0" }, "duration": 0, "stayTime": 0, "sta": "通信维修室入口" }
     ]
   },
+  // 应急备份平台 
+  "emergencyBackupPlatform": {
+    "points": [
+      { "position": { "x": 0.71, "y": -1.78, "z": 1.58 }, "rotation": { "y": "0" }, "duration": 0, "stayTime": 0, "sta": "应急备份平台入口" }
+    ]
+  },
+  // 数据维护室
+  "dataMaintenanceRoom": {
+    "points": [
+      { "position": { "x": 0.55, "y": -1.78, "z": 1.59 }, "rotation": { "y": "0" }, "duration": 0, "stayTime": 0, "sta": "数据维护室入口" }
+    ]
+  },
+  // 通信值班室
+  "communicationDutyRoom": {
+    "points": [
+      { "position": { "x": 0.55, "y": -1.78, "z": 1.59 }, "rotation": { "y": "0" }, "duration": 0, "stayTime": 0, "sta": "通信值班室入口" }
+    ]
+  },
+  // 防化器材室 
+  "chemicalPreventionEquipmentRoom": {
+    "points": [
+      { "position": { "x": -0.25, "y": -1.78, "z": 1.58 }, "rotation": { "y": "0" }, "duration": 0, "stayTime": 0, "sta": "防化器材室入口" }
+    ]
+  },
+  // 有限通信室  
+  "finiteCommunicationRoom": {
+    "points": [
+      { "position": { "x": 0.94, "y": -1.78, "z": 1.70 }, "rotation": { "y": "Math.PI" }, "duration": 0, "stayTime": 0, "sta": "有限通信室入口" }
+    ]
+  },
+  // 防护元件室
+  "protectionEquipmentRoom": {
+    "points": [
+      { "position": { "x": 1.12, "y": -1.78, "z": 1.71 }, "rotation": { "y": "Math.PI" }, "duration": 0, "stayTime": 0, "sta": "防护元件室入口" }
+    ]
+  },
+  // 通信电源配电室
+  "communicationPowerRoom": {
+    "points": [
+      { "position": { "x": 1.75, "y": -1.78, "z": 1.71 }, "rotation": { "y": "Math.PI" }, "duration": 0, "stayTime": 0, "sta": "通信电源配电室入口" }
+    ]
+  },
+  // 空情图标室
+  "emptyStatusIconRoom": {
+    "points": [
+      { "position": { "x": 1.92, "y": -1.78, "z": 1.70 }, "rotation": { "y": "Math.PI" }, "duration": 0, "stayTime": 0, "sta": "空情图标室入口" }
+    ]
+  },
+  // 空情警报控制室
+  "emptyStatusAlertRoom": {
+    "points": [
+      { "position": { "x": 2.56, "y": -1.78, "z": 1.70 }, "rotation": { "y": "Math.PI" }, "duration": 0, "stayTime": 0, "sta": "空情警报控制室入口" }
+    ]
+  },
 
 
   "initLocation": { 

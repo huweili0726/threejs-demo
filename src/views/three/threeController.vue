@@ -49,13 +49,20 @@
           <button @click="toTargetRoom('generatorRoom')" class="control-btn">发电机房</button>
           <button @click="toTargetRoom('airConditioningRoom')" class="control-btn">空调机房</button>
           <button @click="toTargetRoom('pumpRoom')" class="control-btn">水泵房</button>
-          <button @click="toTargetRoom('generatorRoom')" class="control-btn">通信电源配电室</button>
+          <button @click="toTargetRoom('communicationPowerRoom')" class="control-btn">通信电源配电室</button>
           <button @click="toTargetRoom('generatorRoom')" class="control-btn">作战指挥大厅</button>
-          <button @click="toTargetRoom('generatorRoom')" class="control-btn">有线通信室</button>
+          <button @click="toTargetRoom('finiteCommunicationRoom')" class="control-btn">有线通信室</button>
           <button @click="toTargetRoom('chemicalPreventionDutyRoom')" class="control-btn">防化值班室</button>
           <button @click="toTargetRoom('microwaveSatelliteCommunicationRoom')" class="control-btn">微波卫星通信室</button>  
           <button @click="toTargetRoom('managementAreaRoom')" class="control-btn">综合管理区</button>  
           <button @click="toTargetRoom('communicationMaintenanceRoom')" class="control-btn">通信维修室</button>  
+          <button @click="toTargetRoom('emergencyBackupPlatform')" class="control-btn">应急备份平台</button>  
+          <button @click="toTargetRoom('dataMaintenanceRoom')" class="control-btn">数据维护室</button>  
+          <button @click="toTargetRoom('communicationDutyRoom')" class="control-btn">通信值班室</button>  
+          <button @click="toTargetRoom('chemicalPreventionEquipmentRoom')" class="control-btn">防化器材室</button>  
+          <button @click="toTargetRoom('protectionEquipmentRoom')" class="control-btn">防护元件室</button>  
+          <button @click="toTargetRoom('emptyStatusIconRoom')" class="control-btn">空情图标室</button>  
+          <button @click="toTargetRoom('emptyStatusAlertRoom')" class="control-btn">空情警报控制室</button>  
         </div>
       </div>
 
