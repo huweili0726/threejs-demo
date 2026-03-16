@@ -4,53 +4,44 @@
     <div class="button-group">
       <!-- 图片点位控制按钮组 -->
       <div class="button-group img-point-controls">
-        <div class="group-title">
+        <div class="group-title" @click="toggleControls('imgPoint')">
           模型切换控制
+          <span class="toggle-icon">{{ isImgPointControlsOpen ? '▼' : '▶' }}</span>
         </div>
-        <div class="controls-content">
+        <div class="controls-content" v-show="isImgPointControlsOpen">
           <button @click="toFloor('0')" class="control-btn">地面</button>
-        </div>
-        <div class="controls-content">
           <button @click="toFloor('-1')" class="control-btn">-1楼</button>
-        </div>
-        <div class="controls-content">
           <button @click="toFloor('-1_2')" class="control-btn">-1楼2层</button>
-        </div>
-        <div class="controls-content">
           <button @click="toFloor('-1_1')" class="control-btn">下楼</button>
         </div>
       </div>
 
       <!-- 图片点位控制按钮组 -->
       <div class="button-group pyramid-controls">
-        <div class="group-title">
+        <div class="group-title" @click="toggleControls('pyramid')">
           漫游控制
+          <span class="toggle-icon">{{ isPyramidControlsOpen ? '▼' : '▶' }}</span>
         </div>
-        <div class="controls-content">
+        <div class="controls-content" v-show="isPyramidControlsOpen">
           <button @click="toStart()" class="control-btn">开始</button>
-        </div>
-        <div class="controls-content">
           <button @click="toPause()" class="control-btn">暂停</button>
-        </div>
-        <div class="controls-content">
           <button @click="toContinue()" class="control-btn">继续</button>
-        </div>
-        <div class="controls-content">
           <button @click="toStop()" class="control-btn">停止</button>
         </div>
       </div>
 
       <!-- 快速导航控制按钮组 -->
       <div class="button-group model-controls">
-        <div class="group-title">
+        <div class="group-title" @click="toggleControls('model')">
           快速导航
+          <span class="toggle-icon">{{ isModelControlsOpen ? '▼' : '▶' }}</span>
         </div>
-        <div class="controls-content">
+        <div class="controls-content" v-show="isModelControlsOpen">
           <button @click="toTargetRoom('generatorRoom')" class="control-btn">发电机房</button>
           <button @click="toTargetRoom('airConditioningRoom')" class="control-btn">空调机房</button>
           <button @click="toTargetRoom('pumpRoom')" class="control-btn">水泵房</button>
           <button @click="toTargetRoom('communicationPowerRoom')" class="control-btn">通信电源配电室</button>
-          <button @click="toTargetRoom('generatorRoom')" class="control-btn">作战指挥大厅</button>
+          <button @click="toTargetRoom('operationCommandRoom')" class="control-btn">作战指挥大厅</button>
           <button @click="toTargetRoom('finiteCommunicationRoom')" class="control-btn">有线通信室</button>
           <button @click="toTargetRoom('chemicalPreventionDutyRoom')" class="control-btn">防化值班室</button>
           <button @click="toTargetRoom('microwaveSatelliteCommunicationRoom')" class="control-btn">微波卫星通信室</button>  
@@ -63,6 +54,7 @@
           <button @click="toTargetRoom('protectionEquipmentRoom')" class="control-btn">防护元件室</button>  
           <button @click="toTargetRoom('emptyStatusIconRoom')" class="control-btn">空情图标室</button>  
           <button @click="toTargetRoom('emptyStatusAlertRoom')" class="control-btn">空情警报控制室</button>  
+          <button @click="toTargetRoom('warehouseComputingArea')" class="control-btn">储存计算区</button>  
         </div>
       </div>
 
@@ -73,10 +65,31 @@
 
 <script setup lang="ts">
 import * as THREE from 'three'
+import { ref } from 'vue'
 import { useBasisStore } from '@/stores/basis' // 基础配置 Store
 
 // 使用基础配置 Store
 const basisStore = useBasisStore()
+
+// 控制按钮组展开/折叠状态
+const isImgPointControlsOpen = ref(true)
+const isPyramidControlsOpen = ref(true)
+const isModelControlsOpen = ref(true)
+
+// 切换按钮组展开/折叠状态
+const toggleControls = (controlType: string) => {
+  switch (controlType) {
+    case 'imgPoint':
+      isImgPointControlsOpen.value = !isImgPointControlsOpen.value
+      break
+    case 'pyramid':
+      isPyramidControlsOpen.value = !isPyramidControlsOpen.value
+      break
+    case 'model':
+      isModelControlsOpen.value = !isModelControlsOpen.value
+      break
+  }
+}
 
 // 定义事件
 const emit = defineEmits<{

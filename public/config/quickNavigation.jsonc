@@ -95,6 +95,18 @@
       { "position": { "x": 2.56, "y": -1.78, "z": 1.70 }, "rotation": { "y": "Math.PI" }, "duration": 0, "stayTime": 0, "sta": "空情警报控制室入口" }
     ]
   },
+  // 储存计算区
+  "warehouseComputingArea": {
+    "points": [
+      { "position": { "x": 3.12, "y": -1.78, "z": 1.70 }, "rotation": { "y": "Math.PI" }, "duration": 0, "stayTime": 0, "sta": "储存计算区入口" }
+    ]
+  },
+  // 作战指挥大厅 
+  "operationCommandRoom": {
+    "points": [
+      { "position": { "x": 0.43, "y": -1.78, "z": 3.63 }, "rotation": { "y": "3*Math.PI/4" }, "duration": 0, "stayTime": 0, "sta": "作战指挥大厅入口" }
+    ]
+  },
 
 
   "initLocation": { 
