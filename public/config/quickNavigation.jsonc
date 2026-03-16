@@ -35,6 +35,14 @@
       { "position": { "x": 3.13, "y": -1.78, "z": 1.57 }, "rotation": { "y": "0" }, "duration": 0, "stayTime": 0, "sta": "综合管理区入口" }
     ]
   },
+  // 通信维修室 
+  "communicationMaintenanceRoom": {
+    "points": [
+      { "position": { "x": 1.35, "y": -1.78, "z": 1.59 }, "rotation": { "y": "0" }, "duration": 0, "stayTime": 0, "sta": "通信维修室入口" }
+    ]
+  },
+
+
   "initLocation": { 
     "points": [
       { "position": { "x": 0, "y": 0, "z": 0 }, "rotation": { "y": "0" }, "duration": 1000, "stayTime": 500, "sta": "初始位置" }

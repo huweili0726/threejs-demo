@@ -55,6 +55,7 @@
           <button @click="toTargetRoom('chemicalPreventionDutyRoom')" class="control-btn">防化值班室</button>
           <button @click="toTargetRoom('microwaveSatelliteCommunicationRoom')" class="control-btn">微波卫星通信室</button>  
           <button @click="toTargetRoom('managementAreaRoom')" class="control-btn">综合管理区</button>  
+          <button @click="toTargetRoom('communicationMaintenanceRoom')" class="control-btn">通信维修室</button>  
         </div>
       </div>
 
