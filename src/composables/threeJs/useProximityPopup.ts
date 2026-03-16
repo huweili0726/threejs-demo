@@ -8,7 +8,7 @@
  * @description 处理基于距离的弹窗逻辑，当人物接近物体时自动显示弹窗
  */
 import * as THREE from 'three'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 // 碰撞体接口
 interface WallBoundingBox {
@@ -40,6 +40,17 @@ interface CollisionResult {
   isFullyLeft: boolean
 }
 
+// 三维设备配置接口
+interface ThreeDev {
+  id: string
+  meshName: string
+  type: string
+  popInfo?: {
+    title: string
+    content: Array<{ name: string; value: string }>
+  }
+}
+
 export function useProximityPopup(
   showPopup: (data: PopupData, object: THREE.Object3D) => void,
   closePopup: (id?: string) => void,
@@ -49,6 +60,19 @@ export function useProximityPopup(
   const lastWallDistances = new Map<string, number>()
   // 记录当前显示弹窗的物体
   const visiblePopupObjects = ref<Set<string>>(new Set())
+  // 三维设备配置
+  const threeDevConfig = ref<ThreeDev[]>([])
+
+  // 加载三维设备配置
+  onMounted(async () => {
+    try {
+      const response = await fetch(`${import.meta.env.BASE_URL}/config/threeDimensionalDev.jsonc`)
+      const config = await response.json()
+      threeDevConfig.value = config.threeDevs || []
+    } catch (error) {
+      console.error('加载三维设备配置失败：', error)
+    }
+  })
 
   /**
    * 碰撞检测（到达某个模型附近，自动弹窗）
@@ -151,16 +175,18 @@ export function useProximityPopup(
           } else {
             // onlyShowUpDownStairsPopup = false 时，只显示普通物体弹窗
             if (!wallBox.isStairs) {
-              const threeDev = wallBox.selectMode.name
-              popupData = {
-                id: `popup-${objectUuid}`,
-                title: threeDev,
-                content: [
-                  { name: '距离', value: item.distance.toFixed(2) + ' 单位' },
-                  { name: 'UUID', value: objectUuid.slice(0, 8) + '...' }
-                ]
+              // 查找匹配的三维设备配置
+              const threeDev = threeDevConfig.value.find(dev => dev.meshName === wallBox.selectMode.name)
+              
+              // 只有当找到匹配的配置且有 popInfo 时才显示弹窗
+              if (threeDev && threeDev.popInfo) {
+                popupData = {
+                  id: `popup-${objectUuid}`,
+                  title: threeDev.popInfo.title,
+                  content: threeDev.popInfo.content
+                }
+                showPopup(popupData, targetObject)
               }
-              showPopup(popupData, targetObject)
             }
           }
         }
