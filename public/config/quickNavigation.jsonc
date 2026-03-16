@@ -5,6 +5,12 @@
       { "position": { "x": -1.58, "y": -1.78, "z": 3.02 }, "rotation": { "y": "0" }, "duration": 0, "stayTime": 0, "sta": "发电机房入口" }
     ]
   },
+  // 空调机房
+  "airConditioningRoom": {
+    "points": [
+      { "position": { "x": 3.30, "y": -1.78, "z": 1.39 }, "rotation": { "y": "Math.PI/2" }, "duration": 0, "stayTime": 0, "sta": "有线通信室入口" }
+    ]
+  },
   // 水泵房
   "pumpRoom": {
     "points": [

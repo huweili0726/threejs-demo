@@ -47,7 +47,7 @@
         </div>
         <div class="controls-content">
           <button @click="toTargetRoom('generatorRoom')" class="control-btn">发电机房</button>
-          <button @click="toTargetRoom('generatorRoom')" class="control-btn">空调机房</button>
+          <button @click="toTargetRoom('airConditioningRoom')" class="control-btn">空调机房</button>
           <button @click="toTargetRoom('pumpRoom')" class="control-btn">水泵房</button>
           <button @click="toTargetRoom('generatorRoom')" class="control-btn">通信电源配电室</button>
           <button @click="toTargetRoom('generatorRoom')" class="control-btn">作战指挥大厅</button>
