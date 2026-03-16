@@ -74,6 +74,7 @@ const initSceneAndEnvironment = () => {
  * 初始化交互功能
  */
 const initInteractions = () => {
+  // 键盘 wasd 控制人物移动
   cleanupKeyboardEvents = initKeyboardEvents()
   // 初始化双击选中功能
   cleanupSelection = initDoubleClickSelection({
@@ -154,7 +155,7 @@ onMounted(async () => {
   // 1. 初始化场景和环境
   initSceneAndEnvironment()
 
-  // 2. 初始化交互功能 【双击选中功能 + 双击弹窗功能】
+  // 2. 初始化交互功能 【键盘 wasd 控制人物移动 + 双击选中功能 + 双击弹窗功能】
   initInteractions()
 
   // 3. 加载模型和碰撞包围盒
