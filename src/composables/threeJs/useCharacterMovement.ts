@@ -34,8 +34,8 @@ export function useCharacterMovement(
   
   // 每次碰撞检测的最大步长（防止高速穿墙，应小于墙体厚度）
   const MAX_STEP_SIZE = 0.002 // 小于墙体厚度 0.005，更精细检测
-  // 每帧最大移动距离（核心修复：限制最高速度的绝对移动距离）
-  const MAX_FRAME_MOVE_DISTANCE = 0.05
+  // 每帧最大移动距离（核心修复：限制最高速度的绝对移动距离，需要足够大以允许加速效果）
+  const MAX_FRAME_MOVE_DISTANCE = 0.15
   // 碰撞检测安全距离（提前检测距离）
   const COLLISION_SAFE_DISTANCE = 0.02
 
