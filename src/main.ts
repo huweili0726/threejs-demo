@@ -61,6 +61,17 @@ async function loadRoamConfig() {
   }
 }
 
+// 加载快速导航配置
+async function loadQuickNavigationConfig() {
+  try {
+    const config = await getJsonFile(`${import.meta.env.BASE_URL}/config/quickNavigation.jsonc`)
+    basisStore.setQuickNavigationConfig(config)
+    console.log('✅ 快速导航配置加载完成')
+  } catch (error) {
+    console.error('❌ 快速导航配置加载失败:', error)
+  }
+}
+
 // 执行配置加载
 async function loadConfigs() {
   // 并行加载配置
@@ -68,7 +79,8 @@ async function loadConfigs() {
     loadBasisConfig(),
     loadThreeDevConfig(),
     loadWallConfig(),
-    loadRoamConfig()
+    loadRoamConfig(),
+    loadQuickNavigationConfig()
   ])
   // 配置加载完成后挂载应用
   app.mount('#app')

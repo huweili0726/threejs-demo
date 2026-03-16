@@ -78,11 +78,13 @@ export const useBasisStore = defineStore('basis', () => {
   const threeDevConfig = ref<ThreeDevConfig | null>(null)
   const wallConfig = ref<WallConfig | null>(null)
   const roamConfig = ref<any | null>(null)
+  const quickNavigationConfig = ref<any | null>(null)
   
   const isLoaded = ref(false)
   const isThreeDevLoaded = ref(false)
   const isWallLoaded = ref(false)
   const isRoamLoaded = ref(false)
+  const isQuickNavigationLoaded = ref(false)
 
   // Getters
   const characterModelUrlsConfig = computed(() => basisConfig.value?.characterModelUrls)
@@ -98,6 +100,7 @@ export const useBasisStore = defineStore('basis', () => {
   const threeDevs = computed(() => threeDevConfig.value?.threeDevs || [])
   const wallsConfig = computed(() => wallConfig.value?.walls || [])
   const roamPathConfig = computed(() => roamConfig.value || null)
+  const quickNavigation = computed(() => quickNavigationConfig.value || {})
 
   // Actions
   /**
@@ -137,6 +140,15 @@ export const useBasisStore = defineStore('basis', () => {
   }
 
   /**
+   * 设置快速导航配置
+   * @param config 快速导航配置对象
+   */
+  function setQuickNavigationConfig(config: any) {
+    quickNavigationConfig.value = config
+    isQuickNavigationLoaded.value = true
+  }
+
+  /**
    * 清除配置
    */
   function clearConfig() {
@@ -144,10 +156,12 @@ export const useBasisStore = defineStore('basis', () => {
     threeDevConfig.value = null
     wallConfig.value = null
     roamConfig.value = null
+    quickNavigationConfig.value = null
     isLoaded.value = false
     isThreeDevLoaded.value = false
     isWallLoaded.value = false
     isRoamLoaded.value = false
+    isQuickNavigationLoaded.value = false
   }
 
   return {
@@ -156,10 +170,12 @@ export const useBasisStore = defineStore('basis', () => {
     threeDevConfig,
     wallConfig,
     roamConfig,
+    quickNavigationConfig,
     isLoaded,
     isThreeDevLoaded,
     isWallLoaded,
     isRoamLoaded,
+    isQuickNavigationLoaded,
     // Getters
     characterModelUrlsConfig,
     modelUrlsConfig,
@@ -174,11 +190,13 @@ export const useBasisStore = defineStore('basis', () => {
     threeDevs,
     wallsConfig,
     roamPathConfig,
+    quickNavigation,
     // Actions
     setBasisConfig,
     setThreeDevConfig,
     setWallConfig,
     setRoamConfig,
+    setQuickNavigationConfig,
     clearConfig
   }
 })
