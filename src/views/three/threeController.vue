@@ -9,7 +9,6 @@
           <span class="toggle-icon">{{ isImgPointControlsOpen ? '▼' : '▶' }}</span>
         </div>
         <div class="controls-content" v-show="isImgPointControlsOpen">
-          <button @click="toFloor('9')" class="control-btn">风管</button>
           <button @click="toFloor('9')" class="control-btn">9楼</button>
           <button @click="toFloor('8')" class="control-btn">8楼</button>
           <button @click="toFloor('0')" class="control-btn">地面</button>
