@@ -9,7 +9,10 @@
       @startAutoRoam="handleStartAutoRoam" 
       @stopAutoRoam="handleStopAutoRoam"
       @goToTargetRoom="handleToTargetRoom" 
-      @showPipelines="handleShowPipelines" />
+      @showPipelines="handleShowPipelines"
+      @hidePipelines="handleHidePipelines"
+      @showAirConditioningModel="handleShowAirConditioningModel"
+      @hideAirConditioningModel="handleHideAirConditioningModel" />
 
     <!-- 渲染场景 -->
     <ThreeJs 
@@ -77,6 +80,20 @@ const handleShowPipelines = () => {
   threeJsRef.value?.showPipelines()
 }
 
+// 隐藏管路
+const handleHidePipelines = () => {
+  threeJsRef.value?.hidePipelines()
+}
+
+// 显示空调送风005模型
+const handleShowAirConditioningModel = () => {
+  threeJsRef.value?.showAirConditioningModel()
+}
+
+// 隐藏空调送风005模型
+const handleHideAirConditioningModel = () => {
+  threeJsRef.value?.hideAirConditioningModel()
+}
 
 </script>
 

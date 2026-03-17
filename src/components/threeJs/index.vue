@@ -22,6 +22,7 @@ import { useAutoRoam } from '@/composables/threeJs/useAutoRoam' // 自动漫游�
 import { useProximityPopup } from '@/composables/threeJs/useProximityPopup' // 接近弹窗相关Hooks
 import { useBasisStore } from '@/stores/basis' // 基础配置 Store
 import { useFloorSwitch } from '@/composables/threeJs/useFloorSwitch' // 楼层切换相关Hooks
+import { useModelVisibility } from '@/composables/threeJs/useModelVisibility' // 模型显示控制相关Hooks
 import '@/assets/css/object-popup.css' // 弹窗样式
 
 const threeJsContainer = ref<HTMLDivElement>()
@@ -42,6 +43,7 @@ const { wallBoundingBoxes, checkCollision, updateBoundingBoxes, setBoundingBoxes
 const { updateProximityPopups } = useProximityPopup(showPopup, closePopup, toControlCommandRoom) // 使用接近弹窗模块（统一管理弹窗逻辑）
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes, wallBoundingBoxes, updateProximityPopups) // 人物移动控制相关Hooks
 const { initAutoRoam, startAutoRoam, pauseAutoRoam, resumeAutoRoam, stopAutoRoam, updateAutoRoam } = useAutoRoam(wallBoundingBoxes, updateProximityPopups) // 自动漫游相关Hooks
+const { showAirConditioningModel, hideAirConditioningModel, showPipelines, hidePipelines } = useModelVisibility() // 模型显示控制相关Hooks
 
 // 控制变量
 const cameraOffset = new THREE.Vector3(0, 0.1, -0.12) // 相机偏移量（在模型后方，稍微上方）
@@ -251,7 +253,11 @@ defineExpose({
   pauseAutoRoam,
   resumeAutoRoam,
   switchToFloor,
-  toRoom
+  toRoom,
+  showAirConditioningModel: () => showAirConditioningModel(),
+  hideAirConditioningModel: () => hideAirConditioningModel(),
+  showPipelines: () => showPipelines(scene as any),
+  hidePipelines: () => hidePipelines(scene as any)
 })
 </script>
 

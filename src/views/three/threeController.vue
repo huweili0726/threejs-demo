@@ -40,7 +40,20 @@
           <span class="toggle-icon">{{ isPipelineControlsOpen ? '▼' : '▶' }}</span>
         </div>
         <div class="controls-content" v-show="isPipelineControlsOpen">
-          <button @click="showPipelines()" class="control-btn">查看管路</button>
+          <button @click="showPipelines()" class="control-btn">显示管路</button>
+          <button @click="hidePipelines()" class="control-btn">隐藏管路</button>
+        </div>
+      </div>
+
+      <!-- 空调送风005控制按钮组 -->
+      <div class="button-group air-conditioning-controls">
+        <div class="group-title" @click="toggleControls('airConditioning')">
+          空调送风005
+          <span class="toggle-icon">{{ isAirConditioningControlsOpen ? '▼' : '▶' }}</span>
+        </div>
+        <div class="controls-content" v-show="isAirConditioningControlsOpen">
+          <button @click="showAirConditioningModel()" class="control-btn">显示</button>
+          <button @click="hideAirConditioningModel()" class="control-btn">隐藏</button>
         </div>
       </div>
 
@@ -90,6 +103,7 @@ const isImgPointControlsOpen = ref(false)
 const isPyramidControlsOpen = ref(false)
 const isModelControlsOpen = ref(false)
 const isPipelineControlsOpen = ref(false)
+const isAirConditioningControlsOpen = ref(false)
 
 // 切换按钮组展开/折叠状态
 const toggleControls = (controlType: string) => {
@@ -105,6 +119,9 @@ const toggleControls = (controlType: string) => {
       break
     case 'pipeline':
       isPipelineControlsOpen.value = !isPipelineControlsOpen.value
+      break
+    case 'airConditioning':
+      isAirConditioningControlsOpen.value = !isAirConditioningControlsOpen.value
       break
   }
 }
@@ -122,6 +139,8 @@ const emit = defineEmits<{
   (e: 'goToTargetRoom', targetRoom: string): void
   (e: 'showPipelines'): void
   (e: 'hidePipelines'): void
+  (e: 'showAirConditioningModel'): void
+  (e: 'hideAirConditioningModel'): void
 }>()
 
 // 切换楼层
@@ -214,6 +233,21 @@ const showPipelines = () => {
   emit('showPipelines')
 }
 
+// 隐藏管路
+const hidePipelines = () => {
+  emit('hidePipelines')
+}
+
+// 显示空调送风005模型
+const showAirConditioningModel = () => {
+  emit('showAirConditioningModel')
+}
+
+// 隐藏空调送风005模型
+const hideAirConditioningModel = () => {
+  emit('hideAirConditioningModel')
+}
+
 
 </script>
 
@@ -285,6 +319,12 @@ const showPipelines = () => {
       margin-top: 6px;
       background: rgba(20, 60, 60, 0.9);
       border-color: rgba(100, 255, 255, 0.3);
+    }
+
+    &.air-conditioning-controls {
+      margin-top: 6px;
+      background: rgba(60, 20, 60, 0.9);
+      border-color: rgba(255, 100, 255, 0.3);
     }
 
     &.hemisphere-controls {

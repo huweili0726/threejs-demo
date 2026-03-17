@@ -66,7 +66,7 @@ export function useRaycastUtils() {
   const filterIntersects = (
     intersects: THREE.Intersection[],
     // filterTypes: string[] = ['BoxHelper', 'Box3Helper', 'CSS2DObject']
-    filterTypes: string[] = ['BoxHelper', 'Box3Helper', 'CSS2DObject']
+    filterTypes: string[] = ['BoxHelper', 'Box3Helper', 'CSS2DObject', 'AxesHelper']
   ): THREE.Intersection[] => {
     return intersects.filter(
       (intersect) => !filterTypes.includes(intersect.object.type)

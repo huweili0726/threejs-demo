@@ -9,6 +9,7 @@
  */
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import * as THREE from 'three'
 
 // 视角配置接口
 interface PerspectiveConfig {
@@ -79,6 +80,7 @@ export const useBasisStore = defineStore('basis', () => {
   const wallConfig = ref<WallConfig | null>(null)
   const roamConfig = ref<any | null>(null)
   const quickNavigationConfig = ref<any | null>(null)
+  const boundingBoxes = ref<Array<{ child: THREE.Mesh; name: string; }>>([])
   
   const isLoaded = ref(false)
   const isThreeDevLoaded = ref(false)
@@ -101,6 +103,7 @@ export const useBasisStore = defineStore('basis', () => {
   const wallsConfig = computed(() => wallConfig.value?.walls || [])
   const roamPathConfig = computed(() => roamConfig.value || null)
   const quickNavigation = computed(() => quickNavigationConfig.value || {})
+  const collisionBoundingBoxes = computed(() => boundingBoxes.value)
 
   // Actions
   /**
@@ -149,6 +152,14 @@ export const useBasisStore = defineStore('basis', () => {
   }
 
   /**
+   * 设置碰撞检测包围盒
+   * @param boxes 包围盒数组
+   */
+  function setBoundingBoxes(boxes: Array<{ child: THREE.Mesh; name: string; }>) {
+    boundingBoxes.value = boxes
+  }
+
+  /**
    * 清除配置
    */
   function clearConfig() {
@@ -157,6 +168,7 @@ export const useBasisStore = defineStore('basis', () => {
     wallConfig.value = null
     roamConfig.value = null
     quickNavigationConfig.value = null
+    boundingBoxes.value = []
     isLoaded.value = false
     isThreeDevLoaded.value = false
     isWallLoaded.value = false
@@ -171,6 +183,7 @@ export const useBasisStore = defineStore('basis', () => {
     wallConfig,
     roamConfig,
     quickNavigationConfig,
+    boundingBoxes,
     isLoaded,
     isThreeDevLoaded,
     isWallLoaded,
@@ -191,12 +204,14 @@ export const useBasisStore = defineStore('basis', () => {
     wallsConfig,
     roamPathConfig,
     quickNavigation,
+    collisionBoundingBoxes,
     // Actions
     setBasisConfig,
     setThreeDevConfig,
     setWallConfig,
     setRoamConfig,
     setQuickNavigationConfig,
+    setBoundingBoxes,
     clearConfig
   }
 })
