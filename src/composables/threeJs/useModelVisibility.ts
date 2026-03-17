@@ -67,7 +67,7 @@ export function useModelVisibility() {
    * 显示空调送风005模型，隐藏其他所有模型
    * @param scene 场景对象
    */
-  const showAirConditioningModel = () => {
+  const showPipelines = () => {
     const models = basisStore.collisionBoundingBoxes.map(item => item?.child)
 
     
@@ -96,7 +96,7 @@ export function useModelVisibility() {
    * 隐藏空调送风005模型，恢复其他模型的显示状态
    * @param scene 场景对象
    */
-  const hideAirConditioningModel = () => {
+  const hidePipelines = () => {
     const models = basisStore.collisionBoundingBoxes.map(item => item?.child)
     
     // 恢复原始显示状态
@@ -113,73 +113,10 @@ export function useModelVisibility() {
     console.log('✅ 已隐藏空调送风005模型，恢复其他模型显示状态')
   }
 
-  /**
-   * 显示管路模型，隐藏其他所有模型
-   * @param scene 场景对象
-   */
-  const showPipelines = (scene: THREE.Scene) => {
-    const models = findAllModels(scene)
-    
-    // 保存原始显示状态
-    models.forEach(model => {
-      if (!originalVisibilityMap.value.has(model.uuid)) {
-        originalVisibilityMap.value.set(model.uuid, model.visible)
-      }
-    })
-    
-    // 显示管路，隐藏其他
-    models.forEach(model => {
-      if (isPipelineModel(model)) {
-        model.visible = true
-      } else {
-        model.visible = false
-      }
-    })
-    
-    isPipelinesVisible.value = true
-    console.log('✅ 已显示管路模型，隐藏其他所有模型')
-  }
-
-  /**
-   * 隐藏管路模型，恢复其他模型的显示状态
-   * @param scene 场景对象
-   */
-  const hidePipelines = (scene: THREE.Scene) => {
-    const models = findAllModels(scene)
-    
-    // 恢复原始显示状态
-    models.forEach(model => {
-      const originalVisible = originalVisibilityMap.value.get(model.uuid)
-      if (originalVisible !== undefined) {
-        model.visible = originalVisible
-      }
-    })
-    
-    // 清空原始状态映射
-    originalVisibilityMap.value.clear()
-    isPipelinesVisible.value = false
-    console.log('✅ 已隐藏管路模型，恢复其他模型显示状态')
-  }
-
-  /**
-   * 切换空调送风005模型的显示状态
-   * @param scene 场景对象
-   */
-  const toggleAirConditioningModel = (scene: THREE.Scene) => {
-    if (isAirConditioningVisible.value) {
-      hideAirConditioningModel()
-    } else {
-      showAirConditioningModel()
-    }
-  }
-
   return {
     isAirConditioningVisible,
     isPipelinesVisible,
-    showAirConditioningModel,
-    hideAirConditioningModel,
     showPipelines,
-    hidePipelines,
-    toggleAirConditioningModel
+    hidePipelines
   }
 }

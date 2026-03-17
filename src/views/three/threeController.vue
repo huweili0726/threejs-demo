@@ -218,12 +218,12 @@ const toStop = () => {
 
 // 显示空调送风005模型
 const showPipelines = () => {
-  emit('showAirConditioningModel')
+  emit('showPipelines')
 }
 
 // 隐藏空调送风005模型
 const hidePipelines = () => {
-  emit('hideAirConditioningModel')
+  emit('hidePipelines')
 }
 
 

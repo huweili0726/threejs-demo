@@ -10,9 +10,7 @@
       @stopAutoRoam="handleStopAutoRoam"
       @goToTargetRoom="handleToTargetRoom" 
       @showPipelines="handleShowPipelines"
-      @hidePipelines="handleHidePipelines"
-      @showAirConditioningModel="handleShowAirConditioningModel"
-      @hideAirConditioningModel="handleHideAirConditioningModel" />
+      @hidePipelines="handleHidePipelines" />
 
     <!-- 渲染场景 -->
     <ThreeJs 
@@ -75,7 +73,7 @@ const handleToTargetRoom = async (targetRoom: string) => {
   await threeJsRef.value?.toRoom?.(targetRoom)
 }
 
-// 查看管路
+// 显示管路
 const handleShowPipelines = () => {
   threeJsRef.value?.showPipelines()
 }
@@ -83,16 +81,6 @@ const handleShowPipelines = () => {
 // 隐藏管路
 const handleHidePipelines = () => {
   threeJsRef.value?.hidePipelines()
-}
-
-// 显示空调送风005模型
-const handleShowAirConditioningModel = () => {
-  threeJsRef.value?.showAirConditioningModel()
-}
-
-// 隐藏空调送风005模型
-const handleHideAirConditioningModel = () => {
-  threeJsRef.value?.hideAirConditioningModel()
 }
 
 </script>
