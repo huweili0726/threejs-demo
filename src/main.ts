@@ -72,6 +72,17 @@ async function loadQuickNavigationConfig() {
   }
 }
 
+// 加载管路配置
+async function loadLineConfig() {
+  try {
+    const config = await getJsonFile(`${import.meta.env.BASE_URL}/config/line.jsonc`)
+    basisStore.setLineConfig(config)
+    console.log('✅ 管路配置加载完成，共', config?.pipelines?.length || 0, '个管路')
+  } catch (error) {
+    console.error('❌ 管路配置加载失败:', error)
+  }
+}
+
 // 执行配置加载
 async function loadConfigs() {
   // 并行加载配置
@@ -80,7 +91,8 @@ async function loadConfigs() {
     loadThreeDevConfig(),
     loadWallConfig(),
     loadRoamConfig(),
-    loadQuickNavigationConfig()
+    loadQuickNavigationConfig(),
+    loadLineConfig()
   ])
   // 配置加载完成后挂载应用
   app.mount('#app')

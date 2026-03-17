@@ -80,6 +80,7 @@ export const useBasisStore = defineStore('basis', () => {
   const wallConfig = ref<WallConfig | null>(null)
   const roamConfig = ref<any | null>(null)
   const quickNavigationConfig = ref<any | null>(null)
+  const lineConfig = ref<any | null>(null)
   const boundingBoxes = ref<Array<{ child: THREE.Mesh; name: string; }>>([])
   
   const isLoaded = ref(false)
@@ -103,6 +104,7 @@ export const useBasisStore = defineStore('basis', () => {
   const wallsConfig = computed(() => wallConfig.value?.walls || [])
   const roamPathConfig = computed(() => roamConfig.value || null)
   const quickNavigation = computed(() => quickNavigationConfig.value || {})
+  const pipelineConfig = computed(() => lineConfig.value || null)
   const collisionBoundingBoxes = computed(() => boundingBoxes.value)
 
   // Actions
@@ -160,6 +162,14 @@ export const useBasisStore = defineStore('basis', () => {
   }
 
   /**
+   * 设置管路配置
+   * @param config 管路配置对象
+   */
+  function setLineConfig(config: any) {
+    lineConfig.value = config
+  }
+
+  /**
    * 清除配置
    */
   function clearConfig() {
@@ -168,6 +178,7 @@ export const useBasisStore = defineStore('basis', () => {
     wallConfig.value = null
     roamConfig.value = null
     quickNavigationConfig.value = null
+    lineConfig.value = null
     boundingBoxes.value = []
     isLoaded.value = false
     isThreeDevLoaded.value = false
@@ -183,6 +194,7 @@ export const useBasisStore = defineStore('basis', () => {
     wallConfig,
     roamConfig,
     quickNavigationConfig,
+    lineConfig,
     boundingBoxes,
     isLoaded,
     isThreeDevLoaded,
@@ -204,6 +216,7 @@ export const useBasisStore = defineStore('basis', () => {
     wallsConfig,
     roamPathConfig,
     quickNavigation,
+    pipelineConfig,
     collisionBoundingBoxes,
     // Actions
     setBasisConfig,
@@ -212,6 +225,7 @@ export const useBasisStore = defineStore('basis', () => {
     setRoamConfig,
     setQuickNavigationConfig,
     setBoundingBoxes,
+    setLineConfig,
     clearConfig
   }
 })

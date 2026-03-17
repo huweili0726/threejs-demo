@@ -22,14 +22,17 @@ export function useModelVisibility() {
 
 
   /**
-   * 检查模型名称是否包含空调送风005
+   * 检查模型名称是否在管路配置列表中
    * @param model 模型对象
    * @returns 是否匹配
    */
   const isNeedHideModel = (model: THREE.Object3D): boolean => {
     const name = model.name || ''
-    console.log('name', name)
-    return name === '空调回风003'
+    const pipelineConfig = basisStore.pipelineConfig
+    if (!pipelineConfig || !pipelineConfig.pipelines) {
+      return false
+    }
+    return (pipelineConfig as any).pipelines.some((pipeline: { name: string, visible: boolean }) => pipeline.name === name && pipeline.visible)
   }
 
   /**
