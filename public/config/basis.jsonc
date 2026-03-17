@@ -62,6 +62,10 @@
   },
   // 9楼初始视角配置
   "floor_9th": {
-
+    "perspective": { "x": 2, "y": 1.7, "z": 10 }, 
+    "directionToLook": { "x": 2, "y": 1.7, "z": 11 },
+    "durationTime": 2000, // 切换视角的动画时长（毫秒）
+    "characterModelSetPosition": { "x": 2, "y": 1.8, "z": 10.5 }, // 人物模型位置（与视角同步）
+    "characterModelToLook": { "x": 2, "y": 1.8, "z": 11 } // 人物模型看向方向（与视角同步）
   }
 }

@@ -9,6 +9,7 @@
           <span class="toggle-icon">{{ isImgPointControlsOpen ? '▼' : '▶' }}</span>
         </div>
         <div class="controls-content" v-show="isImgPointControlsOpen">
+          <button @click="toFloor('9')" class="control-btn">9楼</button>
           <button @click="toFloor('0')" class="control-btn">地面</button>
           <button @click="toFloor('-1')" class="control-btn">-1楼</button>
           <button @click="toFloor('-1_2')" class="control-btn">-1楼2层</button>
@@ -72,9 +73,9 @@ import { useBasisStore } from '@/stores/basis' // 基础配置 Store
 const basisStore = useBasisStore()
 
 // 控制按钮组展开/折叠状态
-const isImgPointControlsOpen = ref(true)
-const isPyramidControlsOpen = ref(true)
-const isModelControlsOpen = ref(true)
+const isImgPointControlsOpen = ref(false)
+const isPyramidControlsOpen = ref(false)
+const isModelControlsOpen = ref(false)
 
 // 切换按钮组展开/折叠状态
 const toggleControls = (controlType: string) => {
@@ -143,6 +144,16 @@ const toFloor = (floor: string) => {
     const duration = beforeNeg12LayersFloorConfig?.durationTime || 2000 // 飞行时间
     const modelInitPosition = beforeNeg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
     const onLookAt = beforeNeg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼1层入口处
+    emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
+  } else if (floor === '9') {
+    const floor9Config = basisStore.floor9thConfig
+    const perspective = floor9Config?.perspective || { x: 0, y: 0, z: 0 }
+    const directionToLook = floor9Config?.directionToLook || { x: 0, y: 0, z: 0 }
+    const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+    const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+    const duration = floor9Config?.durationTime || 2000 // 飞行时间
+    const modelInitPosition = floor9Config?.characterModelSetPosition // 人物模型初始位置
+    const onLookAt = floor9Config?.characterModelToLook // 人物模型看向-1楼1层入口处
     emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   }
 
