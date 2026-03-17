@@ -3,9 +3,9 @@
   "skybox": "hdr/sky.hdr",
   // 需要加载的模型集合
   "modelUrls": [
-    "glb/groundFloorOfficeBuilding.glb",
-    "glb/underGround.glb",
-    "glb/shu.glb",
+    // "glb/groundFloorOfficeBuilding.glb",
+    // "glb/underGround.glb",
+    // "glb/shu.glb",
     "glb/8th_floor.glb",
     "glb/9th_floor.glb"
     // "glb/空调送、回风、排烟.glb",
@@ -60,12 +60,12 @@
     "characterModelSetPosition": { "x": 2, "y": 1.8, "z": 10.5 }, // 人物模型位置（与视角同步）
     "characterModelToLook": { "x": 2, "y": 1.8, "z": 11 } // 人物模型看向方向（与视角同步）
   },
-  // 9楼初始视角配置
+  // 9楼初始视角配置  0.23, y: 3.60, z: -3.85
   "floor_9th": {
-    "perspective": { "x": 2, "y": 1.7, "z": 10 }, 
-    "directionToLook": { "x": 2, "y": 1.7, "z": 11 },
+    "perspective": { "x": 0.23, "y": 3.60, "z": -3.85 }, 
+    "directionToLook": { "x": 0.23, "y": 3.60, "z": -6 },
     "durationTime": 2000, // 切换视角的动画时长（毫秒）
-    "characterModelSetPosition": { "x": 2, "y": 1.8, "z": 10.5 }, // 人物模型位置（与视角同步）
-    "characterModelToLook": { "x": 2, "y": 1.8, "z": 11 } // 人物模型看向方向（与视角同步）
+    "characterModelSetPosition": { "x": 0.23, "y": 3.60, "z": -3.85 }, // 人物模型位置（与视角同步）
+    "characterModelToLook": { "x": 0.23, "y": 3.60, "z": -6 } // 人物模型看向方向（与视角同步）
   }
 }
