@@ -40,20 +40,8 @@
           <span class="toggle-icon">{{ isPipelineControlsOpen ? '▼' : '▶' }}</span>
         </div>
         <div class="controls-content" v-show="isPipelineControlsOpen">
-          <button @click="showPipelines()" class="control-btn">显示管路</button>
-          <button @click="hidePipelines()" class="control-btn">隐藏管路</button>
-        </div>
-      </div>
-
-      <!-- 空调送风005控制按钮组 -->
-      <div class="button-group air-conditioning-controls">
-        <div class="group-title" @click="toggleControls('airConditioning')">
-          空调送风005
-          <span class="toggle-icon">{{ isAirConditioningControlsOpen ? '▼' : '▶' }}</span>
-        </div>
-        <div class="controls-content" v-show="isAirConditioningControlsOpen">
-          <button @click="showAirConditioningModel()" class="control-btn">显示</button>
-          <button @click="hideAirConditioningModel()" class="control-btn">隐藏</button>
+          <button @click="showPipelines()" class="control-btn">突出显示管路</button>
+          <button @click="hidePipelines()" class="control-btn">恢复原状</button>
         </div>
       </div>
 
@@ -228,23 +216,13 @@ const toStop = () => {
   emit('stopAutoRoam')
 }
 
-// 显示管路
-const showPipelines = () => {
-  emit('showPipelines')
-}
-
-// 隐藏管路
-const hidePipelines = () => {
-  emit('hidePipelines')
-}
-
 // 显示空调送风005模型
-const showAirConditioningModel = () => {
+const showPipelines = () => {
   emit('showAirConditioningModel')
 }
 
 // 隐藏空调送风005模型
-const hideAirConditioningModel = () => {
+const hidePipelines = () => {
   emit('hideAirConditioningModel')
 }
 
