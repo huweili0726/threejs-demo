@@ -41,7 +41,7 @@
         </div>
         <div class="controls-content" v-show="isPipelineControlsOpen">
           <button @click="showPipelines()" class="control-btn">突出显示管路</button>
-          <button @click="hidePipelines()" class="control-btn">恢复原状</button>
+          <button @click="recoveryPipelines()" class="control-btn">恢复原状</button>
         </div>
       </div>
 
@@ -126,9 +126,7 @@ const emit = defineEmits<{
   (e: 'stopAutoRoam'): void
   (e: 'goToTargetRoom', targetRoom: string): void
   (e: 'showPipelines'): void
-  (e: 'hidePipelines'): void
-  (e: 'showAirConditioningModel'): void
-  (e: 'hideAirConditioningModel'): void
+  (e: 'recoveryPipelines'): void
 }>()
 
 // 切换楼层
@@ -222,8 +220,8 @@ const showPipelines = () => {
 }
 
 // 隐藏空调送风005模型
-const hidePipelines = () => {
-  emit('hidePipelines')
+const recoveryPipelines = () => {
+  emit('recoveryPipelines')
 }
 
 

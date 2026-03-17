@@ -43,7 +43,7 @@ const { wallBoundingBoxes, checkCollision, updateBoundingBoxes, setBoundingBoxes
 const { updateProximityPopups } = useProximityPopup(showPopup, closePopup, toControlCommandRoom) // 使用接近弹窗模块（统一管理弹窗逻辑）
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes, wallBoundingBoxes, updateProximityPopups) // 人物移动控制相关Hooks
 const { initAutoRoam, startAutoRoam, pauseAutoRoam, resumeAutoRoam, stopAutoRoam, updateAutoRoam } = useAutoRoam(wallBoundingBoxes, updateProximityPopups) // 自动漫游相关Hooks
-const { showPipelines, hidePipelines } = useModelVisibility() // 模型显示控制相关Hooks
+const { showPipelines, recoveryPipelines } = useModelVisibility() // 模型显示控制相关Hooks
 
 // 控制变量
 const cameraOffset = new THREE.Vector3(0, 0.1, -0.12) // 相机偏移量（在模型后方，稍微上方）
@@ -255,7 +255,7 @@ defineExpose({
   switchToFloor,
   toRoom,
   showPipelines: () => showPipelines(),
-  hidePipelines: () => hidePipelines()
+  recoveryPipelines: () => recoveryPipelines()
 })
 </script>
 

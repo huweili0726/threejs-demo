@@ -10,7 +10,7 @@
       @stopAutoRoam="handleStopAutoRoam"
       @goToTargetRoom="handleToTargetRoom" 
       @showPipelines="handleShowPipelines"
-      @hidePipelines="handleHidePipelines" />
+      @recoveryPipelines="handleRecoveryPipelines" />
 
     <!-- 渲染场景 -->
     <ThreeJs 
@@ -79,8 +79,8 @@ const handleShowPipelines = () => {
 }
 
 // 隐藏管路
-const handleHidePipelines = () => {
-  threeJsRef.value?.hidePipelines()
+const handleRecoveryPipelines = () => {
+  threeJsRef.value?.recoveryPipelines()
 }
 
 </script>
