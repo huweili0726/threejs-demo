@@ -8,7 +8,8 @@
       @continueAutoRoam="handleContinueAutoRoam"
       @startAutoRoam="handleStartAutoRoam" 
       @stopAutoRoam="handleStopAutoRoam"
-      @goToTargetRoom="handleToTargetRoom" />
+      @goToTargetRoom="handleToTargetRoom" 
+      @showPipelines="handleShowPipelines" />
 
     <!-- 渲染场景 -->
     <ThreeJs 
@@ -71,6 +72,10 @@ const handleToTargetRoom = async (targetRoom: string) => {
   await threeJsRef.value?.toRoom?.(targetRoom)
 }
 
+// 查看管路
+const handleShowPipelines = () => {
+  threeJsRef.value?.showPipelines()
+}
 
 
 </script>

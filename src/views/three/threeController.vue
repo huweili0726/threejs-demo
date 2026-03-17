@@ -9,6 +9,7 @@
           <span class="toggle-icon">{{ isImgPointControlsOpen ? '▼' : '▶' }}</span>
         </div>
         <div class="controls-content" v-show="isImgPointControlsOpen">
+          <button @click="toFloor('9')" class="control-btn">风管</button>
           <button @click="toFloor('9')" class="control-btn">9楼</button>
           <button @click="toFloor('8')" class="control-btn">8楼</button>
           <button @click="toFloor('0')" class="control-btn">地面</button>
@@ -18,7 +19,7 @@
         </div>
       </div>
 
-      <!-- 图片点位控制按钮组 -->
+      <!-- 漫游控制按钮组 -->
       <div class="button-group pyramid-controls">
         <div class="group-title" @click="toggleControls('pyramid')">
           漫游控制
@@ -29,6 +30,17 @@
           <button @click="toPause()" class="control-btn">暂停</button>
           <button @click="toContinue()" class="control-btn">继续</button>
           <button @click="toStop()" class="control-btn">停止</button>
+        </div>
+      </div>
+
+      <!-- 查看管路控制按钮组 -->
+      <div class="button-group pipeline-controls">
+        <div class="group-title" @click="toggleControls('pipeline')">
+          查看管路
+          <span class="toggle-icon">{{ isPipelineControlsOpen ? '▼' : '▶' }}</span>
+        </div>
+        <div class="controls-content" v-show="isPipelineControlsOpen">
+          <button @click="showPipelines()" class="control-btn">查看管路</button>
         </div>
       </div>
 
@@ -77,6 +89,7 @@ const basisStore = useBasisStore()
 const isImgPointControlsOpen = ref(false)
 const isPyramidControlsOpen = ref(false)
 const isModelControlsOpen = ref(false)
+const isPipelineControlsOpen = ref(false)
 
 // 切换按钮组展开/折叠状态
 const toggleControls = (controlType: string) => {
@@ -89,6 +102,9 @@ const toggleControls = (controlType: string) => {
       break
     case 'model':
       isModelControlsOpen.value = !isModelControlsOpen.value
+      break
+    case 'pipeline':
+      isPipelineControlsOpen.value = !isPipelineControlsOpen.value
       break
   }
 }
@@ -104,6 +120,8 @@ const emit = defineEmits<{
   (e: 'startAutoRoam'): void
   (e: 'stopAutoRoam'): void
   (e: 'goToTargetRoom', targetRoom: string): void
+  (e: 'showPipelines'): void
+  (e: 'hidePipelines'): void
 }>()
 
 // 切换楼层
@@ -191,6 +209,12 @@ const toStop = () => {
   emit('stopAutoRoam')
 }
 
+// 显示管路
+const showPipelines = () => {
+  emit('showPipelines')
+}
+
+
 </script>
 
 <style scoped lang="less">
@@ -255,6 +279,12 @@ const toStop = () => {
       margin-top: 6px;
       background: rgba(60, 40, 20, 0.9);
       border-color: rgba(255, 200, 100, 0.3);
+    }
+
+    &.pipeline-controls {
+      margin-top: 6px;
+      background: rgba(20, 60, 60, 0.9);
+      border-color: rgba(100, 255, 255, 0.3);
     }
 
     &.hemisphere-controls {
