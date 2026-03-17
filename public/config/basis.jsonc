@@ -1,3 +1,30 @@
+/**
+ * 基础配置文件
+ * 
+ * @description 定义项目的基础配置信息，包括天空盒、模型加载、人物模型、初始视角等
+ * @structure {
+ *   "skybox": "天空盒文件路径",
+ *   "modelUrls": ["模型文件路径数组"],
+ *   "characterModelUrls": {
+ *     "man": "男性人物模型路径",
+ *     "woman": "女性人物模型路径"
+ *   },
+ *   "characterModelMove": {
+ *     "MAX_SPEED_MULTIPLIER": 最大速度倍数,
+ *     "ACCELERATION_THRESHOLD": 加速度阈值,
+ *     "ACCELERATION_FACTOR": 加速度因子
+ *   },
+ *   "楼层配置": {
+ *     "perspective": { "x": 视角X, "y": 视角Y, "z": 视角Z },
+ *     "directionToLook": { "x": 看向X, "y": 看向Y, "z": 看向Z },
+ *     "durationTime": 切换视角动画时长(毫秒),
+ *     "characterModelSetPosition": { "x": 人物X, "y": 人物Y, "z": 人物Z },
+ *     "characterModelToLook": { "x": 人物看向X, "y": 人物看向Y, "z": 人物看向Z }
+ *   }
+ * }
+ * @usage 该配置文件在应用启动时被加载到 Pinia store 中，通过 `basisStore.basisConfig` 访问
+ *        系统会根据该配置文件中的信息，加载模型、设置初始视角、配置人物模型等
+ */
 {
   // 天空盒
   "skybox": "hdr/sky.hdr",

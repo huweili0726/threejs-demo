@@ -1,3 +1,23 @@
+/**
+ * 快速导航配置文件
+ * 
+ * @description 定义项目中各个房间和区域的快速导航点
+ * @structure {
+ *   "房间标识符": {
+ *     "points": [
+ *       {
+ *         "position": { "x": 坐标X, "y": 坐标Y, "z": 坐标Z },
+ *         "rotation": { "y": "旋转角度" },
+ *         "duration": 移动持续时间(毫秒),
+ *         "stayTime": 停留时间(毫秒),
+ *         "sta": "导航点描述"
+ *       }
+ *     ]
+ *   }
+ * }
+ * @usage 该配置文件在应用启动时被加载到 Pinia store 中，通过 `basisStore.quickNavigation` 访问
+ *        当用户点击快速导航按钮时，系统会根据该配置文件中的信息，将视角移动到指定的房间或区域
+ */
 {
   // 发电机房
   "generatorRoom": {

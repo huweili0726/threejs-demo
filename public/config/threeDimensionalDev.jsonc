@@ -1,3 +1,25 @@
+/**
+ * 三维设备配置文件
+ * 
+ * @description 定义项目中三维模型中的设备信息，包括设备的ID、模型名称、类型和弹窗信息
+ * @structure {
+ *   "threeDevs": [
+ *     {
+ *       "id": "设备唯一标识符",
+ *       "meshName": "模型名称",
+ *       "type": "设备类型",
+ *       "popInfo": {
+ *         "title": "设备标题",
+ *         "content": [
+ *           {"name": "属性名称", "value": "属性值"}
+ *         ]
+ *       }
+ *     }
+ *   ]
+ * }
+ * @usage 该配置文件在应用启动时被加载到 Pinia store 中，通过 `basisStore.threeDimensionalDev` 访问
+ *        当用户点击三维模型中的设备时，系统会根据该配置文件中的信息，显示设备的详细信息弹窗
+ */
 {
 	"threeDevs": [
     {

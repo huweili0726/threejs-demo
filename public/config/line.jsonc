@@ -1,3 +1,15 @@
+/**
+ * 管路配置文件
+ * 
+ * @description 定义项目中需要显示的管路模型列表
+ * @structure {
+ *   "pipelines": [
+ *     { "name": "模型名称", "visible": 是否可见 }
+ *   ]
+ * }
+ * @usage 该配置文件在应用启动时被加载到 Pinia store 中，通过 `basisStore.pipelineConfig` 访问
+ *        当调用 `showPipelines` 函数时，系统会根据该配置文件中的信息，显示配置为可见的管路模型，隐藏其他模型
+ */
 {
   "pipelines": [
     { "name": "空调送风007", "visible": true },

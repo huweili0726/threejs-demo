@@ -1,3 +1,23 @@
+/**
+ * 漫游路径点配置文件
+ * 
+ * @description 定义项目中自动漫游的路径点序列
+ * @structure {
+ *   "路径标识符": {
+ *     "points": [
+ *       {
+ *         "position": { "x": 坐标X, "y": 坐标Y, "z": 坐标Z },
+ *         "rotation": { "y": "旋转角度" },
+ *         "duration": 移动持续时间(毫秒),
+ *         "stayTime": 停留时间(毫秒),
+ *         "sta": "路径点描述" (可选)
+ *       }
+ *     ]
+ *   }
+ * }
+ * @usage 该配置文件在应用启动时被加载到 Pinia store 中，通过 `basisStore.roamingPath` 访问
+ *        当用户触发自动漫游功能时，系统会根据该配置文件中的路径点序列，自动移动视角并在每个点停留指定时间
+ */
 {
 	"initLocation": {
 		"points": [
