@@ -1,0 +1,23 @@
+{
+  "pipelines": [
+    { "name": "空调送风007", "visible": true },
+    { "name": "空调送风008", "visible": true },
+    { "name": "空调送风009", "visible": true },
+    { "name": "空调送风010", "visible": true },
+    { "name": "空调送风011", "visible": true },
+    { "name": "空调送风012", "visible": true },
+    { "name": "空调送风002", "visible": true },
+    { "name": "空调送风005", "visible": true },
+    { "name": "空调送风006", "visible": true },
+    { "name": "空调送风031", "visible": true },
+    { "name": "空调送风001", "visible": true },
+    { "name": "空调送风003", "visible": true },
+    { "name": "空调送风004", "visible": true },
+
+    { "name": "空调回风003", "visible": true },
+    { "name": "空调回风005", "visible": true },
+    { "name": "空调回风006", "visible": true },
+    { "name": "空调回风007", "visible": true },
+    { "name": "空调回风008", "visible": true },
+  ]
+}
