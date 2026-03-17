@@ -25,7 +25,8 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
   const modelMixers = ref<Map<string, THREE.AnimationMixer>>(new Map())
   const loadedModelMaps = ref<Map<string, THREE.Group>>(new Map())
   const basisStore = useBasisStore()
-
+  const All_boundingBoxes: { child: THREE.Mesh; name: string }[] = []
+  
   /**
    * 加载3D模型
    * @param options.modelUrl 模型的 URL
@@ -95,7 +96,6 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
           
           // 在模型加载时直接处理包围盒，避免后续重复遍历
           const boundingBoxes: { child: THREE.Mesh; name: string; box: THREE.Box3; uuid: string; isStairs?: boolean }[] = []
-          const All_boundingBoxes: { child: THREE.Mesh; name: string }[] = []
           if (collisionObjects.length > 0) {
             group.updateMatrixWorld(true)
             

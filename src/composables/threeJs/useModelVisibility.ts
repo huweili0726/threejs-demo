@@ -20,7 +20,6 @@ export function useModelVisibility() {
   const isPipelinesVisible = ref(false)
   const basisStore = useBasisStore()
 
-
   /**
    * 检查模型名称是否在管路配置列表中
    * @param model 模型对象
