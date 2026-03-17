@@ -10,6 +10,7 @@
         </div>
         <div class="controls-content" v-show="isImgPointControlsOpen">
           <button @click="toFloor('9')" class="control-btn">9楼</button>
+          <button @click="toFloor('8')" class="control-btn">8楼</button>
           <button @click="toFloor('0')" class="control-btn">地面</button>
           <button @click="toFloor('-1')" class="control-btn">-1楼</button>
           <button @click="toFloor('-1_2')" class="control-btn">-1楼2层</button>
@@ -155,8 +156,17 @@ const toFloor = (floor: string) => {
     const modelInitPosition = floor9Config?.characterModelSetPosition // 人物模型初始位置
     const onLookAt = floor9Config?.characterModelToLook // 人物模型看向-1楼1层入口处
     emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
+  } else if (floor === '8') {
+    const floor8Config = basisStore.floor8thConfig
+    const perspective = floor8Config?.perspective || { x: 0, y: 0, z: 0 }
+    const directionToLook = floor8Config?.directionToLook || { x: 0, y: 0, z: 0 }
+    const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+    const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+    const duration = floor8Config?.durationTime || 2000 // 飞行时间
+    const modelInitPosition = floor8Config?.characterModelSetPosition // 人物模型初始位置
+    const onLookAt = floor8Config?.characterModelToLook // 人物模型看向-1楼1层入口处  
+    emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   }
-
 }
 
 // 快速导航到指定房间

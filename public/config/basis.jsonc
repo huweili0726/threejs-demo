@@ -52,18 +52,18 @@
     "characterModelSetPosition": { "x": -0.25, "y": -1.5, "z": 2.92 }, // 人物模型位置（与视角同步）    
     "characterModelToLook": { "x": 1, "y": -1.5, "z": 2.92 } // 人物模型看向方向（与视角同步）
   },
-  // 8楼初始视角配置
+  // 8楼初始视角配置 -1.18, y: 3.20, z: -4.40
   "floor_8th": {
-    "perspective": { "x": 2, "y": 1.7, "z": 10 }, 
-    "directionToLook": { "x": 2, "y": 1.7, "z": 11 },
+    "perspective": { "x": -1.18, "y": 3.05, "z": -4.40 }, 
+    "directionToLook": { "x": -2, "y": 3.05, "z": -4.40 },
     "durationTime": 2000, // 切换视角的动画时长（毫秒）
-    "characterModelSetPosition": { "x": 2, "y": 1.8, "z": 10.5 }, // 人物模型位置（与视角同步）
-    "characterModelToLook": { "x": 2, "y": 1.8, "z": 11 } // 人物模型看向方向（与视角同步）
+    "characterModelSetPosition": { "x": -1.18, "y": 3.15, "z": -4.40 }, // 人物模型位置（与视角同步）
+    "characterModelToLook": { "x": -2, "y": 3.15, "z": -4.40 } // 人物模型看向方向（与视角同步）
   },
-  // 9楼初始视角配置  0.23, y: 3.60, z: -3.85
+  // 9楼初始视角配置 
   "floor_9th": {
-    "perspective": { "x": 0.23, "y": 3.60, "z": -3.85 }, 
-    "directionToLook": { "x": 0.23, "y": 3.60, "z": -6 },
+    "perspective": { "x": 0.23, "y": 3.50, "z": -3.85 }, 
+    "directionToLook": { "x": 0.23, "y": 3.50, "z": -6 },
     "durationTime": 2000, // 切换视角的动画时长（毫秒）
     "characterModelSetPosition": { "x": 0.23, "y": 3.60, "z": -3.85 }, // 人物模型位置（与视角同步）
     "characterModelToLook": { "x": 0.23, "y": 3.60, "z": -6 } // 人物模型看向方向（与视角同步）
