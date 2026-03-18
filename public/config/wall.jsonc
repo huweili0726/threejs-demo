@@ -557,5 +557,12 @@
     // 9楼
     // { "name": "Cube974" },
     { "name": "Cube2766", "thickness": 0.005 },
-  ]
+    { "name": "Cube2755_1" },
+    { "name": "Cube2766_1" },
+    { "name": "Cube2766" },
+    { "name": "Cube2766_1" },
+    { "name": "Cube2761_1" },
+    { "name": "Cube2760_1" },
+    { "name": "Cube2756" },
+   ]
 }
