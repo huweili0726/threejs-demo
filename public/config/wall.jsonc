@@ -519,5 +519,38 @@
     // { "name": "Cube1120" },
     // { "name": "Cube1119" },
     // { "name": "Cube1116" }
+
+
+    // 8楼
+    { "name": "Cube1042_1" },
+    { "name": "楼板022" },
+    { "name": "楼板021" },
+    { "name": "Cube1041_1" },
+    { "name": "Cube1020" },
+    { "name": "楼板074" },
+    { "name": "楼板006" },
+    { "name": "楼板077" },
+    { "name": "楼板055" },
+    { "name": "Cube1037_1", "thickness": 0.005 },
+    { "name": "Cube781" },
+    { "name": "立方体096" },
+    { "name": "楼板053" },
+    { "name": "Cube771" },
+    { "name": "楼板051" },
+    { "name": "楼板079" },
+    { "name": "楼板056" },
+    { "name": "Cube758" },
+    { "name": "Cube1012" },
+    { "name": "Cube1014" },
+    { "name": "楼板058", "thickness": 0.005 },
+    { "name": "楼板059", "thickness": 0.005 },
+    { "name": "Plane015_2" },
+    { "name": "楼板019" },
+    { "name": "Cube1027" },
+    { "name": "Cube1026_1" },
+    { "name": "楼板016" },
+    { "name": "楼板044" },
+    { "name": "楼板017" },
+    { "name": "Cube1032" },
   ]
 }
