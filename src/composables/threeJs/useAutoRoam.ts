@@ -333,8 +333,8 @@ export function useAutoRoam(wallBoundingBoxes: any, updateProximityPopups?: (opt
       console.log('下一个目标点位置:', roamPoints.value[nextIndex].position)
     } else {
       // 已遍历完所有点，停止漫游
-      stopAutoRoam()
-      console.log('🎉 已遍历完所有漫游点，自动停止漫游')
+      // stopAutoRoam()
+      // console.log('🎉 已遍历完所有漫游点，自动停止漫游')
     }
   }
 

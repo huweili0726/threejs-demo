@@ -27,7 +27,12 @@
 	"allRoom": {
 		"points": [
 			{ "position": { "x": -2.6, "y": -1.8, "z": 3.06 }, "rotation": { "y": "Math.PI/2" }, "duration": 100, "stayTime": 100, "sta": "刚站在-1入口" },
-			{ "position": { "x": -0.5, "y": -1.8, "z": 3.06 }, "rotation": { "y": "Math.PI/2" }, "duration": 9000, "stayTime": 0, "sta": "到发电机房门口了" },
+			// { "position": { "x": -0.5, "y": -1.8, "z": 3.06 }, "rotation": { "y": "Math.PI/2" }, "duration": 9000, "stayTime": 0, "sta": "到发电机房门口了" },
+			{ "position": { "x": -1.59, "y": -1.78, "z": 3.05 }, "rotation": { "y": "Math.PI/2" }, "duration": 10000, "stayTime": 0, "sta": "到发电机房门口了" },
+      { "position": { "x": -1.59, "y": -1.78, "z": 3.05 }, "rotation": { "y": "0" }, "duration": 100, "stayTime": 2000, "sta": "到发电机房门口了" },
+      { "position": { "x": -1.59, "y": -1.78, "z": 3.49 }, "rotation": { "y": "0" }, "duration": 1000, "stayTime": 1000, "sta": "到发电机房门口了" },
+
+
 			// { "position": { "x": 0, "y": 130, "z": 995 }, "rotation": { "y": "-Math.PI/2" }, "duration": 1000, "stayTime": 500, "sta": "转个身准备进发电机房" },
 			// { "position": { "x": -540, "y": 130, "z": 995 }, "rotation": { "y": "-Math.PI/2" }, "duration": 2000, "stayTime": 3000, "sta": "进入了发电机房" },
 			// { "position": { "x": -540, "y": 130, "z": 995 }, "rotation": { "y": "Math.PI/2" }, "duration": 1000, "stayTime": 500, "sta": "看完发电机房之后原地转身，准备出去" },
