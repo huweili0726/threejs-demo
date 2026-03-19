@@ -160,9 +160,9 @@ onMounted(async () => {
   // 2. 添加楼名显示
   if (scene.value) {
     // 添加几个楼名显示，根据实际场景坐标调整
-    createBuildName(-3.2, 3.8, -4.1, '应急指挥中心', scene.value, 4, 'col') // 9楼
+    createBuildName(-3.2, 4, -4.1, '应急指挥中心', scene.value, 4, 'col') // 9楼
     createBuildName(-3.2, 3.3, -4.1, '网络机房', scene.value, 3, 'col') // 8楼
-    createBuildName(-1.3, 1.6, 1.5, '基本指挥所', scene.value, 2) // -1楼地面入口
+    createBuildName(-1.3, 1.6, 1.3, '基本指挥所', scene.value, 2) // -1楼地面入口
   }
 
   // 3. 初始化交互功能 【键盘 wasd 控制人物移动 + 双击选中功能 + 双击弹窗功能】
