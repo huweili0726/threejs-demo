@@ -216,7 +216,10 @@ export function useThreeScene() {
         animationUpdateCallback(deltaTime)
       }
       
-      render()
+      // 只有在场景、相机和渲染器都存在时才渲染
+      if (scene.value && camera.value && renderer.value) {
+        renderer.value.render(scene.value, camera.value)
+      }
     }
     
     animate()

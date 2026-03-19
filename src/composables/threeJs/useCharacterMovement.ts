@@ -32,6 +32,8 @@ export function useCharacterMovement(
   const MOUSE_ROTATION_SENSITIVITY = 0.005
   // 鼠标移动累计值（用于旋转人物）
   const mouseDeltaX = ref(0)
+  // 帧计数器，用于优化性能
+  let frameCount = 0
 
   // 最大速度倍数
   const MAX_SPEED_MULTIPLIER = basisStore.characterModelMoveConfig?.MAX_SPEED_MULTIPLIER || 6
@@ -359,7 +361,7 @@ export function useCharacterMovement(
           direction: moveDirection,
           speed
         })
-        console.log(`📍 人物当前位置: x: ${model.position.x.toFixed(2)}, y: ${model.position.y.toFixed(2)}, z: ${model.position.z.toFixed(2)}，速度倍数: ${speedMultiplier.toFixed(2)}`)
+        // console.log(`📍 人物当前位置: x: ${model.position.x.toFixed(2)}, y: ${model.position.y.toFixed(2)}, z: ${model.position.z.toFixed(2)}，速度倍数: ${speedMultiplier.toFixed(2)}`)
       } else {
         // 碰撞时重置加速状态
         if (keysPressed.value.has('w') || keysPressed.value.has('arrowup')) {
@@ -373,13 +375,17 @@ export function useCharacterMovement(
       }
     }
     
-    // 更新所有包围盒的位置
-    updateBoundingBoxes()
-    
-    // 更新接近弹窗
-    if (model && wallBoundingBoxes) {
-      updateProximityPopups?.({ model: model, wallBoundingBoxes: wallBoundingBoxes?.value || wallBoundingBoxes, onlyShowUpDownStairsPopup: true })
+    // 每两帧更新一次包围盒和接近弹窗，减少计算量
+    if (frameCount % 2 === 0) {
+      // 更新所有包围盒的位置
+      updateBoundingBoxes()
+      
+      // 更新接近弹窗
+      if (model && wallBoundingBoxes) {
+        updateProximityPopups?.({ model: model, wallBoundingBoxes: wallBoundingBoxes?.value || wallBoundingBoxes, onlyShowUpDownStairsPopup: true })
+      }
     }
+    frameCount++
   }
   
   return {
