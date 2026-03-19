@@ -10,6 +10,7 @@
 import * as THREE from 'three'
 import { ref, ShallowRef } from 'vue'
 import { useRaycastUtils } from '@/composables/threeJs/useRaycastUtils'
+import { CSS2DObject } from 'three-stdlib'
 
 // 初始化工具函数
 const { performRaycast, filterIntersects } = useRaycastUtils()
@@ -162,9 +163,34 @@ export function useObjectSelection(camera: ShallowRef<THREE.PerspectiveCamera>, 
     }
   }
 
+  /**
+   * 创建楼顶的楼名备注
+   * @param x X坐标
+   * @param y Y坐标
+   * @param z Z坐标
+   * @param name 楼名
+   * @param scene 场景对象
+   * @param id 楼ID
+   * @param type 类型（可选）
+   */
+  const createBuildName = (x: number, y: number, z: number, name: string, scene: THREE.Scene, id: number, type?: string) => {
+    const div = document.createElement('div')
+    if(type === 'col'){
+      div.innerHTML = `<div class="buildName col" onclick="toControlStartInspection(${id})">${name}</div>`
+    }
+    else{
+      div.innerHTML = `<div class="buildName" onclick="toControlStartInspection(${id})">${name}</div>`
+    }
+
+    const label = new CSS2DObject(div)
+    label.position.set(x, y, z)
+    scene.add(label)
+  }
+
   return {
     selectedObject,
     initDoubleClickSelection,
-    clearSelection
+    clearSelection,
+    createBuildName
   }
 }

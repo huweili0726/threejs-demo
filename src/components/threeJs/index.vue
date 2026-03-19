@@ -35,7 +35,7 @@ const basisStore = useBasisStore()
 const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize } = useThreeScene() // 场景相关Hooks
 const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel, removeModel } = useModelLoader(scene as any, render) // 模型加载相关Hooks
 const { loadEnvironment } = useEnvironmentLoader(scene as any) // 环境贴图加载相关Hooks
-const { initDoubleClickSelection } = useObjectSelection(camera as any, scene as any, threeJsContainer) // 物体选择相关Hooks
+const { initDoubleClickSelection, createBuildName } = useObjectSelection(camera as any, scene as any, threeJsContainer) // 物体选择相关Hooks
 const { initDoubleClickPopup, showPopup, closePopup, updateCSS2DRenderer, handleResize } = useObjectPopup(camera as any, scene as any, threeJsContainer) // 物体弹窗相关Hooks
 
 const { switchToFloor, toControlCommandRoom } = useFloorSwitch(flyTo, loadModel as any, removeModel) // 楼层切换相关Hooks 
@@ -157,16 +157,24 @@ onMounted(async () => {
   // 1. 初始化场景和环境
   initSceneAndEnvironment()
 
-  // 2. 初始化交互功能 【键盘 wasd 控制人物移动 + 双击选中功能 + 双击弹窗功能】
+  // 2. 添加楼名显示
+  if (scene.value) {
+    // 添加几个楼名显示，根据实际场景坐标调整
+    createBuildName(-3.2, 3.8, -4.1, '应急指挥中心', scene.value, 4, 'col') // 9楼
+    createBuildName(-3.2, 3.3, -4.1, '网络机房', scene.value, 3, 'col') // 8楼
+    createBuildName(-1.3, 1.6, 1.5, '基本指挥所', scene.value, 2) // -1楼地面入口
+  }
+
+  // 3. 初始化交互功能 【键盘 wasd 控制人物移动 + 双击选中功能 + 双击弹窗功能】
   initInteractions()
 
-  // 3. 加载模型和碰撞包围盒
+  // 4. 加载模型和碰撞包围盒
   await loadSceneModels()
 
-  // 4. 设置动画循环
+  // 5. 设置动画循环
   setupAnimationLoop()
 
-  // 5. 启动动画循环
+  // 6. 启动动画循环
   startAnimationLoop()
 })
 
