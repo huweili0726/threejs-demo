@@ -164,10 +164,14 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
                   child: child,
                   name: child.name
                 })
-                basisStore.setBoundingBoxes(All_boundingBoxes)
                 // console.log(`已为物体 ${child.name} 计算包围盒`)
               }
             })
+          }
+          
+          // 遍历完成后一次性更新状态
+          if (All_boundingBoxes.length > 0) {
+            basisStore.setBoundingBoxes(All_boundingBoxes)
           }
           
           if (render) {
