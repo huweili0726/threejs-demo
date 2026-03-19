@@ -11,11 +11,15 @@ import * as THREE from 'three'
 import { ref, ShallowRef } from 'vue'
 import { useRaycastUtils } from '@/composables/threeJs/useRaycastUtils'
 import { CSS2DObject } from 'three-stdlib'
+import { useBasisStore } from '@/stores/basis'
 
 // 初始化工具函数
 const { performRaycast, filterIntersects } = useRaycastUtils()
 
-export function useObjectSelection(camera: ShallowRef<THREE.PerspectiveCamera>, scene: ShallowRef<THREE.Scene>, container: ShallowRef<HTMLElement | undefined>) {
+export function useObjectSelection(camera: ShallowRef<THREE.PerspectiveCamera>, scene: ShallowRef<THREE.Scene>, container: ShallowRef<HTMLElement | undefined>, switchToFloor: (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number, modelInitPosition: THREE.Vector3, onLookAt: THREE.Vector3) => void) {
+  // 初始化基础状态
+  const basisStore = useBasisStore()
+
   // 当前选中的物体
   const selectedObject = ref<THREE.Object3D | null>(null)
   // 存储选中物体原始的材质，用于恢复
@@ -189,13 +193,22 @@ export function useObjectSelection(camera: ShallowRef<THREE.PerspectiveCamera>, 
   // 将 toControlStartInspection 函数添加到全局作用域
   if (typeof window !== 'undefined') {
     (window as any).toControlStartInspection = (id: number) => {
-      if (id === 2) {
-
-      }
-      if (id === 3) {
-
-      }
       if (id === 4) {
+        const floor9Config = basisStore.floor9thConfig
+        const perspective = floor9Config?.perspective || { x: 0, y: 0, z: 0 }
+        const directionToLook = floor9Config?.directionToLook || { x: 0, y: 0, z: 0 }
+        const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+        const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+        const duration = floor9Config?.durationTime || 2000 // 飞行时间
+        const modelInitPosition = floor9Config?.characterModelSetPosition // 人物模型初始位置
+        const onLookAt = floor9Config?.characterModelToLook // 人物模型看向-1楼1层入口处
+
+        switchToFloor(targetPosition, targetTarget, duration, modelInitPosition as THREE.Vector3, onLookAt as THREE.Vector3)
+      }
+      else if (id === 3) {
+
+      }
+      else if (id === 2) {
 
       }
     };
