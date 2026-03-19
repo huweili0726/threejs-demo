@@ -193,6 +193,7 @@ export function useObjectSelection(camera: ShallowRef<THREE.PerspectiveCamera>, 
   // 将 toControlStartInspection 函数添加到全局作用域
   if (typeof window !== 'undefined') {
     (window as any).toControlStartInspection = (id: number) => {
+      // 9楼
       if (id === 4) {
         const floor9Config = basisStore.floor9thConfig
         const perspective = floor9Config?.perspective || { x: 0, y: 0, z: 0 }
@@ -205,11 +206,31 @@ export function useObjectSelection(camera: ShallowRef<THREE.PerspectiveCamera>, 
 
         switchToFloor(targetPosition, targetTarget, duration, modelInitPosition as THREE.Vector3, onLookAt as THREE.Vector3)
       }
+      // 8楼
       else if (id === 3) {
+        const floor8Config = basisStore.floor8thConfig
+        const perspective = floor8Config?.perspective || { x: 0, y: 0, z: 0 }
+        const directionToLook = floor8Config?.directionToLook || { x: 0, y: 0, z: 0 }
+        const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+        const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+        const duration = floor8Config?.durationTime || 2000 // 飞行时间
+        const modelInitPosition = floor8Config?.characterModelSetPosition // 人物模型初始位置
+        const onLookAt = floor8Config?.characterModelToLook // 人物模型看向-1楼1层入口处
 
+        switchToFloor(targetPosition, targetTarget, duration, modelInitPosition as THREE.Vector3, onLookAt as THREE.Vector3)
       }
+      // -1楼
       else if (id === 2) {
+        const neg12LayersFloorConfig = basisStore.neg12LayersFloorConfig
+        const perspective = neg12LayersFloorConfig?.perspective || { x: 0, y: 0, z: 0 }
+        const directionToLook = neg12LayersFloorConfig?.directionToLook || { x: 0, y: 0, z: 0 }
+        const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+        const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+        const duration = neg12LayersFloorConfig?.durationTime || 2000 // 飞行时间
+        const modelInitPosition = neg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
+        const onLookAt = neg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼2层入口处
 
+        switchToFloor(targetPosition, targetTarget, duration, modelInitPosition as THREE.Vector3, onLookAt as THREE.Vector3)
       }
     };
   }
