@@ -16,7 +16,13 @@ import { useBasisStore } from '@/stores/basis'
 // 初始化工具函数
 const { performRaycast, filterIntersects } = useRaycastUtils()
 
-export function useObjectSelection(camera: ShallowRef<THREE.PerspectiveCamera>, scene: ShallowRef<THREE.Scene>, container: ShallowRef<HTMLElement | undefined>, switchToFloor: (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number, modelInitPosition: THREE.Vector3, onLookAt: THREE.Vector3) => void) {
+export function useObjectSelection(
+  camera: ShallowRef<THREE.PerspectiveCamera>, 
+  scene: ShallowRef<THREE.Scene>, 
+  container: ShallowRef<HTMLElement | undefined>, 
+  switchToFloor: (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number, modelInitPosition: THREE.Vector3, onLookAt: THREE.Vector3) => void, 
+  loadModel: (options: { modelUrl: string, scale: number }) => void | Promise<void>
+) {
   // 初始化基础状态
   const basisStore = useBasisStore()
 
@@ -204,6 +210,7 @@ export function useObjectSelection(camera: ShallowRef<THREE.PerspectiveCamera>, 
         const modelInitPosition = floor9Config?.characterModelSetPosition // 人物模型初始位置
         const onLookAt = floor9Config?.characterModelToLook // 人物模型看向-1楼1层入口处
 
+        loadModel({ modelUrl: 'glb/9th_floor.glb', scale: 1 });
         switchToFloor(targetPosition, targetTarget, duration, modelInitPosition as THREE.Vector3, onLookAt as THREE.Vector3)
       }
       // 8楼
