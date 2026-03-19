@@ -186,6 +186,20 @@ export function useObjectSelection(camera: ShallowRef<THREE.PerspectiveCamera>, 
     label.position.set(x, y, z)
     scene.add(label)
   }
+  // 将 toControlStartInspection 函数添加到全局作用域
+  if (typeof window !== 'undefined') {
+    (window as any).toControlStartInspection = (id: number) => {
+      if (id === 2) {
+
+      }
+      if (id === 3) {
+
+      }
+      if (id === 4) {
+
+      }
+    };
+  }
 
   return {
     selectedObject,
