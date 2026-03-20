@@ -38,6 +38,11 @@ interface ThreeDev {
   }
 }
 
+// 碰撞检测配置接口
+interface CollisionDetectionConfig {
+  showBoundingBoxes: boolean
+}
+
 // 基础配置接口
 interface BasisConfig {
   // 天空盒
@@ -51,6 +56,8 @@ interface BasisConfig {
     ACCELERATION_THRESHOLD: number
     ACCELERATION_FACTOR: number
   }
+  // 碰撞检测配置
+  collisionDetection?: CollisionDetectionConfig
   floor_1th: FloorConfig
   floor_neg1: FloorConfig
   before_floor_neg1_2layers: FloorConfig
@@ -108,6 +115,7 @@ export const useBasisStore = defineStore('basis', () => {
   const pipelineConfig = computed(() => lineConfig.value || null)
   const collisionBoundingBoxes = computed(() => boundingBoxes.value)
   const currentFloorConfig = computed(() => currentFloor.value)
+  const collisionDetectionConfig = computed(() => basisConfig.value?.collisionDetection || { showBoundingBoxes: false })
 
   // Actions
   /**
@@ -231,6 +239,7 @@ export const useBasisStore = defineStore('basis', () => {
     pipelineConfig,
     collisionBoundingBoxes,
     currentFloorConfig,
+    collisionDetectionConfig,
     // Actions
     setBasisConfig,
     setThreeDevConfig,

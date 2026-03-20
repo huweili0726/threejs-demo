@@ -9,6 +9,7 @@
  */
 import * as THREE from 'three'
 import { ref } from 'vue'
+import { useBasisStore } from '@/stores/basis'
 
 // 定义包围盒类型
 interface WallBoundingBox {
@@ -23,6 +24,9 @@ interface WallBoundingBox {
 type MeshBoxHelper = THREE.BoxHelper | THREE.Box3Helper
 
 export function useCollisionDetection() {
+  // 使用基础配置 Store
+  const basisStore = useBasisStore()
+  
   // 控制变量
   const wallBoundingBoxes = ref<WallBoundingBox[]>([])
   const wallHelpers = ref<MeshBoxHelper[]>([])
@@ -56,7 +60,7 @@ export function useCollisionDetection() {
     
     // 为人物模型添加包围盒
     const helper = new THREE.BoxHelper(model, 0xff0000)
-    helper.visible = true
+    helper.visible = basisStore.collisionDetectionConfig.showBoundingBoxes
     helper.renderOrder = 1000
     if (helper.material instanceof THREE.Material) {
       helper.material.depthTest = false
@@ -104,7 +108,7 @@ export function useCollisionDetection() {
       // 创建包围盒辅助器
       if (scene && helperGroup) {
         const helper = new THREE.Box3Helper(item.box, 0xff0000) as MeshBoxHelper
-        helper.visible = false
+        helper.visible = basisStore.collisionDetectionConfig.showBoundingBoxes
         helper.renderOrder = 1000
         if (helper.material instanceof THREE.Material) {
           helper.material.depthTest = false
