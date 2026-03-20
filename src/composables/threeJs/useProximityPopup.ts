@@ -65,6 +65,8 @@ export function useProximityPopup(
   }): CollisionResult => {
     const threshold = 0.3
     const farThreshold = 0.35
+    // 最大检测距离，只检测附近的物体，提升性能
+    const maxDetectionDistance = 5
     const result: CollisionResult = {
       flag: false,
       boxes: [],
@@ -77,16 +79,22 @@ export function useProximityPopup(
     const { characterBox, wallBoundingBoxes } = options
 
     if (!wallBoundingBoxes || wallBoundingBoxes.length === 0) {
-      console.log('⚠️  wallBoundingBoxes 为空，无法进行碰撞检测')
       return result
     }
+
+    // 获取人物中心点，用于距离过滤
+    const characterCenter = new THREE.Vector3()
+    characterBox.getCenter(characterCenter)
 
     for (const wallBox of wallBoundingBoxes) {
       const wallCenter = new THREE.Vector3()
       wallBox.box.getCenter(wallCenter)
-      const characterCenter = new THREE.Vector3()
-      characterBox.getCenter(characterCenter)
       const currentDistance = characterCenter.distanceTo(wallCenter)
+      
+      // 距离过滤：跳过远处的物体，大幅减少计算量
+      if (currentDistance > maxDetectionDistance) {
+        continue
+      }
 
       const wallKey = `${wallBox.selectMode.name}_${wallBox.selectMode.uuid}`
 
