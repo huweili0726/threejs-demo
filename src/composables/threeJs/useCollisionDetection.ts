@@ -87,6 +87,12 @@ export function useCollisionDetection() {
       wallHelpers.value = []
     }
     
+    // 创建一个组来批量管理辅助器
+    let helperGroup: THREE.Group | null = null
+    if (scene) {
+      helperGroup = new THREE.Group()
+    }
+    
     // 直接使用从 loadModels 返回的包围盒信息
     boundingBoxes.forEach(item => {
       wallBoundingBoxes.value.push({
@@ -96,17 +102,22 @@ export function useCollisionDetection() {
       })
       
       // 创建包围盒辅助器
-      if (scene) {
+      if (scene && helperGroup) {
         const helper = new THREE.Box3Helper(item.box, 0xff0000) as MeshBoxHelper
-        helper.visible = true
+        helper.visible = false
         helper.renderOrder = 1000
         if (helper.material instanceof THREE.Material) {
           helper.material.depthTest = false
         }
         wallHelpers.value.push(helper)
-        scene.add(helper)
+        helperGroup.add(helper) // 先添加到组中
       }
     })
+    
+    // 批量添加辅助器组到场景
+    if (scene && helperGroup && helperGroup.children.length > 0) {
+      scene.add(helperGroup)
+    }
     
     console.log(`已设置 ${boundingBoxes.length} 个碰撞包围盒`)
   }
