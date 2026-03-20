@@ -304,7 +304,7 @@ export function useCharacterMovement(
     // 基础移动速度
     let baseSpeed = .1 * deltaTime
     // 旋转速度（基于时间增量）
-    const rotationSpeed = .8 * deltaTime
+    const rotationSpeed = .4 * deltaTime
     const moveDirection = new THREE.Vector3()
     
     // 计算加速度
@@ -373,9 +373,6 @@ export function useCharacterMovement(
     if (moveDirection.length() > 0) {
       moveDirection.normalize()
       
-      // 保存原始位置
-      const originalPosition = model.position.clone()
-      
       // 使用分步碰撞检测进行移动
       const canMove = moveWithStepCollision(model, moveDirection, speed)
       
@@ -386,7 +383,7 @@ export function useCharacterMovement(
           direction: moveDirection,
           speed
         })
-        // console.log(`📍 人物当前位置: x: ${model.position.x.toFixed(2)}, y: ${model.position.y.toFixed(2)}, z: ${model.position.z.toFixed(2)}，速度倍数: ${speedMultiplier.toFixed(2)}`)
+        console.log(`📍 人物当前位置: x: ${model.position.x.toFixed(2)}, y: ${model.position.y.toFixed(2)}, z: ${model.position.z.toFixed(2)}，速度倍数: ${speedMultiplier.toFixed(2)}`)
       } else {
         // 碰撞时重置加速状态
         if (keysPressed.value.has('w') || keysPressed.value.has('arrowup')) {
