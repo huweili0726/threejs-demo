@@ -210,7 +210,6 @@ export function useObjectSelection(
         const modelInitPosition = floor9Config?.characterModelSetPosition // 人物模型初始位置
         const onLookAt = floor9Config?.characterModelToLook // 人物模型看向-1楼1层入口处
 
-        loadModel({ modelUrl: 'glb/9th_floor.glb', scale: 1 });
         switchToFloor(targetPosition, targetTarget, duration, modelInitPosition as THREE.Vector3, onLookAt as THREE.Vector3)
       }
       // 8楼
@@ -228,14 +227,14 @@ export function useObjectSelection(
       }
       // -1楼
       else if (id === 2) {
-        const neg12LayersFloorConfig = basisStore.neg12LayersFloorConfig
-        const perspective = neg12LayersFloorConfig?.perspective || { x: 0, y: 0, z: 0 }
-        const directionToLook = neg12LayersFloorConfig?.directionToLook || { x: 0, y: 0, z: 0 }
+        const neg1FloorConfig = basisStore.neg1FloorConfig
+        const perspective = neg1FloorConfig?.perspective || { x: 0, y: 0, z: 0 }
+        const directionToLook = neg1FloorConfig?.directionToLook || { x: 0, y: 0, z: 0 }
         const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
         const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
-        const duration = neg12LayersFloorConfig?.durationTime || 2000 // 飞行时间
-        const modelInitPosition = neg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
-        const onLookAt = neg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼2层入口处
+        const duration = neg1FloorConfig?.durationTime || 2000 // 飞行时间
+        const modelInitPosition = neg1FloorConfig?.characterModelSetPosition // 人物模型初始位置
+        const onLookAt = neg1FloorConfig?.characterModelToLook // 人物模型看向-1楼入口处
 
         switchToFloor(targetPosition, targetTarget, duration, modelInitPosition as THREE.Vector3, onLookAt as THREE.Vector3)
       }
