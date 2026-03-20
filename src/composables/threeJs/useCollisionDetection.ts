@@ -151,8 +151,25 @@ export function useCollisionDetection() {
       return false
     }
 
+    // 获取人物中心点，用于距离过滤
+    const characterCenter = new THREE.Vector3()
+    characterBox.getCenter(characterCenter)
+    
+    // 最大检测距离，只检测附近的墙体，提升性能
+    const maxDetectionDistance = 5
+
     // 遍历所有目标墙体的包围盒
     for (const wallBox of wallBoundingBoxes.value) {
+      // 距离过滤：先计算距离，跳过远处的墙体
+      const wallCenter = new THREE.Vector3()
+      wallBox.box.getCenter(wallCenter)
+      const distance = characterCenter.distanceTo(wallCenter)
+      
+      // 只检测附近的墙体，大幅减少计算量
+      if (distance > maxDetectionDistance) {
+        continue
+      }
+      
       // 检测人物碰撞盒是否与墙体包围盒重叠
       if (characterBox.intersectsBox(wallBox.box)) {
         return true
