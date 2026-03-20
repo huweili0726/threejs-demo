@@ -112,18 +112,29 @@ export function useCharacterMovement(
     const walls = wallBoundingBoxes?.value || wallBoundingBoxes
     if (!walls || walls.length === 0) return false
     
+    // 获取人物中心点，用于距离过滤
+    const characterCenter = new THREE.Vector3()
+    currentBox.getCenter(characterCenter)
+    
+    // 最大检测距离，只检测附近的墙体
+    const maxDetectionDistance = 3
+    
     let stuckInWall = false
     let pushDirection = new THREE.Vector3()
     let minPenetration = Infinity
     
     for (const wallBox of walls) {
-      if (wallBox.box && currentBox.intersectsBox(wallBox.box)) {
+      if (!wallBox.box) continue
+      
+      // 距离过滤：跳过远处的墙体
+      const wallCenter = new THREE.Vector3()
+      wallBox.box.getCenter(wallCenter)
+      const distance = characterCenter.distanceTo(wallCenter)
+      
+      if (distance > maxDetectionDistance) continue
+      
+      if (currentBox.intersectsBox(wallBox.box)) {
         stuckInWall = true
-        
-        const wallCenter = new THREE.Vector3()
-        const characterCenter = new THREE.Vector3()
-        wallBox.box.getCenter(wallCenter)
-        currentBox.getCenter(characterCenter)
         
         const direction = characterCenter.clone().sub(wallCenter)
         
@@ -141,8 +152,6 @@ export function useCharacterMovement(
     }
     
     if (stuckInWall) {
-      console.log('⚠️ 检测到人物卡在碰撞体内，正在推出...')
-      
       // 保存原始Y坐标，防止被推到地面以下
       const originalY = model.position.y
       
@@ -151,26 +160,34 @@ export function useCharacterMovement(
       pushDirection.normalize()
       
       const pushStep = 0.002
-      const maxPushSteps = 100
+      const maxPushSteps = 50 // 减少最大步数，从100降到50
       
       for (let i = 0; i < maxPushSteps; i++) {
         model.position.add(pushDirection.clone().multiplyScalar(pushStep))
-        // 保持Y坐标不变
         model.position.y = originalY
         model.updateMatrixWorld(true)
         
         const newBox = new THREE.Box3().setFromObject(model)
+        const newCenter = new THREE.Vector3()
+        newBox.getCenter(newCenter)
+        
         let stillColliding = false
         
         for (const wallBox of walls) {
-          if (wallBox.box && newBox.intersectsBox(wallBox.box)) {
+          if (!wallBox.box) continue
+          
+          // 距离过滤
+          const wallCenter = new THREE.Vector3()
+          wallBox.box.getCenter(wallCenter)
+          if (newCenter.distanceTo(wallCenter) > maxDetectionDistance) continue
+          
+          if (newBox.intersectsBox(wallBox.box)) {
             stillColliding = true
             break
           }
         }
         
         if (!stillColliding) {
-          console.log(`✅ 已将人物推出碰撞体，推出距离: ${((i + 1) * pushStep).toFixed(3)}`)
           return true
         }
       }
@@ -203,14 +220,22 @@ export function useCharacterMovement(
     // 检测距离 = 移动距离 + 安全距离
     const checkDistance = distance + COLLISION_SAFE_DISTANCE
     
+    // 最大检测距离，用于过滤远处的墙体
+    const maxDetectionDistance = 5
+    
     for (const wallBox of walls) {
-      if (wallBox.box) {
-        const intersection = raycaster.ray.intersectBox(wallBox.box, new THREE.Vector3())
-        if (intersection) {
-          const dist = modelCenter.distanceTo(intersection)
-          if (dist < checkDistance) {
-            return true
-          }
+      if (!wallBox.box) continue
+      
+      // 距离过滤：跳过远处的墙体
+      const wallCenter = new THREE.Vector3()
+      wallBox.box.getCenter(wallCenter)
+      if (modelCenter.distanceTo(wallCenter) > maxDetectionDistance) continue
+      
+      const intersection = raycaster.ray.intersectBox(wallBox.box, new THREE.Vector3())
+      if (intersection) {
+        const dist = modelCenter.distanceTo(intersection)
+        if (dist < checkDistance) {
+          return true
         }
       }
     }
@@ -232,7 +257,8 @@ export function useCharacterMovement(
     // 使用射线检测移动方向上是否有障碍物
     if (checkDirectionCollision(model, direction, totalSpeed)) {
       // 有障碍物，使用分步移动检测
-      const stepCount = Math.ceil(totalSpeed / MAX_STEP_SIZE)
+      // 限制最大步数为10，避免过多的碰撞检测
+      const stepCount = Math.min(Math.ceil(totalSpeed / MAX_STEP_SIZE), 10)
       const stepSize = totalSpeed / stepCount
       
       for (let i = 0; i < stepCount; i++) {
@@ -243,11 +269,10 @@ export function useCharacterMovement(
         
         const currentBox = new THREE.Box3().setFromObject(model)
         const hasCollision = checkCollision(currentBox)
-        
+        console.log("发生碰撞：", hasCollision)
         if (hasCollision) {
           model.position.copy(originalPosition)
           model.updateMatrixWorld(true)
-          console.log(`碰撞检测：在第 ${i + 1} 步检测到碰撞，已阻止移动`)
           return false
         }
       }
