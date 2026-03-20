@@ -383,7 +383,28 @@ export function useCharacterMovement(
           direction: moveDirection,
           speed
         })
-        console.log(`📍 人物当前位置: x: ${model.position.x.toFixed(2)}, y: ${model.position.y.toFixed(2)}, z: ${model.position.z.toFixed(2)}，速度倍数: ${speedMultiplier.toFixed(2)}`)
+        // 格式化朝向为类似 "-Math.PI/4" 的形式
+        const yRotation = model.rotation.y
+        let rotationStr = ''
+        if (yRotation === 0) {
+          rotationStr = '0'
+        } else if (yRotation === Math.PI) {
+          rotationStr = 'Math.PI'
+        } else if (yRotation === -Math.PI) {
+          rotationStr = '-Math.PI'
+        } else if (yRotation === Math.PI / 2) {
+          rotationStr = 'Math.PI/2'
+        } else if (yRotation === -Math.PI / 2) {
+          rotationStr = '-Math.PI/2'
+        } else if (yRotation === Math.PI / 4) {
+          rotationStr = 'Math.PI/4'
+        } else if (yRotation === -Math.PI / 4) {
+          rotationStr = '-Math.PI/4'
+        } else {
+          // 对于其他角度，直接显示数值
+          rotationStr = yRotation.toFixed(2)
+        }
+        console.log(`📍 人物当前位置: x: ${model.position.x.toFixed(2)}, y: ${model.position.y.toFixed(2)}, z: ${model.position.z.toFixed(2)}，速度倍数: ${speedMultiplier.toFixed(2)}，朝向: ${rotationStr}`)
       } else {
         // 碰撞时重置加速状态
         if (keysPressed.value.has('w') || keysPressed.value.has('arrowup')) {

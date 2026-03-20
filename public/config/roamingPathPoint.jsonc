@@ -27,10 +27,22 @@
 	"allRoom": {
 		"points": [
 			{ "position": { "x": -2.6, "y": -1.8, "z": 3.06 }, "rotation": { "y": "Math.PI/2" }, "duration": 100, "stayTime": 100, "sta": "刚站在-1入口" },
-			// { "position": { "x": -0.5, "y": -1.8, "z": 3.06 }, "rotation": { "y": "Math.PI/2" }, "duration": 9000, "stayTime": 0, "sta": "到发电机房门口了" },
-			{ "position": { "x": -1.59, "y": -1.78, "z": 3.05 }, "rotation": { "y": "Math.PI/2" }, "duration": 10000, "stayTime": 0, "sta": "到发电机房门口了" },
-      { "position": { "x": -1.59, "y": -1.78, "z": 3.05 }, "rotation": { "y": "0" }, "duration": 100, "stayTime": 2000, "sta": "到发电机房门口了" },
-      { "position": { "x": -1.59, "y": -1.78, "z": 3.49 }, "rotation": { "y": "0" }, "duration": 1000, "stayTime": 1000, "sta": "到发电机房门口了" },
+			{ "position": { "x": -1.59, "y": -1.78, "z": 3.05 }, "rotation": { "y": "Math.PI/2" }, "duration": 2000, "stayTime": 0, "sta": "到发电机房门口了" },
+      { "position": { "x": -1.59, "y": -1.78, "z": 3.05 }, "rotation": { "y": "0" }, "duration": 200, "stayTime": 200, "sta": "转个弯" },
+      { "position": { "x": -1.59, "y": -1.78, "z": 3.62 }, "rotation": { "y": "0" }, "duration": 1000, "stayTime": 2000, "sta": "到1号柴油发电机" },
+      { "position": { "x": -1.59, "y": -1.78, "z": 3.62 }, "rotation": { "y": "Math.PI/2" }, "duration": 1000, "stayTime": 500, "sta": "转个弯" },
+      { "position": { "x": -1.44, "y": -1.78, "z": 3.62 }, "rotation": { "y": "Math.PI/2" }, "duration": 1000, "stayTime": 1000, "sta": "往前面去一点" },
+      { "position": { "x": -1.44, "y": -1.78, "z": 3.62 }, "rotation": { "y": "0" }, "duration": 200, "stayTime": 200, "sta": "再转个弯" },
+      { "position": { "x": -1.44, "y": -1.78, "z": 4.05 }, "rotation": { "y": "0" }, "duration": 1000, "stayTime": 200, "sta": "到2号柴油发电机" },
+      { "position": { "x": -1.44, "y": -1.78, "z": 4.05 }, "rotation": { "y": "-Math.PI/4" }, "duration": 1000, "stayTime": 2000, "sta": "再转个弯，面对2号柴油发电机" },
+      { "position": { "x": -1.44, "y": -1.78, "z": 4.05 }, "rotation": { "y": "-Math.PI" }, "duration": 200, "stayTime": 200, "sta": "再转个弯，准备出门" },
+      { "position": { "x": -1.44, "y": -1.78, "z": 3.61 }, "rotation": { "y": "-Math.PI" }, "duration": 1000, "stayTime": 200, "sta": "快出门了" },
+      { "position": { "x": -1.44, "y": -1.78, "z": 3.61 }, "rotation": { "y": "-2.36" }, "duration": 1000, "stayTime": 200, "sta": "转个弯" },
+      { "position": { "x": -1.58, "y": -1.78, "z": 3.46 }, "rotation": { "y": "-2.36" }, "duration": 1000, "stayTime": 200, "sta": "前行一点" },
+      { "position": { "x": -1.58, "y": -1.78, "z": 3.46 }, "rotation": { "y": "-3.13" }, "duration": 1000, "stayTime": 200, "sta": "再转个弯，正对门" },
+      { "position": { "x": -1.60, "y": -1.78, "z": 3.05 }, "rotation": { "y": "-3.13" }, "duration": 1000, "stayTime": 200, "sta": "走出去，到走廊上" },
+      { "position": { "x": -1.60, "y": -1.78, "z": 3.05 }, "rotation": { "y": "-4.71" }, "duration": 1000, "stayTime": 200, "sta": "到走廊上，往前走" },
+      { "position": { "x": -0.66, "y": -1.78, "z": 3.05 }, "rotation": { "y": "-4.71" }, "duration": 1000, "stayTime": 200, "sta": "走到T字路口" },
 
 
 			// { "position": { "x": 0, "y": 130, "z": 995 }, "rotation": { "y": "-Math.PI/2" }, "duration": 1000, "stayTime": 500, "sta": "转个身准备进发电机房" },

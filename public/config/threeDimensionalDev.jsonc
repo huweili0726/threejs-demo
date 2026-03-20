@@ -93,7 +93,7 @@
 		},
 		{
 			"id": "generatorRoom_1",
-			"meshName": "Cube752",
+			"meshName": "Circle037",
 			"type": "generator",
 			"popInfo": {
 				"title": "发电机1号",
@@ -114,7 +114,7 @@
 		},
 		{
 			"id": "generatorRoom_2",
-			"meshName": "Cube753",
+			"meshName": "Circle827",
 			"type": "generator",
 			"popInfo": {
 				"title": "发电机2号",
