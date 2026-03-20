@@ -136,15 +136,18 @@ const loadSceneModels = async () => {
 const setupAnimationLoop = () => {
   setAnimationUpdateCallback((deltaTime: number) => {
     updateAnimations(deltaTime, modelMixers.value)
-    updateCharacterMovement({
-      deltaTime,
-      modelUrl: basisStore.characterModelUrlsConfig?.man || '',
-      moveModel,
-      loadedModelMaps: loadedModelMaps.value
-    })
-    updateAutoRoam(deltaTime)
-    if (basisStore.characterModelUrlsConfig?.man && camera.value) {
-      cameraFollowModel(basisStore.characterModelUrlsConfig?.man, camera.value, cameraOffset)
+    // 只有在当前楼层是0时才执行这些操作
+    if (basisStore.currentFloor !== '0') {
+      updateCharacterMovement({
+        deltaTime,
+        modelUrl: basisStore.characterModelUrlsConfig?.man || '',
+        moveModel,
+        loadedModelMaps: loadedModelMaps.value
+      })
+      updateAutoRoam(deltaTime)
+      if (basisStore.characterModelUrlsConfig?.man && camera.value) {
+        cameraFollowModel(basisStore.characterModelUrlsConfig?.man, camera.value, cameraOffset)
+      }
     }
     updateCSS2DRenderer()
   })
@@ -261,6 +264,7 @@ defineExpose({
   resumeAutoRoam,
   switchToFloor,
   toRoom,
+  setupAnimationLoop, // 暴露setupAnimationLoop方法，以便在楼层切换时重新设置
   showPipelines: () => showPipelines(),
   recoveryPipelines: () => recoveryPipelines()
 })

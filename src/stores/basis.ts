@@ -82,6 +82,7 @@ export const useBasisStore = defineStore('basis', () => {
   const quickNavigationConfig = ref<any | null>(null)
   const lineConfig = ref<any | null>(null)
   const boundingBoxes = ref<Array<{ child: THREE.Mesh; name: string; }>>([])
+  const currentFloor = ref<string>('0') // 当前楼层
   
   const isLoaded = ref(false)
   const isThreeDevLoaded = ref(false)
@@ -106,6 +107,7 @@ export const useBasisStore = defineStore('basis', () => {
   const quickNavigation = computed(() => quickNavigationConfig.value || {})
   const pipelineConfig = computed(() => lineConfig.value || null)
   const collisionBoundingBoxes = computed(() => boundingBoxes.value)
+  const currentFloorConfig = computed(() => currentFloor.value)
 
   // Actions
   /**
@@ -180,11 +182,20 @@ export const useBasisStore = defineStore('basis', () => {
     quickNavigationConfig.value = null
     lineConfig.value = null
     boundingBoxes.value = []
+    currentFloor.value = '0'
     isLoaded.value = false
     isThreeDevLoaded.value = false
     isWallLoaded.value = false
     isRoamLoaded.value = false
     isQuickNavigationLoaded.value = false
+  }
+
+  /**
+   * 设置当前楼层
+   * @param floor 楼层字符串
+   */
+  function setCurrentFloor(floor: string) {
+    currentFloor.value = floor
   }
 
   return {
@@ -196,6 +207,7 @@ export const useBasisStore = defineStore('basis', () => {
     quickNavigationConfig,
     lineConfig,
     boundingBoxes,
+    currentFloor,
     isLoaded,
     isThreeDevLoaded,
     isWallLoaded,
@@ -218,6 +230,7 @@ export const useBasisStore = defineStore('basis', () => {
     quickNavigation,
     pipelineConfig,
     collisionBoundingBoxes,
+    currentFloorConfig,
     // Actions
     setBasisConfig,
     setThreeDevConfig,
@@ -226,6 +239,7 @@ export const useBasisStore = defineStore('basis', () => {
     setQuickNavigationConfig,
     setBoundingBoxes,
     setLineConfig,
+    setCurrentFloor,
     clearConfig
   }
 })

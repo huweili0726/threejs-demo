@@ -130,6 +130,9 @@ const emit = defineEmits<{
 
 // 切换楼层
 const toFloor = (floor: string) => {
+  // 存储当前楼层到Pinia
+  basisStore.setCurrentFloor(floor)
+  
   // 切换模型
   if (floor === '0') {
     const floor1Config = basisStore.floor1Config
