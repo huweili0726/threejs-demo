@@ -46,9 +46,12 @@
       { "position": { "x": -0.71, "y": -1.78, "z": 3.05 }, "rotation": { "y": "-6.29" }, "duration": 1000, "stayTime": 200, "sta": "转个弯" },
       { "position": { "x": -0.71, "y": -1.78, "z": 4.51 }, "rotation": { "y": "-6.29" }, "duration": 1000, "stayTime": 200, "sta": "右边直行" },
       { "position": { "x": -0.71, "y": -1.78, "z": 4.51 }, "rotation": { "y": "-4.70" }, "duration": 200, "stayTime": 200, "sta": "转个弯" },
-      
-
-
+ 
+      { "position": { "x": 3.34, "y": -1.78, "z": 4.51 }, "rotation": { "y": "-4.70" }, "duration": 2000, "stayTime": 200, "sta": "直行" },
+      { "position": { "x": 3.34, "y": -1.78, "z": 4.51 }, "rotation": { "y": "-3.15" }, "duration": 2000, "stayTime": 200, "sta": "到T字路口对面的横向走廊了，转个弯" },
+      { "position": { "x": 3.36, "y": -1.78, "z": 1.65 }, "rotation": { "y": "-3.15" }, "duration": 1000, "stayTime": 200, "sta": "直行经过字路口对面的横向走廊" },
+      { "position": { "x": 3.36, "y": -1.78, "z": 1.65 }, "rotation": { "y": "-1.57" }, "duration": 200, "stayTime": 200, "sta": "转个弯" },
+      { "position": { "x": -0.7, "y": -1.78, "z": 1.65 }, "rotation": { "y": "-1.57" }, "duration": 2000, "stayTime": 200, "sta": "T字路口左边的走廊直行，回到T字路口附近" },
 
 			// { "position": { "x": 0, "y": 130, "z": 995 }, "rotation": { "y": "-Math.PI/2" }, "duration": 1000, "stayTime": 500, "sta": "转个身准备进发电机房" },
 			// { "position": { "x": -540, "y": 130, "z": 995 }, "rotation": { "y": "-Math.PI/2" }, "duration": 2000, "stayTime": 3000, "sta": "进入了发电机房" },
