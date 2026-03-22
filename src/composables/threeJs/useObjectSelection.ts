@@ -33,6 +33,9 @@ export function useObjectSelection(
   // 选中高亮颜色（蓝色）
   const highlightColor: any = new THREE.Color(0x00a0c6)
 
+  // 存储所有创建的楼名标签
+  const buildNameLabels = ref<THREE.Object3D[]>([])
+
   // 复用对象，避免每次双击创建新对象提升性能
   const worldPos = new THREE.Vector3()
 
@@ -195,6 +198,7 @@ export function useObjectSelection(
     const label = new CSS2DObject(div)
     label.position.set(x, y, z)
     scene.add(label)
+    buildNameLabels.value.push(label)
   }
   // 将 toControlStartInspection 函数添加到全局作用域
   if (typeof window !== 'undefined') {
@@ -241,10 +245,34 @@ export function useObjectSelection(
     };
   }
 
+  /**
+   * 显示所有楼名标签
+   */
+  const showBuildNames = () => {
+    buildNameLabels.value.forEach(label => {
+      if (label) {
+        label.visible = true
+      }
+    })
+  }
+
+  /**
+   * 隐藏所有楼名标签
+   */
+  const hideBuildNames = () => {
+    buildNameLabels.value.forEach(label => {
+      if (label) {
+        label.visible = false
+      }
+    })
+  }
+
   return {
     selectedObject,
     initDoubleClickSelection,
     clearSelection,
-    createBuildName
+    createBuildName,
+    showBuildNames,
+    hideBuildNames
   }
 }
