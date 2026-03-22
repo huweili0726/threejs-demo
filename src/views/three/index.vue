@@ -76,13 +76,13 @@ const handleToTargetRoom = async (targetRoom: string) => {
 // 突出显示管路
 const handleShowPipelines = () => {
   threeJsRef.value?.showPipelines()
-  threeJsRef.value?.hideBuildNames()
+  threeJsRef.value?.hideBuildNames() // 隐藏建筑名称
 }
 
 // 恢复突出显示管路
 const handleRecoveryPipelines = () => {
   threeJsRef.value?.recoveryPipelines()
-  threeJsRef.value?.showBuildNames()
+  threeJsRef.value?.showBuildNames() // 显示建筑名称
 }
 
 </script>
