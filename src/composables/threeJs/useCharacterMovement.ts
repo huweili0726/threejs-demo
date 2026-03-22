@@ -10,6 +10,7 @@
 import * as THREE from 'three'
 import { ref } from 'vue'
 import { useBasisStore } from '@/stores/basis'
+import { getModelCenter } from '@/utils/threejs'
 
 export function useCharacterMovement( 
   checkCollision: (characterBox: THREE.Box3) => boolean, // 检查碰撞函数
@@ -113,8 +114,7 @@ export function useCharacterMovement(
     if (!walls || walls.length === 0) return false
     
     // 获取人物中心点，用于距离过滤
-    const characterCenter = new THREE.Vector3()
-    currentBox.getCenter(characterCenter)
+    const characterCenter = getModelCenter(model)
     
     // 最大检测距离，只检测附近的墙体
     const maxDetectionDistance = 3

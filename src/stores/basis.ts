@@ -115,7 +115,7 @@ export const useBasisStore = defineStore('basis', () => {
   const pipelineConfig = computed(() => lineConfig.value || null)
   const collisionBoundingBoxes = computed(() => boundingBoxes.value)
   const currentFloorConfig = computed(() => currentFloor.value)
-  const collisionDetectionConfig = computed(() => basisConfig.value?.collisionDetection || { showBoundingBoxes: false })
+  const collisionDetectionConfig = computed(() => basisConfig.value?.collisionDetection)
 
   // Actions
   /**
