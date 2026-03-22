@@ -84,7 +84,8 @@ const handleShowPipelines = () => {
   const directionToLook = LineConfigFromBasis?.directionToLook || { x: 0, y: 0, z: 0 }
   const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
   const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
-  threeJsRef.value?.flyTo(targetPosition, targetTarget, 2000)
+  const durationTime = LineConfigFromBasis?.durationTime || 2000
+  threeJsRef.value?.flyTo(targetPosition, targetTarget, durationTime)
 }
 
 // 恢复突出显示管路
@@ -98,7 +99,8 @@ const handleRecoveryPipelines = () => {
   const directionToLook = floor1Config?.directionToLook || { x: 0, y: 0, z: 0 }
   const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
   const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
-  threeJsRef.value?.flyTo(targetPosition, targetTarget, 2000)
+  const durationTime = floor1Config?.durationTime || 2000
+  threeJsRef.value?.flyTo(targetPosition, targetTarget, durationTime)
 }
 
 </script>

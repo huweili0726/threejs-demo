@@ -54,12 +54,14 @@
   // 查看管路默认的视角
   "line": {
     "perspective": { "x": -2, "y": 1, "z": -5 }, 
-    "directionToLook": { "x": 0, "y": 0, "z": 0 } 
+    "directionToLook": { "x": 0, "y": 0, "z": 0 }, 
+    "durationTime": 2000 // 切换视角的动画时长（毫秒）
   },
   // 1楼初始视角配置
   "floor_1th": {
     "perspective": { "x": -9, "y": 5, "z": -15 }, // 默认视角（大楼之外的视角）
-    "directionToLook": { "x": 0, "y": 0, "z": 0 } // 默认视角（看向大楼中心）
+    "directionToLook": { "x": 0, "y": 0, "z": 0 }, // 默认视角（看向大楼中心）
+    "durationTime": 2000 // 切换视角的动画时长（毫秒）
   },
   // -1楼初始视角配置
   "floor_neg1": {
@@ -67,7 +69,7 @@
     "directionToLook": { "x": 0, "y": -1.68, "z": 3.06 },
     "durationTime": 2000, // 切换视角的动画时长（毫秒）
     "characterModelSetPosition": { "x": -2.6, "y": -1.78, "z": 3.06 }, // 人物模型位置（与视角同步）
-    "characterModelToLook": { "x": 0, "y": -1.78, "z": 3.06 } // 人物模型看向方向（与视角同步）
+    "characterModelToLook": { "x": 0, "y": -1.78, "z": 3.06 }, // 人物模型看向方向（与视角同步）
   },
   // -1楼里的去2层上楼之前初始视角配置
   "before_floor_neg1_2layers": {
