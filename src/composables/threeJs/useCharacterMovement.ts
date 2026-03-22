@@ -10,7 +10,7 @@
 import * as THREE from 'three'
 import { ref } from 'vue'
 import { useBasisStore } from '@/stores/basis'
-import { calculateDistance, getModelCenter, getBoxCenter } from '@/utils/threejs'
+import { calculateDistance, getModelCenter, getBoxCenter, createBoxFromObject } from '@/utils/threejs'
 
 export function useCharacterMovement( 
   checkCollision: (characterBox: THREE.Box3) => boolean, // 检查碰撞函数
@@ -108,11 +108,11 @@ export function useCharacterMovement(
    */
   const checkAndPushOut = (model: THREE.Group): boolean => {
     model.updateMatrixWorld(true)
-    const currentBox = new THREE.Box3().setFromObject(model)
-    
+    const currentBox = createBoxFromObject(model)
+
     const walls = wallBoundingBoxes?.value || wallBoundingBoxes
     if (!walls || walls.length === 0) return false
-    
+
     // 获取人物中心点，用于距离过滤
     const characterCenter = getModelCenter(model)
     
@@ -166,9 +166,9 @@ export function useCharacterMovement(
         model.position.y = originalY
         model.updateMatrixWorld(true)
 
-        const newBox = new THREE.Box3().setFromObject(model)
+        const newBox = createBoxFromObject(model)
         const newCenter = getModelCenter(model)
-        
+
         let stillColliding = false
         
         for (const wallBox of walls) {
@@ -257,11 +257,11 @@ export function useCharacterMovement(
       
       for (let i = 0; i < stepCount; i++) {
         const originalPosition = model.position.clone()
-        
+
         model.position.add(direction.clone().multiplyScalar(stepSize))
         model.updateMatrixWorld(true)
-        
-        const currentBox = new THREE.Box3().setFromObject(model)
+
+        const currentBox = createBoxFromObject(model)
         const hasCollision = checkCollision(currentBox)
         console.log("发生碰撞：", hasCollision)
         if (hasCollision) {

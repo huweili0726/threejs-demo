@@ -10,7 +10,7 @@
 import * as THREE from 'three'
 import { ref } from 'vue'
 import { useBasisStore } from '@/stores/basis'
-import { calculateDistance, getBoxCenter } from '@/utils/threejs'
+import { calculateDistance, getBoxCenter, createBoxFromObject } from '@/utils/threejs'
 
 // 定义包围盒类型
 interface WallBoundingBox {
@@ -69,11 +69,11 @@ export function useCollisionDetection() {
     helper.update()
     characterHelper.value = helper as MeshBoxHelper
     scene.add(helper)
-    
+
     // 计算人物模型的包围盒
-    const box = new THREE.Box3().setFromObject(model)
+    const box = createBoxFromObject(model)
     characterBoundingBox.value = box
-    
+
     console.log(`已添加人物模型红色包围盒`)
   }
 

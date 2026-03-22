@@ -10,7 +10,7 @@
 import * as THREE from 'three'
 import { ref } from 'vue'
 import { useBasisStore } from '@/stores/basis'
-import { calculateDistance, getBoxCenter } from '@/utils/threejs'
+import { calculateDistance, getBoxCenter, createBoxFromObject } from '@/utils/threejs'
 
 // 碰撞体接口
 interface WallBoundingBox {
@@ -127,7 +127,7 @@ export function useProximityPopup(
       return
     }
 
-    const characterBox = new THREE.Box3().setFromObject(model)
+    const characterBox = createBoxFromObject(model)
     const collisionResult = isCloseToCollision({ characterBox: characterBox, wallBoundingBoxes: wallBoundingBoxes })
 
     const currentCloseObjects = new Set<string>()

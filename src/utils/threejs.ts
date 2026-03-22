@@ -20,12 +20,21 @@ export const calculateDistance = (point1: THREE.Vector3, point2: THREE.Vector3):
 }
 
 /**
+ * 从对象创建包围盒
+ * @param object 3D对象
+ * @returns 包围盒
+ */
+export const createBoxFromObject = (object: THREE.Object3D): THREE.Box3 => {
+  return new THREE.Box3().setFromObject(object)
+}
+
+/**
  * 获取模型的中心点
  * @param model 模型对象
  * @returns 模型的中心点
  */
 export const getModelCenter = (model: THREE.Object3D): THREE.Vector3 => {
-  const box = new THREE.Box3().setFromObject(model)
+  const box = createBoxFromObject(model)
   const center = new THREE.Vector3()
   box.getCenter(center)
   return center
