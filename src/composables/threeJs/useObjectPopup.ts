@@ -205,7 +205,7 @@ export function useObjectPopup(
       popups.value.splice(index, 1)
       // 清除回调函数
       popupCallbacks.delete(id)
-      console.log('❌ 关闭弹窗:', id, '剩余弹窗数:', popups.value.length)
+      // console.log('❌ 关闭弹窗:', id, '剩余弹窗数:', popups.value.length)
     }
   }
 
