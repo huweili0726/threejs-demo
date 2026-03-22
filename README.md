@@ -312,3 +312,109 @@ watchEffect(() => {
 - **单独关闭**：每个弹窗都有独立的关闭按钮
 - **跟随物体**：弹窗随物体移动和缩放，保持相对位置
 - **配置过滤**：只允许配置文件中的物体弹出弹窗
+
+## 工具函数说明
+
+项目提供了多个 Three.js 工具函数，用于减少代码冗余，提高代码复用性：
+
+### calculateDistance
+- **功能**：计算两个点之间的距离
+- **参数**：
+  - `point1`：第一个点（THREE.Vector3）
+  - `point2`：第二个点（THREE.Vector3）
+- **返回值**：两点之间的距离（number）
+- **使用示例**：
+```typescript
+import { calculateDistance } from '@/utils/threejs'
+
+const point1 = new THREE.Vector3(0, 0, 0)
+const point2 = new THREE.Vector3(1, 1, 1)
+const distance = calculateDistance(point1, point2)
+console.log('距离：', distance)
+```
+
+### createBoxFromObject
+- **功能**：从 3D 对象创建包围盒
+- **参数**：
+  - `object`：3D 对象（THREE.Object3D）
+- **返回值**：包围盒对象（THREE.Box3）
+- **使用示例**：
+```typescript
+import { createBoxFromObject } from '@/utils/threejs'
+
+const box = createBoxFromObject(model)
+console.log('包围盒：', box)
+```
+
+### getModelCenter
+- **功能**：获取 3D 模型的中心点
+- **参数**：
+  - `model`：模型对象（THREE.Object3D）
+- **返回值**：模型中心点（THREE.Vector3）
+- **使用示例**：
+```typescript
+import { getModelCenter } from '@/utils/threejs'
+
+const center = getModelCenter(model)
+console.log('模型中心：', center)
+```
+
+### getBoxCenter
+- **功能**：获取包围盒的中心点
+- **参数**：
+  - `box`：包围盒对象（THREE.Box3）
+- **返回值**：包围盒中心点（THREE.Vector3）
+- **使用示例**：
+```typescript
+import { getBoxCenter } from '@/utils/threejs'
+
+const center = getBoxCenter(boundingBox)
+console.log('包围盒中心：', center)
+```
+
+### 工具函数使用场景
+
+#### 碰撞检测中的使用
+```typescript
+// 计算人物中心点
+const characterCenter = getModelCenter(model)
+
+// 计算墙体包围盒中心点
+const wallCenter = getBoxCenter(wallBox.box)
+
+// 计算人物与墙体的距离
+const distance = calculateDistance(characterCenter, wallCenter)
+
+// 判断是否碰撞
+if (distance < threshold) {
+  console.log('发生碰撞')
+}
+```
+
+#### 模型加载中的使用
+```typescript
+// 为模型创建包围盒
+const box = createBoxFromObject(model)
+
+// 获取模型中心点用于定位
+const center = getModelCenter(model)
+model.position.set(center.x, center.y, center.z)
+```
+
+#### 性能优化中的使用
+```typescript
+// 距离过滤：只检测附近的物体
+const characterCenter = getModelCenter(model)
+const nearbyWalls = walls.filter(wallBox => {
+  const wallCenter = getBoxCenter(wallBox.box)
+  return calculateDistance(characterCenter, wallCenter) <= maxDistance
+})
+```
+
+### 工具函数的优势
+
+1. **代码复用**：避免在多个地方重复编写相同的逻辑
+2. **类型安全**：TypeScript 类型定义确保参数和返回值的正确性
+3. **易于维护**：集中管理工具函数，便于统一修改和优化
+4. **提高可读性**：使用语义化的函数名，代码更易理解
+5. **减少错误**：统一的实现方式，减少因手动编写导致的错误
