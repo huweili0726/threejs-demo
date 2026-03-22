@@ -151,10 +151,9 @@ const setupAnimationLoop = () => {
         // 更新相机位置
         cameraFollowModel(basisStore.characterModelUrlsConfig?.man, camera.value, cameraOffset)
       }
-    }else if(basisStore.currentFloor === '0'){  
-      // 更新 CSS2DRenderer 为默认值
-      updateCSS2DRenderer()
     }
+    // 更新 CSS2DRenderer 为默认值
+    updateCSS2DRenderer()
   })
 }
 

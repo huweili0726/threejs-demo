@@ -28,7 +28,10 @@ import { useBasisStore } from '@/stores/basis'
 const threeJsRef = ref<typeof ThreeJs>()
 const basisStore = useBasisStore()
 
+// 飞行到地面大楼初始视角位置
 const handleToTheSurface = async (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3) => {
+  threeJsRef.value?.showBuildNames()
+
   await threeJsRef.value?.removeModel(basisStore.characterModelUrlsConfig?.man || '')?.catch(console.error)
   await threeJsRef.value?.flyTo?.(targetPosition, targetTarget, 2000)?.catch(console.error)
 }
@@ -41,6 +44,9 @@ const handleToBottomfloorAndLoadcharacterModel = async (
   modelInitPosition?: {x: number, y: number, z: number}, // 人物模型初始位置
   onLookAt?: {x: number, y: number, z: number} // 人物模型看向位置
 ) => {
+  threeJsRef.value?.hideBuildNames()
+
+  // 切换楼层
   await threeJsRef.value?.switchToFloor(targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   // 为人物模型添加碰撞检测包围盒
   threeJsRef.value?.toAddCharacterBoundingBox()
