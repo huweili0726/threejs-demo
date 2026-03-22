@@ -10,7 +10,7 @@
 import * as THREE from 'three'
 import { ref } from 'vue'
 import { useBasisStore } from '@/stores/basis'
-import { getModelCenter } from '@/utils/threejs'
+import { calculateDistance, getModelCenter } from '@/utils/threejs'
 
 export function useCharacterMovement( 
   checkCollision: (characterBox: THREE.Box3) => boolean, // 检查碰撞函数
@@ -166,10 +166,9 @@ export function useCharacterMovement(
         model.position.add(pushDirection.clone().multiplyScalar(pushStep))
         model.position.y = originalY
         model.updateMatrixWorld(true)
-        
+
         const newBox = new THREE.Box3().setFromObject(model)
-        const newCenter = new THREE.Vector3()
-        newBox.getCenter(newCenter)
+        const newCenter = getModelCenter(model)
         
         let stillColliding = false
         
@@ -209,31 +208,29 @@ export function useCharacterMovement(
   ): boolean => {
     const walls = wallBoundingBoxes?.value || wallBoundingBoxes
     if (!walls || walls.length === 0) return false
-    
-    const modelBox = new THREE.Box3().setFromObject(model)
-    const modelCenter = new THREE.Vector3()
-    modelBox.getCenter(modelCenter)
-    
+
+    const modelCenter = getModelCenter(model)
+
     const raycaster = new THREE.Raycaster()
     raycaster.set(modelCenter, direction.clone().normalize())
-    
+
     // 检测距离 = 移动距离 + 安全距离
     const checkDistance = distance + COLLISION_SAFE_DISTANCE
-    
+
     // 最大检测距离，用于过滤远处的墙体
     const maxDetectionDistance = 5
-    
+
     for (const wallBox of walls) {
       if (!wallBox.box) continue
-      
+
       // 距离过滤：跳过远处的墙体
       const wallCenter = new THREE.Vector3()
       wallBox.box.getCenter(wallCenter)
-      if (modelCenter.distanceTo(wallCenter) > maxDetectionDistance) continue
-      
+      if (calculateDistance(modelCenter, wallCenter) > maxDetectionDistance) continue
+
       const intersection = raycaster.ray.intersectBox(wallBox.box, new THREE.Vector3())
       if (intersection) {
-        const dist = modelCenter.distanceTo(intersection)
+        const dist = calculateDistance(modelCenter, intersection)
         if (dist < checkDistance) {
           return true
         }
