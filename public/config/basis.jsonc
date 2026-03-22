@@ -51,6 +51,11 @@
   "collisionDetection": {
     "showBoundingBoxes": false // 是否显示碰撞检测包围盒辅助器
   },
+  // 查看管路默认的视角
+  "line": {
+    "perspective": { "x": -2, "y": 1, "z": -5 }, 
+    "directionToLook": { "x": 0, "y": 0, "z": 0 } 
+  },
   // 1楼初始视角配置
   "floor_1th": {
     "perspective": { "x": -9, "y": 5, "z": -15 }, // 默认视角（大楼之外的视角）

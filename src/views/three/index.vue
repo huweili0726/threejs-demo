@@ -79,8 +79,11 @@ const handleShowPipelines = () => {
   threeJsRef.value?.hideBuildNames() // 隐藏建筑名称
 
   // 飞行到管路位置
-  let targetPosition = new THREE.Vector3(-2, 1, -5)
-  let targetTarget = new THREE.Vector3(0, 0, 0)
+  const LineConfigFromBasis = basisStore.lineConfigFromBasis
+  const perspective = LineConfigFromBasis?.perspective || { x: 0, y: 0, z: 0 }
+  const directionToLook = LineConfigFromBasis?.directionToLook || { x: 0, y: 0, z: 0 }
+  const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+  const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
   threeJsRef.value?.flyTo(targetPosition, targetTarget, 2000)
 }
 
@@ -89,8 +92,12 @@ const handleRecoveryPipelines = () => {
   threeJsRef.value?.recoveryPipelines()
   threeJsRef.value?.showBuildNames() // 显示建筑名称
 
-  let targetPosition = new THREE.Vector3(-9, 5, -15)
-  let targetTarget = new THREE.Vector3(0, 0, 0)
+  // 飞行到大楼初始位置
+  const floor1Config = basisStore.floor1Config
+  const perspective = floor1Config?.perspective || { x: 0, y: 0, z: 0 }
+  const directionToLook = floor1Config?.directionToLook || { x: 0, y: 0, z: 0 }
+  const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+  const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
   threeJsRef.value?.flyTo(targetPosition, targetTarget, 2000)
 }
 

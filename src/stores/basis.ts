@@ -58,6 +58,8 @@ interface BasisConfig {
   }
   // 碰撞检测配置
   collisionDetection?: CollisionDetectionConfig
+  // 查看管路默认的视角
+  line: FloorConfig
   floor_1th: FloorConfig
   floor_neg1: FloorConfig
   before_floor_neg1_2layers: FloorConfig
@@ -108,6 +110,7 @@ export const useBasisStore = defineStore('basis', () => {
   const neg12LayersFloorConfig = computed(() => basisConfig.value?.floor_neg1_2layers)
   const floor8thConfig = computed(() => basisConfig.value?.floor_8th)
   const floor9thConfig = computed(() => basisConfig.value?.floor_9th)
+  const lineConfigFromBasis = computed(() => basisConfig.value?.line)
   const threeDevs = computed(() => threeDevConfig.value?.threeDevs || [])
   const wallsConfig = computed(() => wallConfig.value?.walls || [])
   const roamPathConfig = computed(() => roamConfig.value || null)
@@ -232,6 +235,7 @@ export const useBasisStore = defineStore('basis', () => {
     neg12LayersFloorConfig,
     floor8thConfig,
     floor9thConfig,
+    lineConfigFromBasis,
     threeDevs,
     wallsConfig,
     roamPathConfig,
