@@ -11,6 +11,7 @@ import * as THREE from 'three'
 import { ref, ShallowRef } from 'vue'
 import { CSS2DRenderer, CSS2DObject } from 'three-stdlib'
 import { useRaycastUtils } from '@/composables/threeJs/useRaycastUtils'
+import { getModelCenter } from '@/utils/threejs'
 
 // 初始化工具函数
 const { performRaycast, filterIntersects } = useRaycastUtils()
@@ -141,9 +142,7 @@ export function useObjectPopup(
     label.name = data.id
     
     // 计算物体的中心点
-    const box = new THREE.Box3().setFromObject(object)
-    const center = new THREE.Vector3()
-    box.getCenter(center)
+    const center = getModelCenter(object)
     
     // 转换中心点到物体的局部坐标系
     object.worldToLocal(center)

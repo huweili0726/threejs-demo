@@ -119,14 +119,14 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
                       const thickness = collisionObject.thickness
                       const center = new THREE.Vector3()
                       box.getCenter(center)
-                      
+
                       // 扩展包围盒，添加厚度
                       const halfThickness = thickness / 2
                       box.expandByVector(new THREE.Vector3(halfThickness, halfThickness, halfThickness))
-                      
+
                       // console.log(`为物体 ${child.name} 添加厚度: ${thickness}`)
                     }
-                    
+
                     // 检查是否手动指定了包围盒尺寸
                     if (collisionObject.width !== undefined || collisionObject.height !== undefined || collisionObject.depth !== undefined) {
                       const center = new THREE.Vector3()
