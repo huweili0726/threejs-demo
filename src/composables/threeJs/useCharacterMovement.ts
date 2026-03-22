@@ -10,7 +10,7 @@
 import * as THREE from 'three'
 import { ref } from 'vue'
 import { useBasisStore } from '@/stores/basis'
-import { calculateDistance, getModelCenter } from '@/utils/threejs'
+import { calculateDistance, getModelCenter, getBoxCenter } from '@/utils/threejs'
 
 export function useCharacterMovement( 
   checkCollision: (characterBox: THREE.Box3) => boolean, // 检查碰撞函数
@@ -125,11 +125,10 @@ export function useCharacterMovement(
     
     for (const wallBox of walls) {
       if (!wallBox.box) continue
-      
+
       // 距离过滤：跳过远处的墙体
-      const wallCenter = new THREE.Vector3()
-      wallBox.box.getCenter(wallCenter)
-      const distance = characterCenter.distanceTo(wallCenter)
+      const wallCenter = getBoxCenter(wallBox.box)
+      const distance = calculateDistance(characterCenter, wallCenter)
       
       if (distance > maxDetectionDistance) continue
       
@@ -174,11 +173,10 @@ export function useCharacterMovement(
         
         for (const wallBox of walls) {
           if (!wallBox.box) continue
-          
+
           // 距离过滤
-          const wallCenter = new THREE.Vector3()
-          wallBox.box.getCenter(wallCenter)
-          if (newCenter.distanceTo(wallCenter) > maxDetectionDistance) continue
+          const wallCenter = getBoxCenter(wallBox.box)
+          if (calculateDistance(newCenter, wallCenter) > maxDetectionDistance) continue
           
           if (newBox.intersectsBox(wallBox.box)) {
             stillColliding = true
@@ -224,8 +222,7 @@ export function useCharacterMovement(
       if (!wallBox.box) continue
 
       // 距离过滤：跳过远处的墙体
-      const wallCenter = new THREE.Vector3()
-      wallBox.box.getCenter(wallCenter)
+      const wallCenter = getBoxCenter(wallBox.box)
       if (calculateDistance(modelCenter, wallCenter) > maxDetectionDistance) continue
 
       const intersection = raycaster.ray.intersectBox(wallBox.box, new THREE.Vector3())

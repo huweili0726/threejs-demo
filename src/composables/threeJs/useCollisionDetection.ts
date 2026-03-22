@@ -10,6 +10,7 @@
 import * as THREE from 'three'
 import { ref } from 'vue'
 import { useBasisStore } from '@/stores/basis'
+import { calculateDistance, getBoxCenter } from '@/utils/threejs'
 
 // 定义包围盒类型
 interface WallBoundingBox {
@@ -156,18 +157,16 @@ export function useCollisionDetection() {
     }
 
     // 获取人物中心点，用于距离过滤
-    const characterCenter = new THREE.Vector3()
-    characterBox.getCenter(characterCenter)
-    
+    const characterCenter = getBoxCenter(characterBox)
+
     // 最大检测距离，只检测附近的墙体，提升性能
     const maxDetectionDistance = 5
 
     // 遍历所有目标墙体的包围盒
     for (const wallBox of wallBoundingBoxes.value) {
       // 距离过滤：先计算距离，跳过远处的墙体
-      const wallCenter = new THREE.Vector3()
-      wallBox.box.getCenter(wallCenter)
-      const distance = characterCenter.distanceTo(wallCenter)
+      const wallCenter = getBoxCenter(wallBox.box)
+      const distance = calculateDistance(characterCenter, wallCenter)
       
       // 只检测附近的墙体，大幅减少计算量
       if (distance > maxDetectionDistance) {

@@ -30,3 +30,14 @@ export const getModelCenter = (model: THREE.Object3D): THREE.Vector3 => {
   box.getCenter(center)
   return center
 }
+
+/**
+ * 获取包围盒的中心点
+ * @param box 包围盒对象
+ * @returns 包围盒的中心点
+ */
+export const getBoxCenter = (box: THREE.Box3): THREE.Vector3 => {
+  const center = new THREE.Vector3()
+  box.getCenter(center)
+  return center
+}

@@ -10,7 +10,7 @@
 import * as THREE from 'three'
 import { ref } from 'vue'
 import { useBasisStore } from '@/stores/basis'
-import { calculateDistance } from '@/utils/threejs'
+import { calculateDistance, getBoxCenter } from '@/utils/threejs'
 
 // 碰撞体接口
 interface WallBoundingBox {
@@ -84,12 +84,10 @@ export function useProximityPopup(
     }
 
     // 获取人物中心点，用于距离过滤
-    const characterCenter = new THREE.Vector3()
-    characterBox.getCenter(characterCenter)
+    const characterCenter = getBoxCenter(characterBox)
 
     for (const wallBox of wallBoundingBoxes) {
-      const wallCenter = new THREE.Vector3()
-      wallBox.box.getCenter(wallCenter)
+      const wallCenter = getBoxCenter(wallBox.box)
       const currentDistance = calculateDistance(characterCenter, wallCenter)
       
       // 距离过滤：跳过远处的物体，大幅减少计算量
