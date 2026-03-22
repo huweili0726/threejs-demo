@@ -181,6 +181,25 @@ export function useThreeScene() {
   }
 
   /**
+   * 设置相机位置
+   * @description 直接设置相机位置，适用于模型加载完毕后调整相机视角
+   * @param position 相机位置
+   * @param target 目标观察点（可选，默认为原点）
+   */
+  const setCameraPosition = (position: THREE.Vector3, target?: THREE.Vector3) => {
+    if (!camera.value || !controls.value) return
+
+    camera.value.position.set(position.x, position.y, position.z)
+    
+    if (target) {
+      controls.value.target.set(target.x, target.y, target.z)
+    }
+    
+    controls.value.update()
+    render()
+  }
+
+  /**
    * 设置动画更新回调
    * @param callback 动画更新回调函数，接收deltaTime参数
    */
@@ -251,6 +270,7 @@ export function useThreeScene() {
     render,
     onWindowResize,
     flyTo,
+    setCameraPosition,
     updateAnimations,
     setAnimationUpdateCallback,
     startAnimationLoop,

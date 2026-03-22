@@ -77,12 +77,21 @@ const handleToTargetRoom = async (targetRoom: string) => {
 const handleShowPipelines = () => {
   threeJsRef.value?.showPipelines()
   threeJsRef.value?.hideBuildNames() // 隐藏建筑名称
+
+  // 飞行到管路位置
+  let targetPosition = new THREE.Vector3(-2, 1, -5)
+  let targetTarget = new THREE.Vector3(0, 0, 0)
+  threeJsRef.value?.flyTo(targetPosition, targetTarget, 2000)
 }
 
 // 恢复突出显示管路
 const handleRecoveryPipelines = () => {
   threeJsRef.value?.recoveryPipelines()
   threeJsRef.value?.showBuildNames() // 显示建筑名称
+
+  let targetPosition = new THREE.Vector3(-9, 5, -15)
+  let targetTarget = new THREE.Vector3(0, 0, 0)
+  threeJsRef.value?.flyTo(targetPosition, targetTarget, 2000)
 }
 
 </script>

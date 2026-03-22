@@ -32,7 +32,7 @@ const { width, height } = useWindowSize()
 // 使用基础配置 Store
 const basisStore = useBasisStore()
 
-const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize } = useThreeScene() // 场景相关Hooks
+const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize, setCameraPosition } = useThreeScene() // 场景相关Hooks
 const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel, removeModel } = useModelLoader(scene as any, render) // 模型加载相关Hooks
 const { loadEnvironment } = useEnvironmentLoader(scene as any) // 环境贴图加载相关Hooks
 const { initDoubleClickPopup, showPopup, closePopup, updateCSS2DRenderer, handleResize } = useObjectPopup(camera as any, scene as any, threeJsContainer) // 物体弹窗相关Hooks
@@ -268,7 +268,8 @@ defineExpose({
   showPipelines: () => showPipelines(),
   recoveryPipelines: () => recoveryPipelines(),
   hideBuildNames: () => hideBuildNames(),
-  showBuildNames: () => showBuildNames()
+  showBuildNames: () => showBuildNames(),
+  setCameraPosition
 })
 </script>
 
