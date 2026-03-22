@@ -49,7 +49,7 @@
   },
   // 碰撞检测配置
   "collisionDetection": {
-    "showBoundingBoxes": false // 是否显示碰撞检测包围盒辅助器
+    "showBoundingBoxes": true // 是否显示碰撞检测包围盒辅助器
   },
   // 1楼初始视角配置
   "floor_1th": {

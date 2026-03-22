@@ -11,6 +11,7 @@ import * as THREE from 'three'
 import { ref, ShallowRef } from 'vue'
 import { GLTFLoader, DRACOLoader } from 'three-stdlib'
 import { useBasisStore } from '@/stores/basis' // 基础配置 Store
+import { getModelCenter } from '@/utils/threejs'
 
 // 全局单例DRACOLoader，只初始化一次，提升加载性能
 const globalDracoLoader = new DRACOLoader()
@@ -117,8 +118,6 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
                     if (collisionObject.thickness) {
                       // 为平面添加厚度
                       const thickness = collisionObject.thickness
-                      const center = new THREE.Vector3()
-                      box.getCenter(center)
 
                       // 扩展包围盒，添加厚度
                       const halfThickness = thickness / 2
@@ -129,8 +128,7 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
 
                     // 检查是否手动指定了包围盒尺寸
                     if (collisionObject.width !== undefined || collisionObject.height !== undefined || collisionObject.depth !== undefined) {
-                      const center = new THREE.Vector3()
-                      box.getCenter(center)
+                      const center = getModelCenter(child)
                       
                       // 计算新尺寸
                       const newSize = new THREE.Vector3(
