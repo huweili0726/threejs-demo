@@ -134,15 +134,15 @@ export function useCharacterMovement(
       
       if (currentBox.intersectsBox(wallBox.box)) {
         stuckInWall = true
-        
-        const direction = characterCenter.clone().sub(wallCenter)
-        
+
+        const direction = new THREE.Vector3().subVectors(characterCenter, wallCenter)
+
         const intersection = currentBox.clone().intersect(wallBox.box)
         const intersectionSize = new THREE.Vector3()
         intersection.getSize(intersectionSize)
-        
+
         const penetration = Math.min(intersectionSize.x, intersectionSize.z)
-        
+
         if (penetration < minPenetration) {
           minPenetration = penetration
           pushDirection.copy(direction).normalize()
@@ -160,9 +160,12 @@ export function useCharacterMovement(
       
       const pushStep = 0.002
       const maxPushSteps = 50 // 减少最大步数，从100降到50
-      
+
+      const tempVector = new THREE.Vector3()
+
       for (let i = 0; i < maxPushSteps; i++) {
-        model.position.add(pushDirection.clone().multiplyScalar(pushStep))
+        tempVector.copy(pushDirection).multiplyScalar(pushStep)
+        model.position.add(tempVector)
         model.position.y = originalY
         model.updateMatrixWorld(true)
 
@@ -254,11 +257,15 @@ export function useCharacterMovement(
       // 限制最大步数为10，避免过多的碰撞检测
       const stepCount = Math.min(Math.ceil(totalSpeed / MAX_STEP_SIZE), 10)
       const stepSize = totalSpeed / stepCount
-      
-      for (let i = 0; i < stepCount; i++) {
-        const originalPosition = model.position.clone()
 
-        model.position.add(direction.clone().multiplyScalar(stepSize))
+      const tempVector = new THREE.Vector3()
+      const originalPosition = new THREE.Vector3()
+
+      for (let i = 0; i < stepCount; i++) {
+        originalPosition.copy(model.position)
+
+        tempVector.copy(direction).multiplyScalar(stepSize)
+        model.position.add(tempVector)
         model.updateMatrixWorld(true)
 
         const currentBox = createBoxFromObject(model)
