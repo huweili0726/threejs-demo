@@ -259,7 +259,7 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
     speed: number
   }) => {
     const { modelUrl, direction, speed } = options
-    console.log(`移动模型 ${modelUrl} 方向 ${direction.toArray()} 速度 ${speed}`)
+    // console.log(`移动模型 ${modelUrl} 方向 ${direction.toArray()} 速度 ${speed}`)
     const model = loadedModelMaps.value.get(modelUrl)
     if (model) {
       model.position.add(direction.multiplyScalar(speed))
