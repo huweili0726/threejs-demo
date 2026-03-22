@@ -138,18 +138,22 @@ const setupAnimationLoop = () => {
     updateAnimations(deltaTime, modelMixers.value)
     // 只有在当前楼层是0时才执行这些操作
     if (basisStore.currentFloor !== '0') {
+      // 更新人物移动
       updateCharacterMovement({
         deltaTime,
         modelUrl: basisStore.characterModelUrlsConfig?.man || '',
         moveModel,
         loadedModelMaps: loadedModelMaps.value
       })
+      // 更新自动漫游
       updateAutoRoam(deltaTime)
       if (basisStore.characterModelUrlsConfig?.man && camera.value) {
+        // 更新相机位置
         cameraFollowModel(basisStore.characterModelUrlsConfig?.man, camera.value, cameraOffset)
       }
+      // 更新 CSS2DRenderer
+      updateCSS2DRenderer()
     }
-    updateCSS2DRenderer()
   })
 }
 
