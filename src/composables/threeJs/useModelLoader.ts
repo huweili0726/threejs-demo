@@ -100,52 +100,47 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
           if (collisionObjects.length > 0) {
             group.updateMatrixWorld(true)
             
+            // 创建碰撞对象映射，提高查找效率
+            const collisionObjectMap = new Map(collisionObjects.map(obj => [obj.name, obj]))
+            
             group.traverse((child) => {
               if (child instanceof THREE.Mesh ) {
-
-                if(collisionObjects.some(obj => obj.name === child.name)){
+                const collisionObject = collisionObjectMap.get(child.name)
+                
+                if(collisionObject){
                   // 计算初始包围盒（使用 setFromObject 更通用，支持不同类型的几何体）
                   const box = new THREE.Box3().setFromObject(child)
-                  
-                  // 检查是否有厚度配置
-                  const collisionObject = collisionObjects.find(obj => obj.name === child.name)
                   
                   // 获取当前尺寸
                   const currentSize = new THREE.Vector3()
                   box.getSize(currentSize)
                   
-                  if (collisionObject) {
-                    if (collisionObject.thickness) {
-                      // 为平面添加厚度
-                      const thickness = collisionObject.thickness
+                  if (collisionObject.thickness) {
+                    // 为平面添加厚度
+                    const thickness = collisionObject.thickness
 
-                      // 扩展包围盒，添加厚度
-                      const halfThickness = thickness / 2
-                      box.expandByVector(new THREE.Vector3(halfThickness, halfThickness, halfThickness))
+                    // 扩展包围盒，添加厚度
+                    const halfThickness = thickness / 2
+                    box.expandByVector(new THREE.Vector3(halfThickness, halfThickness, halfThickness))
+                  }
 
-                      // console.log(`为物体 ${child.name} 添加厚度: ${thickness}`)
-                    }
-
-                    // 检查是否手动指定了包围盒尺寸
-                    if (collisionObject.width !== undefined || collisionObject.height !== undefined || collisionObject.depth !== undefined) {
-                      const center = getModelCenter(child)
-                      
-                      // 计算新尺寸
-                      const newSize = new THREE.Vector3(
-                        collisionObject.width !== undefined ? collisionObject.width : currentSize.x,
-                        collisionObject.height !== undefined ? collisionObject.height : currentSize.y,
-                        collisionObject.depth !== undefined ? collisionObject.depth : currentSize.z
-                      )
-                      
-                      // 重新计算包围盒
-                      const halfSize = newSize.multiplyScalar(0.5)
-                      box.set(
-                        center.clone().sub(halfSize),
-                        center.clone().add(halfSize)
-                      )
-                      
-                      // console.log(`为物体 ${child.name} 手动设置包围盒尺寸:`, newSize)
-                    }
+                  // 检查是否手动指定了包围盒尺寸
+                  if (collisionObject.width !== undefined || collisionObject.height !== undefined || collisionObject.depth !== undefined) {
+                    const center = getModelCenter(child)
+                    
+                    // 计算新尺寸
+                    const newSize = new THREE.Vector3(
+                      collisionObject.width !== undefined ? collisionObject.width : currentSize.x,
+                      collisionObject.height !== undefined ? collisionObject.height : currentSize.y,
+                      collisionObject.depth !== undefined ? collisionObject.depth : currentSize.z
+                    )
+                    
+                    // 重新计算包围盒
+                    const halfSize = newSize.multiplyScalar(0.5)
+                    box.set(
+                      center.clone().sub(halfSize),
+                      center.clone().add(halfSize)
+                    )
                   }
                   
                   boundingBoxes.push({
@@ -153,7 +148,7 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
                     name: child.name,
                     box: box,
                     uuid: child.uuid,
-                    ...(collisionObject && collisionObject.isStairs !== undefined ? { isStairs: collisionObject.isStairs } : {})
+                    ...(collisionObject.isStairs !== undefined ? { isStairs: collisionObject.isStairs } : {})
                   })
                 }
 
@@ -162,7 +157,6 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
                   child: child,
                   name: child.name
                 })
-                // console.log(`已为物体 ${child.name} 计算包围盒`)
               }
             })
           }
