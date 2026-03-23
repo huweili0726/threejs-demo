@@ -420,9 +420,9 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
    * @param modelUrls 模型URL数组
    * @param visible 是否可见
    */
-  const setModelsVisibility = (modelUrls: string[], visible: boolean) => {
-    modelUrls.forEach(url => {
-      setModelVisibility(url, visible)
+  const setModelsVisibility = (modelUrls: { url: string, visible: boolean } []) => {
+    modelUrls.forEach(item => {
+      setModelVisibility(item.url, item.visible)
     })
   }
 
@@ -445,32 +445,40 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
     // 根据楼层显示对应模型
     switch (floor) {
       case '0': 
-        setModelVisibility(groundFloorOfficeBuildingGlb, true)
-        setModelVisibility(shuGlb, true)
-        setModelVisibility(underGroundGlb, false)
-        setModelVisibility(eightFloorGlb, false)
-        setModelVisibility(nineFloorGlb, false)
+        setModelsVisibility([
+          { url: groundFloorOfficeBuildingGlb, visible: true },
+          { url: shuGlb, visible: true },
+          { url: underGroundGlb, visible: false },
+          { url: eightFloorGlb, visible: false },
+          { url: nineFloorGlb, visible: false },
+        ])
         break
       case '-1': 
-        setModelVisibility(groundFloorOfficeBuildingGlb, false)
-        setModelVisibility(shuGlb, false)
-        setModelVisibility(underGroundGlb, true)
-        setModelVisibility(eightFloorGlb, false)
-        setModelVisibility(nineFloorGlb, false)
+        setModelsVisibility([
+          { url: groundFloorOfficeBuildingGlb, visible: false },
+          { url: shuGlb, visible: false },
+          { url: underGroundGlb, visible: true },
+          { url: eightFloorGlb, visible: false },
+          { url: nineFloorGlb, visible: false },
+        ])
         break
       case '8':
-        setModelVisibility(shuGlb, false)
-        setModelVisibility(groundFloorOfficeBuildingGlb, false)
-        setModelVisibility(underGroundGlb, false)
-        setModelVisibility(eightFloorGlb, true)
-        setModelVisibility(nineFloorGlb, false)
+        setModelsVisibility([
+          { url: groundFloorOfficeBuildingGlb, visible: false },
+          { url: shuGlb, visible: false },
+          { url: underGroundGlb, visible: false },
+          { url: eightFloorGlb, visible: true },
+          { url: nineFloorGlb, visible: false },
+        ])
         break
       case '9':
-        setModelVisibility(shuGlb, false)
-        setModelVisibility(groundFloorOfficeBuildingGlb, false)
-        setModelVisibility(underGroundGlb, false)
-        setModelVisibility(eightFloorGlb, false)
-        setModelVisibility(nineFloorGlb, true)
+        setModelsVisibility([
+          { url: groundFloorOfficeBuildingGlb, visible: false },
+          { url: shuGlb, visible: false },
+          { url: underGroundGlb, visible: false },
+          { url: eightFloorGlb, visible: false },
+          { url: nineFloorGlb, visible: true },
+        ])
         break
     }
   }
