@@ -519,6 +519,47 @@
     { "name": "Cube1384", "thickness": 0.005 },
     { "name": "Cube752" },
 
+    // 女厕所
+    { "name": "Cube1304" },
+    { "name": "Cube862" },
+    { "name": "Cube1305" },
+    { "name": "Cube1802" },
+    { "name": "Cube1801" },
+    { "name": "Cube1803" },
+    { "name": "Cube1799" },
+    { "name": "Cube1770" },
+    { "name": "防烟阀007" },
+    { "name": "Cube1797" },
+    { "name": "Cube1798" },
+
+    // 污水泵房
+    { "name": "Cube2740" },
+    { "name": "Cube1298" },
+    { "name": "Cube863" },
+    { "name": "Cube1299" },
+    { "name": "Cube1812" },
+    { "name": "Cube1808" },
+    { "name": "Cube1811" },
+    { "name": "Cube1809" },
+
+    // 男厕所
+    { "name": "Cube861" },
+    { "name": "Cube1293" },
+    { "name": "Cube1292" },
+    { "name": "Cube1815" },
+    { "name": "Cube1814" },
+    { "name": "Cube1813" },
+    { "name": "Cube1817" },
+    { "name": "Cube1820" },
+    { "name": "Cube1793" },
+    { "name": "Cube1769" },
+    { "name": "防烟阀009" },
+    { "name": "Cube1794" },
+    { "name": "Cube1795" },
+    { "name": "Cube1796" },
+
+    // 指挥控制中心
+    { "name": "Cube1281" },
 
     // 1-4号大铁门框
     // { "name": "Cube080" },
