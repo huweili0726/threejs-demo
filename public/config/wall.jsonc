@@ -560,6 +560,147 @@
 
     // 指挥控制中心
     { "name": "Cube1281" },
+    { "name": "Cube851" },
+    { "name": "Cube1280" },
+    { "name": "Cube1768" },
+    { "name": "Cube1787" },
+    { "name": "立方体091" },
+    { "name": "Cube1792" },
+    { "name": "Cube1290" },
+    { "name": "Cube1789" },
+
+    // 情报通信室
+    { "name": "Cube1277" },
+    { "name": "Cube850" },
+    { "name": "Cube1278" },
+    { "name": "Cube849" },
+    { "name": "Cube1267" },
+    { "name": "Cube1269" },
+    { "name": "Cube1780" },
+    { "name": "Cube1767" },
+    { "name": "立方体089" },
+    { "name": "Cube1784" },
+    { "name": "Cube1782" },
+
+
+    // 综合保障部
+    { "name": "Cube1265" },
+    { "name": "Cube848" },
+    { "name": "Cube1266" },
+    { "name": "Cube847" },
+    { "name": "Cube1257" },
+    { "name": "Cube1256" },
+    { "name": "Cube1775" },
+    { "name": "Cube1766" },
+    { "name": "立方体087" },
+    { "name": "Cube1779" },
+    { "name": "Cube1777" },
+
+    // 政治工作部
+    { "name": "Cube1253" },
+    { "name": "Cube845" },
+    { "name": "Cube1254" },
+    { "name": "Cube1774" },
+    { "name": "Cube1765" },
+    { "name": "立方体067" },
+    { "name": "Cube2223_1" },
+    { "name": "Cube1771" },
+
+    // 机要室
+    { "name": "Cube844" },
+    { "name": "Cube1247" },
+    { "name": "Cube1248" },
+    { "name": "Cube1456" },
+    { "name": "Cube665" },
+    { "name": "Cube1697" },
+    { "name": "Cube430" },
+    { "name": "Cube1697" },
+    { "name": "Cube1734" },
+    { "name": "Cube428" },
+    { "name": "Cube429" },
+    { "name": "Cube1735" },
+
+
+    // 档案资料室
+    { "name": "Cube1266" },
+    { "name": "Cube1251" },
+    { "name": "Cube1725" },
+    { "name": "Cube664" },
+    { "name": "Cube444" },
+    { "name": "Cube1698" },
+    { "name": "Cube1458" },
+    { "name": "Cube1736" },
+    { "name": "Cube1249" },
+
+    // 休息室（三）
+    { "name": "Cube1260" },
+    { "name": "Cube853" },
+    { "name": "Cube1259" },
+    { "name": "Cube1460" },
+    { "name": "Cube1699" },
+    { "name": "Cube1726" },
+    { "name": "Cube1737" },
+
+
+    // 休息室（二）
+    { "name": "Cube1262" },
+    { "name": "Cube854" },
+    { "name": "Cube1263" },
+    { "name": "Cube1727" },
+    { "name": "Cube1700" },
+    { "name": "Cube1462" },
+    { "name": "Cube1738" },
+
+    // 休息室（一）
+    { "name": "Cube1464" },
+    { "name": "Cube1701" },
+    { "name": "Cube1728" },
+    { "name": "Cube1740" },
+
+    // 指挥长室（四）
+    { "name": "Cube1274" },
+    { "name": "Cube856" },
+    { "name": "Cube1275" },
+    { "name": "Cube715_1" },
+    { "name": "Cube1729" },
+    { "name": "Cube1702" },
+    { "name": "Cube1465" },
+    { "name": "Cube1743" },
+    { "name": "Cube864" },
+    { "name": "Cube1744" },
+
+    // 指挥长室（三）
+    { "name": "Cube724_1" },
+    { "name": "Cube1703" },
+    { "name": "Cube507" },
+    { "name": "Cube1747" },
+    { "name": "Cube1748" },
+    { "name": "Cube1284" },
+    { "name": "Cube1283" },
+    { "name": "Cube858" },
+    
+    // 指挥长室（二）
+    { "name": "Cube1286" },
+    { "name": "Cube857" },
+    { "name": "Cube1287" },
+    { "name": "Cube1754" },
+    // { "name": "Cube1731" },
+    { "name": "Cube736" },
+    { "name": "Cube1704" },
+    { "name": "Cube1722" },
+    { "name": "Cube866" },
+
+    // 指挥长室（一）
+    { "name": "Cube860" },
+    { "name": "Cube1296" },
+    { "name": "Cube1295" },
+    { "name": "Cube1757" },
+    { "name": "Cube1732" },
+    { "name": "Cube730" },
+
+
+
+
 
     // 1-4号大铁门框
     // { "name": "Cube080" },
