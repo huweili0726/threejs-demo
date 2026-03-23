@@ -21,6 +21,7 @@ export function useThreeScene() {
   let animationId: number | null = null
   const clock = new THREE.Clock()
   let animationUpdateCallback: ((deltaTime: number) => void) | null = null
+  let needsRender = true // 标记是否需要渲染
 
   /**
    * 初始化场景
@@ -88,8 +89,10 @@ export function useThreeScene() {
     controls.value.maxPolarAngle = Math.PI / 2
     // 更新控制器状态
     controls.value.update()
-    // 控制器变化时触发重新渲染
-    controls.value.addEventListener('change', render)
+    // 控制器变化时标记需要渲染
+    controls.value.addEventListener('change', () => {
+      needsRender = true
+    })
 
     // 5. 添加坐标轴辅助器（红色=X轴，绿色=Y轴，蓝色=Z轴）
     if(coordinateAxis){
@@ -112,9 +115,7 @@ export function useThreeScene() {
    * @description 渲染场景，包括场景、相机、渲染器
    */
   const render = () => {
-    if (renderer.value && scene.value && camera.value) {
-      renderer.value.render(scene.value, camera.value)
-    }
+    needsRender = true // 设置需要渲染的标记
   }
 
   /**
@@ -126,7 +127,7 @@ export function useThreeScene() {
       camera.value.aspect = width.value / height.value
       camera.value.updateProjectionMatrix()
       renderer.value.setSize(width.value, height.value)
-      render()
+      needsRender = true // 窗口大小变化时需要渲染
     }
   }
 
@@ -163,7 +164,7 @@ export function useThreeScene() {
         controls.value!.target.lerpVectors(startTarget, targetTarget, easedProgress)
 
         controls.value!.update()
-        render()
+        needsRender = true // 相机位置变化时需要渲染
 
         if (progress < 1) {
           flyAnimationId = requestAnimationFrame(animate)
@@ -196,7 +197,7 @@ export function useThreeScene() {
     }
     
     controls.value.update()
-    render()
+    needsRender = true // 相机位置变化时需要渲染
   }
 
   /**
@@ -233,11 +234,13 @@ export function useThreeScene() {
       
       if (animationUpdateCallback) {
         animationUpdateCallback(deltaTime)
+        needsRender = true // 有动画更新时需要渲染
       }
       
-      // 只有在场景、相机和渲染器都存在时才渲染
-      if (scene.value && camera.value && renderer.value) {
+      // 只有在需要渲染且场景、相机和渲染器都存在时才渲染
+      if (needsRender && scene.value && camera.value && renderer.value) {
         renderer.value.render(scene.value, camera.value)
+        needsRender = false // 渲染后重置标记
       }
     }
     
