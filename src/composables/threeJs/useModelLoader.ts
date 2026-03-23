@@ -36,6 +36,7 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
    * @param options.onLookAt 模型初始朝向
    * @param options.frontAxis 模型前方向量（默认：0,0,1，可根据不同模型自定义）
    * @param options.enableAnimation 是否启用动画
+   * @param options.visible 模型初始可见性
    * @param options.collisionObjects 需要添加碰撞检测的物体配置数组（可选）
    * @returns 加载完成后的 Promise，返回包含包围盒信息的数组
    */
@@ -46,9 +47,10 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
     onLookAt?: { x: number; y: number; z: number }
     frontAxis?: THREE.Vector3
     enableAnimation?: boolean
+    visible?: boolean
     collisionObjects?: Array<{ name: string; thickness?: number; width?: number; height?: number; depth?: number; isStairs?: boolean }>
   }): Promise<{ name: string; box: THREE.Box3; uuid: string; isStairs?: boolean }[]> => {
-    const { modelUrl, scale, modelInitPosition = { x: 0, y: 0, z: 0 }, onLookAt = { x: 0, y: 0, z: 0 }, enableAnimation = true, collisionObjects = [] } = options
+    const { modelUrl, scale, modelInitPosition = { x: 0, y: 0, z: 0 }, onLookAt = { x: 0, y: 0, z: 0 }, enableAnimation = true, visible = true, collisionObjects = [] } = options
     return new Promise((resolve, reject) => {
       if (!scene.value) {
         reject(new Error('Scene not initialized'))
@@ -74,6 +76,7 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
           group.scale.set(scale, scale, scale)
           group.position.set(modelInitPosition.x, modelInitPosition.y, modelInitPosition.z)
           group.lookAt(onLookAt.x, onLookAt.y, onLookAt.z)
+          group.visible = visible // 设置模型初始可见性
           
           if (enableAnimation && gltf.animations && gltf.animations.length > 0) {
             const mixer = new THREE.AnimationMixer(group)
@@ -199,7 +202,7 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
    * @returns 加载完成后的 Promise，返回所有模型的包围盒信息
    */
   const loadModels = (options: {
-    modelUrls: string[]
+    modelUrls: any[]
     scale: number
     modelInitPosition?: { x: number; y: number; z: number }
     onLookAt?: { x: number; y: number; z: number }
@@ -213,14 +216,22 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
         loadingText.value = '正在并行加载3D模型...'
         const modelLoadStartTime = performance.now()
         
-        const loadPromises = modelUrls.map(url => loadModel({
-          modelUrl: url,
-          scale,
-          modelInitPosition,
-          onLookAt,
-          enableAnimation,
-          collisionObjects
-        }))
+        // 获取模型配置
+        // const modelConfigs = modelUrls || []
+        const loadPromises = modelUrls.map(config => {
+          // 从配置中获取初始可见性
+          const visible = config?.initialVisible ?? true
+
+          return loadModel({
+            modelUrl: config.url,
+            scale,
+            modelInitPosition,
+            onLookAt,
+            enableAnimation,
+            visible,
+            collisionObjects
+          })
+        })
         const results = await Promise.all(loadPromises)
         
         // 合并所有模型的包围盒信息
@@ -389,6 +400,80 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
     return found
   }
 
+  /**
+   * 设置模型的可见性
+   * @param modelUrl 模型URL
+   * @param visible 是否可见
+   */
+  const setModelVisibility = (modelUrl: string, visible: boolean) => {
+    const model = loadedModelMaps.value.get(modelUrl)
+    if (model) {
+      model.visible = visible
+      if (render) {
+        render()
+      }
+    }
+  }
+
+  /**
+   * 批量设置模型的可见性
+   * @param modelUrls 模型URL数组
+   * @param visible 是否可见
+   */
+  const setModelsVisibility = (modelUrls: string[], visible: boolean) => {
+    modelUrls.forEach(url => {
+      setModelVisibility(url, visible)
+    })
+  }
+
+  /**
+   * 根据楼层更新模型可见性
+   * @param floor 楼层名称
+   */
+  const updateModelVisibilityByFloor = (floor: string) => {  
+    // 默认只显示外部模型
+    setModelVisibility(`glb/groundFloorOfficeBuilding.glb`, true)
+    setModelVisibility(`glb/shu.glb`, true)
+    setModelVisibility(`glb/underGround.glb`, false)
+    setModelVisibility(`glb/8th_floor.glb`, false)
+    setModelVisibility(`glb/9th_floor.glb`, false)
+    
+    // 根据楼层显示对应模型
+    switch (floor) {
+      case '-1': 
+        setModelVisibility(`glb/groundFloorOfficeBuilding.glb`, false)
+        setModelVisibility(`glb/shu.glb`, false)
+        setModelVisibility(`glb/underGround.glb`, true)
+        setModelVisibility(`glb/8th_floor.glb`, false)
+        setModelVisibility(`glb/9th_floor.glb`, false)
+        break
+      case '-1_1':
+        setModelVisibility(`glb/groundFloorOfficeBuilding.glb`, false)
+        setModelVisibility(`glb/shu.glb`, false)
+        setModelVisibility(`glb/underGround.glb`, true)
+        setModelVisibility(`glb/8th_floor.glb`, false)
+        setModelVisibility(`glb/9th_floor.glb`, false)
+        break
+      case '-1_2':
+        setModelVisibility(`glb/underGround.glb`, true)
+        break
+      case '8':
+        setModelVisibility(`glb/shu.glb`, false)
+        setModelVisibility(`glb/groundFloorOfficeBuilding.glb`, false)
+        setModelVisibility(`glb/underGround.glb`, false)
+        setModelVisibility(`glb/8th_floor.glb`, true)
+        setModelVisibility(`glb/9th_floor.glb`, false)
+        break
+      case '9':
+        setModelVisibility(`glb/shu.glb`, false)
+        setModelVisibility(`glb/groundFloorOfficeBuilding.glb`, false)
+        setModelVisibility(`glb/underGround.glb`, false)
+        setModelVisibility(`glb/8th_floor.glb`, false)
+        setModelVisibility(`glb/9th_floor.glb`, true)
+        break
+    }
+  }
+
   return {
     isLoading,
     loadingText,
@@ -400,6 +485,9 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
     getModelPosition,
     cameraFollowModel,
     removeModel,
-    hasObjectByName
+    hasObjectByName,
+    setModelVisibility,
+    setModelsVisibility,
+    updateModelVisibilityByFloor
   }
 }

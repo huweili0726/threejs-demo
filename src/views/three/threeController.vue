@@ -126,13 +126,14 @@ const emit = defineEmits<{
   (e: 'goToTargetRoom', targetRoom: string): void
   (e: 'showPipelines'): void
   (e: 'recoveryPipelines'): void
+  (e: 'toUpdateModelVisibilityByFloor', floor: string): void
 }>()
 
 // 切换楼层
 const toFloor = (floor: string) => {
   // 存储当前楼层到Pinia
   basisStore.setCurrentFloor(floor)
-  
+
   // 切换模型
   if (floor === '0') {
     const floor1Config = basisStore.floor1Config
@@ -192,6 +193,8 @@ const toFloor = (floor: string) => {
     const onLookAt = floor8Config?.characterModelToLook // 人物模型看向-1楼1层入口处  
     emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   }
+
+  emit('toUpdateModelVisibilityByFloor', floor)
 }
 
 // 快速导航到指定房间

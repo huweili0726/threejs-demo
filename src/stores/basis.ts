@@ -43,12 +43,20 @@ interface CollisionDetectionConfig {
   showBoundingBoxes: boolean
 }
 
+// 模型配置接口
+interface ModelConfig {
+  url: string
+  initialVisible: boolean
+}
+
 // 基础配置接口
 interface BasisConfig {
   // 天空盒
   skybox?: string
-  // 需要加载的模型集合
+  // 需要加载的模型集合（旧格式，保留以兼容）
   modelUrls?: string[]
+  // 需要加载的模型集合（新格式，包含可见性配置）
+  modelConfigs?: ModelConfig[]
   characterModelUrls: Record<string, string>
   // 人物模型移动配置
   characterModelMove?: {
@@ -102,6 +110,7 @@ export const useBasisStore = defineStore('basis', () => {
   // Getters
   const characterModelUrlsConfig = computed(() => basisConfig.value?.characterModelUrls)
   const modelUrlsConfig = computed(() => basisConfig.value?.modelUrls)
+  const modelConfigs = computed(() => basisConfig.value?.modelConfigs)
   const skyboxUrlConfig = computed(() => basisConfig.value?.skybox)
   const characterModelMoveConfig = computed(() => basisConfig.value?.characterModelMove)
   const floor1Config = computed(() => basisConfig.value?.floor_1th)
@@ -227,6 +236,7 @@ export const useBasisStore = defineStore('basis', () => {
     // Getters
     characterModelUrlsConfig,
     modelUrlsConfig,
+    modelConfigs,
     skyboxUrlConfig,
     characterModelMoveConfig,
     floor1Config,

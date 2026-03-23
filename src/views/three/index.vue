@@ -4,6 +4,7 @@
     <ThreeController 
       @toBottomfloorAndLoadcharacterModel="handleToBottomfloorAndLoadcharacterModel" 
       @toTheSurface="handleToTheSurface" 
+      @toUpdateModelVisibilityByFloor="handleToUpdateModelVisibilityByFloor"
       @pauseAutoRoam="handlePauseAutoRoam" 
       @continueAutoRoam="handleContinueAutoRoam"
       @startAutoRoam="handleStartAutoRoam" 
@@ -50,6 +51,11 @@ const handleToBottomfloorAndLoadcharacterModel = async (
   await threeJsRef.value?.switchToFloor(targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   // 为人物模型添加碰撞检测包围盒
   threeJsRef.value?.toAddCharacterBoundingBox()
+}
+
+// 更新模型可见性
+const handleToUpdateModelVisibilityByFloor = (floor: string) => {
+  threeJsRef.value?.updateModelVisibilityByFloor(floor)
 }
 
 // 开始自动漫游
