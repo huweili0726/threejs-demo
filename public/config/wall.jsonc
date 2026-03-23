@@ -165,7 +165,7 @@
     { "name": "Cube2411" },
     { "name": "Cube2409", "thickness": 0.005 },
     { "name": "Cube2405", "thickness": 0.005 },
-    // { "name": "Cube015_1", "thickness": 0.005 }, // 
+    { "name": "Cube1924_1" }, 
     { "name": "Cube1928_1", "thickness": 0.005 },
     { "name": "Cube2412", "thickness": 0.005 },
     { "name": "Cube1961_1", "thickness": 0.005 },
@@ -180,6 +180,15 @@
     { "name": "Cube2086", "thickness": 0.005 },
     { "name": "Cube2537_1", "thickness": 0.005 },
     { "name": "Cube1922_1", "thickness": 0.005 },
+    { "name": "Cube1929_1" },
+    { "name": "Cube2355" },
+    { "name": "Cube1242" },
+    { "name": "Cube842" },
+    { "name": "Cube1240" },
+    { "name": "Cube1891" },
+    { "name": "Cube421" },
+    { "name": "Cube1475" },
+    { "name": "Cube2336" },
 
     // 左手边的走廊
     { "name": "Cube2447", "thickness": 0.005 },
