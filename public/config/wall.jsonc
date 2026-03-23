@@ -726,6 +726,23 @@
     { "name": "Cube1669" },
     
 
+    // 排风室旁边的屋子
+    { "name": "Cube925" },
+    { "name": "Cube925" },
+    { "name": "Cube1159" },
+    { "name": "防烟阀005" },
+
+    // 信息综合处理室
+    { "name": "Cube817" },
+    { "name": "Cube1174" },
+    { "name": "立方体002" },
+    { "name": "Cube1323_1" },
+    { "name": "Cube2163" },
+    { "name": "Cube2164" },
+    { "name": "Cube318" },
+    { "name": "Cube317" },
+    { "name": "Cube2172" },
+
 
 
 
