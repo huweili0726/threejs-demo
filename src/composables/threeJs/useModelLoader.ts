@@ -441,24 +441,17 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
     if (!groundFloorOfficeBuildingGlb || !shuGlb || !underGroundGlb || !eightFloorGlb || !nineFloorGlb) {
       return
     }
-
-    // 默认只显示外部模型
-    setModelVisibility(groundFloorOfficeBuildingGlb, true)
-    setModelVisibility(shuGlb, true)
-    setModelVisibility(underGroundGlb, false)
-    setModelVisibility(eightFloorGlb, false)
-    setModelVisibility(nineFloorGlb, false)
     
     // 根据楼层显示对应模型
     switch (floor) {
-      case '-1': 
-        setModelVisibility(groundFloorOfficeBuildingGlb, false)
-        setModelVisibility(shuGlb, false)
-        setModelVisibility(underGroundGlb, true)
+      case '0': 
+        setModelVisibility(groundFloorOfficeBuildingGlb, true)
+        setModelVisibility(shuGlb, true)
+        setModelVisibility(underGroundGlb, false)
         setModelVisibility(eightFloorGlb, false)
         setModelVisibility(nineFloorGlb, false)
         break
-      case '-1_1':
+      case '-1': 
         setModelVisibility(groundFloorOfficeBuildingGlb, false)
         setModelVisibility(shuGlb, false)
         setModelVisibility(underGroundGlb, true)
