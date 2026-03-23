@@ -25,15 +25,16 @@
     // { "name": "Circle021", "isStairs": true },
     // { "name": "Circle024", "isStairs": true },
 
+    // 1-4号门 向后转的区域
+    { "name": "Cube709" },
+    { "name": "Cube710" },
+    { "name": "Cube1518_1" },
+
     // 1-4号门
     { "name": "Cube2788", "width": 0.18, "height": 0.22, "depth": 0.005 },
     { "name": "Cube2789", "width": 0.18, "height": 0.22, "depth": 0.005 },
     { "name": "Cube2790", "width": 0.18, "height": 0.22, "depth": 0.005 },
     { "name": "Cube2791", "width": 0.18, "height": 0.22, "depth": 0.005 },
-    // { "name": "Cube099_1", "width": 0.18, "height": 0.22, "depth": 0.001 },
-    // { "name": "Cube1536_1", "width": 0.18, "height": 0.22, "depth": 0.001 },
-    // { "name": "Cube1531_1", "width": 0.18, "height": 0.22, "depth": 0.001 },
-    // { "name": "Cube1541_1", "width": 0.18, "height": 0.22, "depth": 0.001 },  
 
     // 1-4号门左右两边的墙
     { "name": "Cube1568", "thickness": 0.005 },
@@ -82,6 +83,16 @@
     { "name": "Cube059_1", "thickness": 0.005 },
     { "name": "Cube014_1", "thickness": 0.005 },
     { "name": "Cube005_1", "thickness": 0.005 },
+    { "name": "Cube1151" },
+    { "name": "Cube2312_1" },
+    { "name": "Cube890" },
+    { "name": "Cube891" },
+    { "name": "Cube022" },
+    { "name": "Cube888" },
+    { "name": "Cube1153" },
+    { "name": "Cube889" },
+    { "name": "Cube023" },
+    
     // 里面的桌子
     { "name": "Cube034" },
     { "name": "Cube026" },
