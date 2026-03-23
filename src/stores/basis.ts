@@ -45,6 +45,7 @@ interface CollisionDetectionConfig {
 
 // 模型配置接口
 interface ModelConfig {
+  id: string
   url: string
   initialVisible: boolean
 }

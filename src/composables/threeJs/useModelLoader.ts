@@ -431,45 +431,53 @@ export function useModelLoader(scene: ShallowRef<THREE.Scene>, render?: () => vo
    * @param floor 楼层名称
    */
   const updateModelVisibilityByFloor = (floor: string) => {  
+    const modelConfigs = basisStore.modelConfigs || []
+    let groundFloorOfficeBuildingGlb = modelConfigs.find(config => config.id === 'groundFloorOfficeBuilding')?.url;
+    let shuGlb = modelConfigs.find(config => config.id === 'shu')?.url;
+    let underGroundGlb = modelConfigs.find(config => config.id === 'underGround')?.url;
+    let eightFloorGlb = modelConfigs.find(config => config.id === '8th_floor')?.url;
+    let nineFloorGlb = modelConfigs.find(config => config.id === '9th_floor')?.url;
+
+    if (!groundFloorOfficeBuildingGlb || !shuGlb || !underGroundGlb || !eightFloorGlb || !nineFloorGlb) {
+      return
+    }
+
     // 默认只显示外部模型
-    setModelVisibility(`glb/groundFloorOfficeBuilding.glb`, true)
-    setModelVisibility(`glb/shu.glb`, true)
-    setModelVisibility(`glb/underGround.glb`, false)
-    setModelVisibility(`glb/8th_floor.glb`, false)
-    setModelVisibility(`glb/9th_floor.glb`, false)
+    setModelVisibility(groundFloorOfficeBuildingGlb, true)
+    setModelVisibility(shuGlb, true)
+    setModelVisibility(underGroundGlb, false)
+    setModelVisibility(eightFloorGlb, false)
+    setModelVisibility(nineFloorGlb, false)
     
     // 根据楼层显示对应模型
     switch (floor) {
       case '-1': 
-        setModelVisibility(`glb/groundFloorOfficeBuilding.glb`, false)
-        setModelVisibility(`glb/shu.glb`, false)
-        setModelVisibility(`glb/underGround.glb`, true)
-        setModelVisibility(`glb/8th_floor.glb`, false)
-        setModelVisibility(`glb/9th_floor.glb`, false)
+        setModelVisibility(groundFloorOfficeBuildingGlb, false)
+        setModelVisibility(shuGlb, false)
+        setModelVisibility(underGroundGlb, true)
+        setModelVisibility(eightFloorGlb, false)
+        setModelVisibility(nineFloorGlb, false)
         break
       case '-1_1':
-        setModelVisibility(`glb/groundFloorOfficeBuilding.glb`, false)
-        setModelVisibility(`glb/shu.glb`, false)
-        setModelVisibility(`glb/underGround.glb`, true)
-        setModelVisibility(`glb/8th_floor.glb`, false)
-        setModelVisibility(`glb/9th_floor.glb`, false)
-        break
-      case '-1_2':
-        setModelVisibility(`glb/underGround.glb`, true)
+        setModelVisibility(groundFloorOfficeBuildingGlb, false)
+        setModelVisibility(shuGlb, false)
+        setModelVisibility(underGroundGlb, true)
+        setModelVisibility(eightFloorGlb, false)
+        setModelVisibility(nineFloorGlb, false)
         break
       case '8':
-        setModelVisibility(`glb/shu.glb`, false)
-        setModelVisibility(`glb/groundFloorOfficeBuilding.glb`, false)
-        setModelVisibility(`glb/underGround.glb`, false)
-        setModelVisibility(`glb/8th_floor.glb`, true)
-        setModelVisibility(`glb/9th_floor.glb`, false)
+        setModelVisibility(shuGlb, false)
+        setModelVisibility(groundFloorOfficeBuildingGlb, false)
+        setModelVisibility(underGroundGlb, false)
+        setModelVisibility(eightFloorGlb, true)
+        setModelVisibility(nineFloorGlb, false)
         break
       case '9':
-        setModelVisibility(`glb/shu.glb`, false)
-        setModelVisibility(`glb/groundFloorOfficeBuilding.glb`, false)
-        setModelVisibility(`glb/underGround.glb`, false)
-        setModelVisibility(`glb/8th_floor.glb`, false)
-        setModelVisibility(`glb/9th_floor.glb`, true)
+        setModelVisibility(shuGlb, false)
+        setModelVisibility(groundFloorOfficeBuildingGlb, false)
+        setModelVisibility(underGroundGlb, false)
+        setModelVisibility(eightFloorGlb, false)
+        setModelVisibility(nineFloorGlb, true)
         break
     }
   }

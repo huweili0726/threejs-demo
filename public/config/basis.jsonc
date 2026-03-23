@@ -30,11 +30,11 @@
   "skybox": "hdr/sky.hdr",
   // 需要加载的模型集合
   "modelConfigs": [
-    { "url": "glb/groundFloorOfficeBuilding.glb", "initialVisible": true },
-    { "url": "glb/underGround.glb", "initialVisible": false },
-    { "url": "glb/shu.glb", "initialVisible": true },
-    { "url": "glb/8th_floor.glb", "initialVisible": false },
-    { "url": "glb/9th_floor.glb", "initialVisible": false }
+    { "id": "groundFloorOfficeBuilding", "url": "glb/groundFloorOfficeBuilding.glb", "initialVisible": true },
+    { "id": "underGround", "url": "glb/underGround.glb", "initialVisible": false },
+    { "id": "shu", "url": "glb/shu.glb", "initialVisible": true },
+    { "id": "8th_floor", "url": "glb/8th_floor.glb", "initialVisible": false },
+    { "id": "9th_floor", "url": "glb/9th_floor.glb", "initialVisible": false }
   ],
   // 人物模型URL集合
   "characterModelUrls": {
