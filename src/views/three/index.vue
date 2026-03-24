@@ -4,8 +4,7 @@
     <ThreeController />
 
     <!-- 渲染场景 -->
-    <ThreeJs 
-      ref="threeJsRef" />
+    <ThreeJs ref="threeJsRef" />
   </div>
 </template>
 
