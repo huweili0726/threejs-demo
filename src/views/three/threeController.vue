@@ -125,8 +125,6 @@ const emit = defineEmits<{
   (e: 'startAutoRoam'): void
   (e: 'stopAutoRoam'): void
   (e: 'goToTargetRoom', targetRoom: string): void
-  (e: 'showPipelines'): void
-  (e: 'recoveryPipelines'): void
   (e: 'toUpdateModelVisibilityByFloor', floor: string): void
 }>()
 
@@ -230,17 +228,13 @@ const toStop = () => {
   emit('stopAutoRoam')
 }
 
-// 显示空调送风005模型
+// 显示管路模型
 const showPipelines = () => {
-  // emit('showPipelines')
-
   threeJsStore.handleShowPipelines()
 }
 
-// 隐藏空调送风005模型
+// 恢复最初状态
 const recoveryPipelines = () => {
-  // emit('recoveryPipelines')
-
   threeJsStore.handleRecoveryPipelines()
 }
 

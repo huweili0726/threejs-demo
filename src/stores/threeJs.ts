@@ -92,6 +92,9 @@ export const useThreeJsStore = defineStore('threeJs', () => {
 
   // 恢复突出显示管路
   const handleRecoveryPipelines = () => {
+    // 更新模型可见性
+    if (updateModelVisibilityByFloorCallback.value) updateModelVisibilityByFloorCallback.value('0')
+
     if (recoveryPipelinesCallback.value) recoveryPipelinesCallback.value()
     if (showBuildNamesCallback.value) showBuildNamesCallback.value() // 显示建筑名称
 

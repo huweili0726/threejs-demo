@@ -208,12 +208,10 @@ onMounted(async () => {
   // 3. 初始化交互功能 【键盘 wasd 控制人物移动 + 双击选中功能 + 双击弹窗功能】
   initInteractions()
 
-
-
-  // 5. 加载模型和碰撞包围盒
+  // 4. 加载模型和碰撞包围盒
   await loadSceneModels()
 
-    // 4. 注册楼层切换回调到 Store
+  // 5. 注册需要的函数回调到 Store
   threeJsStore.registerCallbacks(
     switchToFloor,
     toAddCharacterBoundingBox,

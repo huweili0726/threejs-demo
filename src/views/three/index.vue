@@ -8,9 +8,7 @@
       @continueAutoRoam="handleContinueAutoRoam"
       @startAutoRoam="handleStartAutoRoam" 
       @stopAutoRoam="handleStopAutoRoam"
-      @goToTargetRoom="handleToTargetRoom" 
-      @showPipelines="handleShowPipelines"
-      @recoveryPipelines="handleRecoveryPipelines" />
+      @goToTargetRoom="handleToTargetRoom" />
 
     <!-- 渲染场景 -->
     <ThreeJs 
@@ -69,36 +67,6 @@ const handleStopAutoRoam = () => {
 // 快速导航到指定房间
 const handleToTargetRoom = async (targetRoom: string) => {
   await threeJsRef.value?.toRoom?.(targetRoom)
-}
-
-// 突出显示管路
-const handleShowPipelines = () => {
-  threeJsRef.value?.showPipelines()
-  threeJsRef.value?.hideBuildNames() // 隐藏建筑名称
-
-  // 飞行到管路位置
-  const LineConfigFromBasis = basisStore.lineConfigFromBasis
-  const perspective = LineConfigFromBasis?.perspective || { x: 0, y: 0, z: 0 }
-  const directionToLook = LineConfigFromBasis?.directionToLook || { x: 0, y: 0, z: 0 }
-  const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
-  const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
-  const durationTime = LineConfigFromBasis?.durationTime || 2000
-  threeJsRef.value?.flyTo(targetPosition, targetTarget, durationTime)
-}
-
-// 恢复突出显示管路
-const handleRecoveryPipelines = () => {
-  threeJsRef.value?.recoveryPipelines()
-  threeJsRef.value?.showBuildNames() // 显示建筑名称
-
-  // 飞行到大楼初始位置
-  const floor1Config = basisStore.floor1Config
-  const perspective = floor1Config?.perspective || { x: 0, y: 0, z: 0 }
-  const directionToLook = floor1Config?.directionToLook || { x: 0, y: 0, z: 0 }
-  const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
-  const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
-  const durationTime = floor1Config?.durationTime || 2000
-  threeJsRef.value?.flyTo(targetPosition, targetTarget, durationTime)
 }
 
 </script>
