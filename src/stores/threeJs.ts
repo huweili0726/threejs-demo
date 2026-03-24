@@ -93,7 +93,10 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     if (toAddCharacterBoundingBoxCallback.value) toAddCharacterBoundingBoxCallback.value()
   }
 
-  // 切换楼层 + 更新模型可见性
+  /**
+   * 切换楼层 + 更新模型可见性
+   * @param floor 目标楼层
+   */
   const toFloor = (floor: string) => {
     // 存储当前楼层到Pinia
     basisStore.setCurrentFloor(floor)
@@ -178,7 +181,9 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     if (updateModelVisibilityByFloorCallback.value) updateModelVisibilityByFloorCallback.value(floor)
   }
 
-  // 突出显示管路
+  /**
+   * 突出显示管路
+   */
   const handleShowPipelines = () => {
     // 更新模型可见性
     if (updateModelVisibilityByFloorCallback.value) updateModelVisibilityByFloorCallback.value('-1')
@@ -196,7 +201,9 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     if (flyToCallback.value) flyToCallback.value(targetPosition, targetTarget, durationTime)
   }
 
-  // 恢复突出显示管路
+  /**
+   * 恢复突出显示管路
+   */
   const handleRecoveryPipelines = () => {
     // 更新模型可见性
     if (updateModelVisibilityByFloorCallback.value) updateModelVisibilityByFloorCallback.value('0')
@@ -214,28 +221,39 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     if (flyToCallback.value) flyToCallback.value(targetPosition, targetTarget, durationTime)
   }
 
-  // 开始漫游
+  /**
+   * 开始漫游
+   */
   const handleStartAutoRoam = () => {
     if (loadCharacterModelAndStartRoamCallback.value) loadCharacterModelAndStartRoamCallback.value()
     if (startAutoRoamCallback.value) startAutoRoamCallback.value()
   }
 
-  // 暂停漫游
+  /**
+   * 暂停漫游
+   */
   const handlePauseAutoRoam = () => {
     if (pauseAutoRoamCallback.value) pauseAutoRoamCallback.value()
   }
 
-  // 继续漫游
+  /**
+   * 继续漫游
+   */
   const handleResumeAutoRoam = () => {
     if (resumeAutoRoamCallback.value) resumeAutoRoamCallback.value()
   }
 
-  // 停止漫游
+  /**
+   * 停止漫游
+   */
   const handleStopAutoRoam = () => {
     if (stopAutoRoamCallback.value) stopAutoRoamCallback.value()
   }
 
-  // 快速导航到指定房间
+  /**
+   * 快速导航到指定房间
+   * @param targetRoom 目标房间的UUID
+   */
   const toTargetRoom = (targetRoom: string) => {
     if (toRoomCallback.value) toRoomCallback.value(targetRoom)
   }

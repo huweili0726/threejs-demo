@@ -106,10 +106,19 @@ npm run preview
 - **双击物体弹窗**：双击配置文件中指定的物体，弹出详细信息弹窗
 - **多弹窗并存**：支持同时打开多个弹窗，可单独关闭
 - **弹窗跟随**：弹窗随物体移动和缩放，保持相对位置不变
+- **楼层切换**：支持多楼层场景切换，自动显示/隐藏对应楼层的模型
+- **接近弹窗**：人物接近特定物体时自动弹出提示信息
+- **自动漫游**：支持人物按照预设路径自动漫游
+- **快速导航**：支持快速导航到指定房间，导航完成后自动恢复 WASD 控制
+- **模型显示控制**：支持显示/隐藏特定类型的模型（如管路图、建筑名称标签等）
+- **状态管理**：使用 Pinia 管理应用状态，支持楼层、漫游等状态的持久化
 
 ## 配置文件
 
-项目使用 `public/config/threeDimensionalDev.jsonc` 配置文件管理物体的标签和弹窗信息：
+项目使用多个配置文件管理不同的功能模块：
+
+### 三维设备配置 (`public/config/threeDimensionalDev.jsonc`)
+管理物体的标签和弹窗信息：
 
 ```json
 {
@@ -137,6 +146,74 @@ npm run preview
 - **popInfo**：弹窗信息
   - **title**：弹窗标题
   - **content**：弹窗内容数组，每项包含 name 和 value
+
+### 快速导航配置 (`public/config/quickNavigation.jsonc`)
+管理快速导航到指定房间的路径：
+
+```json
+{
+  "room1": {
+    "points": [
+      {
+        "position": {"x": 0, "y": 0, "z": 0},
+        "rotation": {"y": "0"},
+        "duration": 2000,
+        "stayTime": 1000,
+        "sta": "入口"
+      }
+    ]
+  }
+}
+```
+
+配置字段说明：
+- **room1**：房间名称（键名）
+- **points**：漫游路径点数组
+  - **position**：目标位置坐标
+  - **rotation**：目标旋转角度
+  - **duration**：移动到该点所需时间（毫秒）
+  - **stayTime**：在该点停留时间（毫秒）
+  - **sta**：位置描述
+
+### 漫游路径配置 (`public/config/roamingPathPoint.jsonc`)
+管理自动漫游的路径点：
+
+```json
+{
+  "allRoom": {
+    "points": [
+      {
+        "position": {"x": 0, "y": 0, "z": 0},
+        "rotation": {"y": "0"},
+        "duration": 2000,
+        "stayTime": 1000,
+        "sta": "起点"
+      }
+    ]
+  }
+}
+```
+
+配置字段说明：
+- **allRoom**：漫游路径名称
+- **points**：漫游路径点数组（字段说明同快速导航配置）
+
+### 管路配置 (`public/config/line.jsonc`)
+管理管路图的显示控制：
+
+```json
+{
+  "pipelines": [
+    {"name": "空调送风007", "visible": true},
+    {"name": "空调送风008", "visible": true}
+  ]
+}
+```
+
+配置字段说明：
+- **pipelines**：管路数组
+  - **name**：管路名称
+  - **visible**：是否可见
 
 ## 开发说明
 
@@ -193,12 +270,51 @@ npm run preview
 - **主要方法**：
   - `initKeyboardEvents`：初始化键盘事件监听，返回清理函数
   - `updateCharacterMovement`：更新人物移动和旋转状态
+- **特性**：支持 WASD/方向键控制，自动漫游时自动禁用键盘控制
+
+### useAutoRoam
+- **功能**：自动漫游控制、路径点管理、漫游状态管理
+- **主要方法**：
+  - `initAutoRoam`：初始化自动漫游
+  - `startAutoRoam`：开始自动漫游
+  - `pauseAutoRoam`：暂停自动漫游
+  - `resumeAutoRoam`：继续自动漫游
+  - `stopAutoRoam`：停止自动漫游
+  - `updateAutoRoam`：更新自动漫游状态
+- **状态**：
+  - `roamState`：漫游状态（stopped/moving/staying/paused）
+  - `currentPointIndex`：当前漫游点索引
+- **特性**：支持自定义路径点、停留时间、平滑插值、Esc 键退出
+
+### useFloorSwitch
+- **功能**：楼层切换、模型显示/隐藏控制
+- **主要方法**：
+  - `switchToFloor`：切换到指定楼层
+  - `toControlCommandRoom`：切换到控制室
+- **特性**：支持多楼层场景，自动显示/隐藏对应楼层的模型
+
+### useProximityPopup
+- **功能**：接近弹窗、距离检测、自动显示/隐藏
+- **主要方法**：
+  - `updateProximityPopups`：更新接近弹窗状态
+- **特性**：人物接近特定物体时自动弹出提示信息，离开时自动关闭
+
+### useModelVisibility
+- **功能**：模型显示控制、管路图显示、建筑名称标签显示
+- **主要方法**：
+  - `showPipelines`：显示管路图，隐藏其他模型
+  - `recoveryPipelines`：恢复所有模型显示
+  - `hideBuildNames`：隐藏建筑名称标签
+  - `showBuildNames`：显示建筑名称标签
+- **特性**：支持按类型显示/隐藏模型，保存原始显示状态
 
 ### useObjectSelection
 - **功能**：3D物体选中、双击检测、高亮显示
 - **主要方法**：
   - `initDoubleClickSelection`：初始化双击事件监听，返回清理函数
   - `clearSelection`：清除当前选中状态
+  - `initHoverEvent`：初始化鼠标悬停事件，支持鼠标指针变化
+  - `createBuildName`：创建建筑名称标签
 - **特性**：支持最细粒度子物体选中，可配置高亮开关，自动返回物体完整信息
 
 ### useCollisionDetection
@@ -243,6 +359,155 @@ npm run preview
 - 自动清理键盘事件监听器，防止内存泄漏
 - 集成 `useCollisionDetection` 进行碰撞检测，防止人物穿墙
 - 实时更新包围盒位置，确保碰撞检测的准确性
+
+## 自动漫游
+
+### 功能说明
+支持人物按照预设路径自动漫游，可暂停、继续、停止漫游
+
+### 使用方法
+```typescript
+// 初始化hook
+const { roamState, initAutoRoam, startAutoRoam, pauseAutoRoam, resumeAutoRoam, stopAutoRoam } = useAutoRoam(wallBoundingBoxes, updateProximityPopups)
+
+// 初始化自动漫游
+const model = loadedModelMaps.get(characterModelUrl)
+initAutoRoam(model)
+
+// 开始自动漫游
+startAutoRoam(roamPoints)
+
+// 暂停自动漫游
+pauseAutoRoam()
+
+// 继续自动漫游
+resumeAutoRoam()
+
+// 停止自动漫游
+stopAutoRoam()
+```
+
+### 漫游状态
+- **stopped**：已停止
+- **moving**：正在移动
+- **staying**：正在停留
+- **paused**：已暂停
+
+### 特性
+- 支持自定义路径点
+- 支持在每个点停留指定时间
+- 使用平滑插值实现流畅移动
+- Esc 键可退出自动漫游
+- 自动漫游时禁用 WASD 控制
+
+## 快速导航
+
+### 功能说明
+支持快速导航到指定房间，导航完成后自动恢复 WASD 控制
+
+### 使用方法
+```typescript
+// 快速导航到指定房间
+const toRoom = async (roomName: string) => {
+  const quickNavConfig = basisStore.quickNavigation || {}
+  const roamPoints = quickNavConfig[roomName]?.points || []
+  
+  if (roamPoints.length > 0) {
+    const model = loadedModelMaps.get(characterModelUrl)
+    if (model) {
+      initAutoRoam(model)
+      startAutoRoam(roamPoints)
+      
+      // 导航完成后自动停止，允许WASD控制
+      setTimeout(() => {
+        stopAutoRoam()
+        console.log("快速导航完成，现在可以使用WASD控制人物移动")
+      }, 3000)
+    }
+  }
+}
+```
+
+### 特性
+- 支持配置多个房间的导航路径
+- 自动完成导航后恢复 WASD 控制
+- 导航过程中禁用 WASD 控制
+- 支持自定义导航路径和停留时间
+
+## 楼层切换
+
+### 功能说明
+支持多楼层场景切换，自动显示/隐藏对应楼层的模型
+
+### 使用方法
+```typescript
+// 初始化hook
+const { switchToFloor } = useFloorSwitch(flyTo, loadModel, removeModel)
+
+// 切换到指定楼层
+switchToFloor('1') // 切换到1楼
+```
+
+### 特性
+- 支持多楼层场景
+- 自动显示/隐藏对应楼层的模型
+- 支持楼层切换时的相机飞行动画
+- 使用 Pinia 管理楼层状态
+
+## 模型显示控制
+
+### 功能说明
+支持显示/隐藏特定类型的模型，如管路图、建筑名称标签等
+
+### 使用方法
+```typescript
+// 初始化hook
+const { showPipelines, recoveryPipelines, hideBuildNames, showBuildNames } = useModelVisibility()
+
+// 显示管路图，隐藏其他模型
+showPipelines()
+
+// 恢复所有模型显示
+recoveryPipelines()
+
+// 隐藏建筑名称标签
+hideBuildNames()
+
+// 显示建筑名称标签
+showBuildNames()
+```
+
+### 特性
+- 支持按类型显示/隐藏模型
+- 保存原始显示状态，可恢复
+- 支持管路图、建筑名称标签等多种类型
+
+## 接近弹窗
+
+### 功能说明
+人物接近特定物体时自动弹出提示信息，离开时自动关闭
+
+### 使用方法
+```typescript
+// 初始化hook
+const { updateProximityPopups } = useProximityPopup(showPopup, closePopup, toControlCommandRoom)
+
+// 在动画循环中更新接近弹窗
+setAnimationUpdateCallback(() => {
+  updateProximityPopups({
+    model: characterModel,
+    wallBoundingBoxes: wallBoundingBoxes.value,
+    onlyShowUpDownStairsPopup: false
+  })
+})
+```
+
+### 特性
+- 自动检测人物与物体的距离
+- 接近时自动显示弹窗
+- 离开时自动关闭弹窗
+- 支持配置触发距离
+- 支持只显示特定类型的弹窗（如上下楼梯提示）
 
 ## 双击物体选中
 
