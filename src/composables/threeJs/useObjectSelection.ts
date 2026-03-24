@@ -10,7 +10,6 @@
 import * as THREE from 'three'
 import { ref, ShallowRef } from 'vue'
 import { useRaycastUtils } from '@/composables/threeJs/useRaycastUtils'
-import { CSS2DObject } from 'three-stdlib'
 import { useBasisStore } from '@/stores/basis'
 
 // 初始化工具函数
@@ -74,12 +73,6 @@ export function useObjectSelection(
           let intersectedObject = filteredIntersects[0].object
           let targetObject: THREE.Object3D | null = intersectedObject
           console.log('🎯 选中子物体：', intersectedObject.name, '类型：', intersectedObject.type)
-
-          // 处理精灵模型点击
-          if (targetObject instanceof THREE.Sprite && targetObject.userData.id) {
-            // toControlStartInspection(targetObject.userData.id)
-            return
-          }
 
           if (targetObject && targetObject instanceof THREE.Mesh) {
             // 判断：如果点击的是已经高亮的模型，则取消高亮
@@ -262,50 +255,6 @@ export function useObjectSelection(
       position: new THREE.Vector3(x, y, z)
     })
   }
-  // 将 toControlStartInspection 函数添加到全局作用域
-  if (typeof window !== 'undefined') {
-    (window as any).toControlStartInspection = (id: number) => {
-      // 9楼
-      if (id === 4) {
-        const floor9Config = basisStore.floor9thConfig
-        const perspective = floor9Config?.perspective || { x: 0, y: 0, z: 0 }
-        const directionToLook = floor9Config?.directionToLook || { x: 0, y: 0, z: 0 }
-        const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
-        const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
-        const duration = floor9Config?.durationTime || 2000 // 飞行时间
-        const modelInitPosition = floor9Config?.characterModelSetPosition // 人物模型初始位置
-        const onLookAt = floor9Config?.characterModelToLook // 人物模型看向-1楼1层入口处
-
-        switchToFloor(targetPosition, targetTarget, duration, modelInitPosition as THREE.Vector3, onLookAt as THREE.Vector3)
-      }
-      // 8楼
-      else if (id === 3) {
-        const floor8Config = basisStore.floor8thConfig
-        const perspective = floor8Config?.perspective || { x: 0, y: 0, z: 0 }
-        const directionToLook = floor8Config?.directionToLook || { x: 0, y: 0, z: 0 }
-        const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
-        const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
-        const duration = floor8Config?.durationTime || 2000 // 飞行时间
-        const modelInitPosition = floor8Config?.characterModelSetPosition // 人物模型初始位置
-        const onLookAt = floor8Config?.characterModelToLook // 人物模型看向-1楼1层入口处
-
-        switchToFloor(targetPosition, targetTarget, duration, modelInitPosition as THREE.Vector3, onLookAt as THREE.Vector3)
-      }
-      // -1楼
-      else if (id === 2) {
-        const neg1FloorConfig = basisStore.neg1FloorConfig
-        const perspective = neg1FloorConfig?.perspective || { x: 0, y: 0, z: 0 }
-        const directionToLook = neg1FloorConfig?.directionToLook || { x: 0, y: 0, z: 0 }
-        const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
-        const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
-        const duration = neg1FloorConfig?.durationTime || 2000 // 飞行时间
-        const modelInitPosition = neg1FloorConfig?.characterModelSetPosition // 人物模型初始位置
-        const onLookAt = neg1FloorConfig?.characterModelToLook // 人物模型看向-1楼入口处
-
-        switchToFloor(targetPosition, targetTarget, duration, modelInitPosition as THREE.Vector3, onLookAt as THREE.Vector3)
-      }
-    };
-  }
 
   /**
    * 显示所有楼名标签
@@ -329,12 +278,63 @@ export function useObjectSelection(
     })
   }
 
+  /**
+   * 初始化鼠标悬停事件，实现鼠标移动到精灵上时变成小手
+   */
+  const initHoverEvent = (
+    options: {
+      onMouseEnter?: (object: THREE.Object3D | null) => void,
+      onMouseLeave?: (object: THREE.Object3D | null) => void
+    }
+  ) => {
+    const { onMouseEnter, onMouseLeave } = options
+
+    // 鼠标移动事件处理函数
+    const handleMouseMove = (event: MouseEvent) => {
+      // 校验依赖项：确保scene、camera已初始化
+      if (!camera.value || !scene.value) return
+
+      // 使用工具函数进行射线检测
+      const intersects = performRaycast(camera, scene, container, event)
+
+      if (intersects && intersects.length > 0) {
+        // 使用工具函数过滤射线检测结果（默认过滤 BoxHelper、Box3Helper 和 CSS2DObject）
+        const filteredIntersects = filterIntersects(intersects)
+        if (filteredIntersects.length > 0) {
+          // 获取第一个交点的物体（最接近相机的最细分子物体）
+          let intersectedObject = filteredIntersects[0].object
+          let targetObject: THREE.Object3D | null = intersectedObject
+
+          // 处理精灵模型鼠标悬浮事件
+          if (targetObject instanceof THREE.Sprite) {
+            if (onMouseEnter) {
+              onMouseEnter(targetObject)
+            }
+          }else{
+            if (onMouseLeave) {
+              onMouseLeave(targetObject)
+            }
+          }
+        }
+      }
+    }
+
+    // 监听鼠标移动
+    window.addEventListener('mousemove', handleMouseMove)
+
+    // 返回清理函数
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+    }
+  }
+
   return {
     selectedObject,
     initDoubleClickSelection,
     clearSelection,
     createBuildName,
     showBuildNames,
-    hideBuildNames
+    hideBuildNames,
+    initHoverEvent
   }
 }

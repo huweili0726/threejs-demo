@@ -37,15 +37,17 @@ const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadMod
 const { loadEnvironment } = useEnvironmentLoader(scene as any) // 环境贴图加载相关Hooks
 const { initDoubleClickPopup, showPopup, closePopup, updateCSS2DRenderer, handleResize } = useObjectPopup(camera as any, scene as any, threeJsContainer) // 物体弹窗相关Hooks
 const { switchToFloor, toControlCommandRoom } = useFloorSwitch(flyTo, loadModel as any, removeModel) // 楼层切换相关Hooks 
-const { initDoubleClickSelection, createBuildName, hideBuildNames, showBuildNames } = useObjectSelection(camera as any, scene as any, threeJsContainer, switchToFloor)  // 物体选择相关Hooks
+const { initDoubleClickSelection, createBuildName, hideBuildNames, showBuildNames, initHoverEvent } = useObjectSelection(camera as any, scene as any, threeJsContainer, switchToFloor)  // 物体选择相关Hooks
 const { wallBoundingBoxes, checkCollision, updateBoundingBoxes, setBoundingBoxesFromLoadResult, addCharacterBoundingBox } = useCollisionDetection() // 碰撞检测相关Hooks
 const { updateProximityPopups } = useProximityPopup(showPopup, closePopup, toControlCommandRoom) // 使用接近弹窗模块（统一管理弹窗逻辑）
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes, wallBoundingBoxes, updateProximityPopups) // 人物移动控制相关Hooks
 const { initAutoRoam, startAutoRoam, pauseAutoRoam, resumeAutoRoam, stopAutoRoam, updateAutoRoam } = useAutoRoam(wallBoundingBoxes, updateProximityPopups) // 自动漫游相关Hooks
 const { showPipelines, recoveryPipelines } = useModelVisibility() // 模型显示控制相关Hooks
+import { toControlStartInspection } from '@/utils/threejs'
 
 // 控制变量
 const cameraOffset = new THREE.Vector3(0, 0.1, -0.12) // 相机偏移量（在模型后方，稍微上方）
+let cleanHoverEvent: (() => void) | null = null // 初始化悬停事件的函数
 let cleanupKeyboardEvents: (() => void) | null = null // 清理键盘事件的函数
 let cleanupSelection: (() => void) | null = null // 清理双击选中事件的函数
 let cleanupPopup: (() => void) | null = null // 清理双击弹窗事件的函数
@@ -75,13 +77,28 @@ const initSceneAndEnvironment = () => {
  * 初始化交互功能
  */
 const initInteractions = () => {
+  // 初始化悬停悬停事件(实现鼠标移动到精灵上时变成小手)
+  cleanHoverEvent = initHoverEvent({
+    onMouseEnter: (object) => {
+      if (object) {
+        document.body.style.cursor = 'pointer'
+        // toControlStartInspection(object.userData.id, switchToFloor)
+        // console.log('🎉 悬停了物体：', object.name, object)
+      } 
+    },
+    onMouseLeave: (object) => {
+      if (object) {
+        document.body.style.cursor = 'default'
+      } 
+    }
+  })
   // 键盘 wasd 控制人物移动
   cleanupKeyboardEvents = initKeyboardEvents()
   // 初始化双击选中功能
   cleanupSelection = initDoubleClickSelection({
     onSelect: (object) => {
       if (object) {
-        console.log('🎉 双击选中了物体：', object.name)
+        console.log('🎉 双击选中了物体：', object.name, object)
       } else {
         console.log('🗑️  取消选中')
       }
@@ -241,6 +258,10 @@ const toRoom = async (value: any) => {
 // 组件卸载时清理
 onBeforeUnmount(() => {
   stopAnimationLoop()
+  // 清理悬停事件
+  if (cleanHoverEvent) {
+    cleanHoverEvent()
+  }
   // 清理键盘事件监听
   if (cleanupKeyboardEvents) {
     cleanupKeyboardEvents()
