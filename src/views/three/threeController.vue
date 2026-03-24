@@ -147,8 +147,6 @@ const showPipelines = () => {
 const recoveryPipelines = () => {
   threeJsStore.handleRecoveryPipelines()
 }
-
-
 </script>
 
 <style scoped lang="less">
