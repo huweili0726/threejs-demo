@@ -50,11 +50,12 @@ export function useObjectSelection(
    */
   const initDoubleClickSelection = (
     options: {
-      onSelect?: (object: THREE.Object3D | null) => void
+      onMeshSelect?: (object: THREE.Object3D | null) => void,
+      onSpriteSelect?: (object: THREE.Object3D | null) => void,
       highlightEnabled?: boolean
     }
   ) => {
-    const { onSelect, highlightEnabled = true } = options
+    const { onMeshSelect, onSpriteSelect, highlightEnabled = true } = options
 
     // 双击事件处理函数
     const handleDoubleClick = (event: MouseEvent) => {
@@ -72,7 +73,6 @@ export function useObjectSelection(
           // 获取第一个交点的物体（最接近相机的最细分子物体）
           let intersectedObject = filteredIntersects[0].object
           let targetObject: THREE.Object3D | null = intersectedObject
-          console.log('🎯 选中子物体：', intersectedObject.name, '类型：', intersectedObject.type)
 
           if (targetObject && targetObject instanceof THREE.Mesh) {
             // 判断：如果点击的是已经高亮的模型，则取消高亮
@@ -84,8 +84,8 @@ export function useObjectSelection(
               // 重置高亮状态
               selectedObject.value = null
               originalMaterial.value = null
-              if (onSelect) {
-                onSelect(null)
+              if (onMeshSelect) {
+                onMeshSelect(null)
               }
             } else {
               // 如果有其他高亮模型，先恢复其原始材质
@@ -124,24 +124,18 @@ export function useObjectSelection(
               selectedObject.value = targetObject
 
               // 触发选中回调
-              if (onSelect) {
-                onSelect(targetObject)
+              if (onMeshSelect) {
+                onMeshSelect(targetObject)
               }
-
-              // 打印物体信息
-              console.log('✅ 双击选中模型信息：', targetObject)
-              console.log('模型详细信息：', {
-                name: targetObject.name,
-                uuid: targetObject.uuid,
-                position: worldPos,
-                rotation: targetObject.rotation,
-                scale: targetObject.scale,
-                userData: targetObject.userData,
-                material: targetObject.material.type
-              })
             }
 
             return
+          }
+
+          if (targetObject && targetObject instanceof THREE.Sprite) {
+            if (onSpriteSelect) {
+              onSpriteSelect(targetObject)
+            }
           }
         }
       }
@@ -151,8 +145,11 @@ export function useObjectSelection(
         (selectedObject.value as THREE.Mesh).material = originalMaterial.value
         selectedObject.value = null
         originalMaterial.value = null
-        if (onSelect) {
-          onSelect(null)
+        if (onMeshSelect) {
+          onMeshSelect(null)
+        }
+        if (onSpriteSelect) {
+          onSpriteSelect(null)
         }
       }
     }
@@ -186,9 +183,8 @@ export function useObjectSelection(
    * @param name 楼名
    * @param scene 场景对象
    * @param id 楼ID
-   * @param type 类型（可选）
    */
-  const createBuildName = (x: number, y: number, z: number, name: string, scene: THREE.Scene, id: number, type?: string) => {
+  const createBuildName = (x: number, y: number, z: number, name: string, scene: THREE.Scene, id: string) => {
     // 创建画布来生成精灵纹理
     const canvas = document.createElement('canvas')
     const context = canvas.getContext('2d')

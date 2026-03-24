@@ -246,8 +246,6 @@ export function useObjectPopup(
           // 获取第一个交点的物体
           const intersectedObject = filteredIntersects[0].object
 
-          console.log('🎯 双击选中物体:', intersectedObject.name, '类型:', intersectedObject.type)
-
           // 获取弹窗数据
           if (getPopupData) {
             const popupData = getPopupData(intersectedObject)

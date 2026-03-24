@@ -33,6 +33,8 @@ export function useFloorSwitch(
   ) => {
     const characterModelUrl = basisStore.characterModelUrlsConfig?.man || ''
     
+    debugger
+    
     // 1、先移除人物模型
     removeModel(characterModelUrl)
 

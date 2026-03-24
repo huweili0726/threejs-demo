@@ -57,11 +57,11 @@ export const getBoxCenter = (box: THREE.Box3): THREE.Vector3 => {
  * @param id 楼层ID
  * @param switchToFloor 切换楼层的函数
  */
-export const toControlStartInspection = (id: number, switchToFloor: (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number, modelInitPosition: THREE.Vector3, onLookAt: THREE.Vector3) => void) => {
+export const toControlStartInspection = (id: string, switchToFloor: (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number, modelInitPosition: THREE.Vector3, onLookAt: THREE.Vector3) => void) => {
   const basisStore = useBasisStore()
   
   // 9楼
-  if (id === 4) {
+  if (id === '9') {
     const floor9Config = basisStore.floor9thConfig
     const perspective = floor9Config?.perspective || { x: 0, y: 0, z: 0 }
     const directionToLook = floor9Config?.directionToLook || { x: 0, y: 0, z: 0 }
@@ -74,7 +74,7 @@ export const toControlStartInspection = (id: number, switchToFloor: (targetPosit
     switchToFloor(targetPosition, targetTarget, duration, modelInitPosition as THREE.Vector3, onLookAt as THREE.Vector3)
   }
   // 8楼
-  else if (id === 3) {
+  else if (id === '8') {
     const floor8Config = basisStore.floor8thConfig
     const perspective = floor8Config?.perspective || { x: 0, y: 0, z: 0 }
     const directionToLook = floor8Config?.directionToLook || { x: 0, y: 0, z: 0 }
@@ -87,7 +87,7 @@ export const toControlStartInspection = (id: number, switchToFloor: (targetPosit
     switchToFloor(targetPosition, targetTarget, duration, modelInitPosition as THREE.Vector3, onLookAt as THREE.Vector3)
   }
   // -1楼
-  else if (id === 2) {
+  else if (id === '-1') {
     const neg1FloorConfig = basisStore.neg1FloorConfig
     const perspective = neg1FloorConfig?.perspective || { x: 0, y: 0, z: 0 }
     const directionToLook = neg1FloorConfig?.directionToLook || { x: 0, y: 0, z: 0 }

@@ -43,7 +43,6 @@ const { updateProximityPopups } = useProximityPopup(showPopup, closePopup, toCon
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes, wallBoundingBoxes, updateProximityPopups) // 人物移动控制相关Hooks
 const { initAutoRoam, startAutoRoam, pauseAutoRoam, resumeAutoRoam, stopAutoRoam, updateAutoRoam } = useAutoRoam(wallBoundingBoxes, updateProximityPopups) // 自动漫游相关Hooks
 const { showPipelines, recoveryPipelines } = useModelVisibility() // 模型显示控制相关Hooks
-import { toControlStartInspection } from '@/utils/threejs'
 
 // 控制变量
 const cameraOffset = new THREE.Vector3(0, 0.1, -0.12) // 相机偏移量（在模型后方，稍微上方）
@@ -96,11 +95,28 @@ const initInteractions = () => {
   cleanupKeyboardEvents = initKeyboardEvents()
   // 初始化双击选中功能
   cleanupSelection = initDoubleClickSelection({
-    onSelect: (object) => {
+    onMeshSelect: (object) => {
       if (object) {
-        console.log('🎉 双击选中了物体：', object.name, object)
-      } else {
-        console.log('🗑️  取消选中')
+        // 打印物体信息
+        console.log('🎉 双击选中模型信息：', {
+          name: object.name,
+          uuid: object.uuid,  
+          rotation: object.rotation,
+          userData: object.userData,
+          object
+        })
+      }
+    },
+    onSpriteSelect: (object) => {
+      if (object) {
+        // 打印物体信息
+        console.log('🎉 双击选中精灵信息：', {
+          name: object.name,
+          uuid: object.uuid,  
+          rotation: object.rotation,
+          userData: object.userData,
+          object
+        })
       }
     },
     highlightEnabled: true
@@ -183,9 +199,9 @@ onMounted(async () => {
   // 2. 添加楼名显示
   if (scene.value) {
     // 添加几个楼名显示，根据实际场景坐标调整
-    createBuildName(-3.2, 4, -4.1, '应急指挥中心', scene.value, 4, 'col') // 9楼
-    createBuildName(-3.2, 3.3, -4.1, '网络机房', scene.value, 3, 'col') // 8楼
-    createBuildName(-1.3, 1.6, 1.3, '基本指挥所', scene.value, 2) // -1楼地面入口
+    createBuildName(-3.2, 4, -4.1, '应急指挥中心', scene.value, '9') // 9楼
+    createBuildName(-3.2, 3.3, -4.1, '网络机房', scene.value, '8') // 8楼
+    createBuildName(-1.3, 1.6, 1.3, '基本指挥所', scene.value, '-2') // -1楼地面入口
   }
 
   // 3. 初始化交互功能 【键盘 wasd 控制人物移动 + 双击选中功能 + 双击弹窗功能】
