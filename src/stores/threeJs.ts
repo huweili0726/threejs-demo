@@ -46,7 +46,7 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     updateModelVisibilityByFloorCallback.value = updateModelVisibilityByFloor
   }
 
-  // 执行楼层切换
+  // 执行楼层切换细节
   const toTargetFloor = (options: {
     targetPosition: THREE.Vector3,
     targetTarget: THREE.Vector3,
@@ -70,6 +70,85 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     }
     // 添加包围盒
     if (toAddCharacterBoundingBoxCallback.value) toAddCharacterBoundingBoxCallback.value()
+  }
+
+  // 切换楼层 + 更新模型可见性
+  const toFloor = (floor: string) => {
+    // 存储当前楼层到Pinia
+    basisStore.setCurrentFloor(floor)
+
+    let targetPosition = new THREE.Vector3()
+    let targetTarget = new THREE.Vector3()
+    let duration = 0
+    let modelInitPosition = undefined
+    let onLookAt = undefined
+
+    // 切换模型
+    if (floor === '0') {
+      const floor1Config = basisStore.floor1Config
+      const perspective = floor1Config?.perspective || { x: 0, y: 0, z: 0 }
+      const directionToLook = floor1Config?.directionToLook || { x: 0, y: 0, z: 0 }
+      const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+      const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+      // emit('toTheSurface', targetPosition, targetTarget)
+    } else if (floor === '-1') {
+      const floorNeg1Config = basisStore.neg1FloorConfig
+      const perspective = floorNeg1Config?.perspective || { x: 0, y: 0, z: 0 }
+      const directionToLook = floorNeg1Config?.directionToLook || { x: 0, y: 0, z: 0 }
+      targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+      targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+      duration = floorNeg1Config?.durationTime || 2000 // 飞行时间
+      modelInitPosition = floorNeg1Config?.characterModelSetPosition // 人物模型初始位置
+      onLookAt = floorNeg1Config?.characterModelToLook // 人物模型看向-1楼入口处
+    } else if (floor === '-1_2') {
+      const neg12LayersFloorConfig = basisStore.neg12LayersFloorConfig
+      const perspective = neg12LayersFloorConfig?.perspective || { x: 0, y: 0, z: 0 }
+      const directionToLook = neg12LayersFloorConfig?.directionToLook || { x: 0, y: 0, z: 0 }
+      targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+      targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+      duration = neg12LayersFloorConfig?.durationTime || 2000 // 飞行时间
+      modelInitPosition = neg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
+      onLookAt = neg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼2层入口处
+    } else if (floor === '-1_1') {
+      const beforeNeg12LayersFloorConfig = basisStore.beforeNeg12LayersFloorConfig
+      const perspective = beforeNeg12LayersFloorConfig?.perspective || { x: 0, y: 0, z: 0 }
+      const directionToLook = beforeNeg12LayersFloorConfig?.directionToLook || { x: 0, y: 0, z: 0 }
+      targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+      targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+      duration = beforeNeg12LayersFloorConfig?.durationTime || 2000 // 飞行时间
+      modelInitPosition = beforeNeg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
+      onLookAt = beforeNeg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼1层入口处
+    } else if (floor === '9') {
+      const floor9Config = basisStore.floor9thConfig
+      const perspective = floor9Config?.perspective || { x: 0, y: 0, z: 0 }
+      const directionToLook = floor9Config?.directionToLook || { x: 0, y: 0, z: 0 }
+      targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+      targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+      duration = floor9Config?.durationTime || 2000 // 飞行时间
+      modelInitPosition = floor9Config?.characterModelSetPosition // 人物模型初始位置
+      onLookAt = floor9Config?.characterModelToLook // 人物模型看向-1楼1层入口处
+    } else if (floor === '8') {
+      const floor8Config = basisStore.floor8thConfig
+      const perspective = floor8Config?.perspective || { x: 0, y: 0, z: 0 }
+      const directionToLook = floor8Config?.directionToLook || { x: 0, y: 0, z: 0 }
+      targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+      targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+      duration = floor8Config?.durationTime || 2000 // 飞行时间
+      modelInitPosition = floor8Config?.characterModelSetPosition // 人物模型初始位置
+      onLookAt = floor8Config?.characterModelToLook // 人物模型看向-1楼1层入口处  
+    }
+
+    // 切换楼层
+    toTargetFloor({
+      targetPosition: targetPosition, 
+      targetTarget: targetTarget, 
+      duration: duration, 
+      modelInitPosition: modelInitPosition, 
+      onLookAt: onLookAt
+    })
+
+    // 更新模型可见性
+    if (updateModelVisibilityByFloorCallback.value) updateModelVisibilityByFloorCallback.value(floor)
   }
 
   // 突出显示管路
@@ -112,6 +191,7 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     registerCallbacks,
     toTargetFloor,
     handleShowPipelines,
-    handleRecoveryPipelines
+    handleRecoveryPipelines,
+    toFloor
   }
 })
