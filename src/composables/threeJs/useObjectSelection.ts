@@ -201,24 +201,43 @@ export function useObjectSelection(
     const context = canvas.getContext('2d')
     if (!context) return
     
-    // 设置画布大小
-    canvas.width = 256
-    canvas.height = 64
+    // 考虑设备像素比，提高画布分辨率
+    const dpr = window.devicePixelRatio || 1
+    const canvasWidth = 300 * dpr
+    const canvasHeight = 80 * dpr
+    canvas.width = canvasWidth
+    canvas.height = canvasHeight
+    
+    // 缩放上下文以适应高DPI屏幕
+    context.scale(dpr, dpr)
     
     // 绘制背景
-    context.fillStyle = 'rgba(0, 0, 0, 0.7)'
-    context.roundRect(0, 0, canvas.width, canvas.height, 8)
+    const gradient = context.createLinearGradient(0, 0, 300, 80)
+    // gradient.addColorStop(0, 'rgba(0, 20, 40, 0.8)')  155BD4
+    // gradient.addColorStop(1, 'rgba(0, 40, 80, 0.9)')
+    gradient.addColorStop(0, '#002fffff')   
+    gradient.addColorStop(1, '#002fffff')
+    context.fillStyle = gradient
+    context.roundRect(0, 0, 300, 80, 12)
     context.fill()
+    
+    // 绘制边框
+    context.strokeStyle = '#64ffda'
+    context.lineWidth = 2
+    context.roundRect(2, 2, 296, 76, 10)
+    context.stroke()
     
     // 绘制文字
     context.fillStyle = '#64ffda'
-    context.font = '24px Arial'
+    context.font = 'bold 28px Arial'
     context.textAlign = 'center'
     context.textBaseline = 'middle'
-    context.fillText(name, canvas.width / 2, canvas.height / 2)
+    context.fillText(name, 150, 40)
     
-    // 创建纹理
+    // 创建纹理并设置过滤方式以提高清晰度
     const texture = new THREE.CanvasTexture(canvas)
+    texture.minFilter = THREE.LinearFilter
+    texture.magFilter = THREE.LinearFilter
     texture.needsUpdate = true
     
     // 创建精灵材质
@@ -231,13 +250,27 @@ export function useObjectSelection(
     // 创建精灵
     const sprite = new THREE.Sprite(material)
     sprite.position.set(x, y, z)
-    sprite.scale.set(2, 0.5, 1) // 调整精灵大小
+    sprite.scale.set(2.5, 0.6, 1) // 调整精灵大小
     
     // 添加到场景
     scene.add(sprite)
     
     // 为精灵添加点击事件
     sprite.userData = { id }
+    
+    // 添加动画效果
+    // let scaleDirection = 1
+    // const animateSprite = () => {
+    //   if (sprite.scale.x > 2.7) {
+    //     scaleDirection = -1
+    //   } else if (sprite.scale.x < 2.3) {
+    //     scaleDirection = 1
+    //   }
+    //   sprite.scale.x += 0.005 * scaleDirection
+    //   sprite.scale.y += 0.0012 * scaleDirection
+    //   requestAnimationFrame(animateSprite)
+    // }
+    // animateSprite()
     
     // 存储标签信息
     buildNameLabels.value.push({
