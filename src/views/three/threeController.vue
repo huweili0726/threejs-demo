@@ -111,11 +111,6 @@ const toggleControls = (controlType: string) => {
   }
 }
 
-// 定义事件
-const emit = defineEmits<{
-  (e: 'goToTargetRoom', targetRoom: string): void
-}>()
-
 // 切换楼层
 const ToFloor = (floor: string) => {
   threeJsStore.toFloor(floor)
@@ -123,7 +118,7 @@ const ToFloor = (floor: string) => {
 
 // 快速导航到指定房间
 const toTargetRoom = (targetRoom: string) => {
-  emit('goToTargetRoom', targetRoom)
+  threeJsStore.toTargetRoom(targetRoom)
 }
 
 // 开始自动漫游

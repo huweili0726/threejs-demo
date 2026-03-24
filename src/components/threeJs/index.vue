@@ -180,7 +180,7 @@ const setupAnimationLoop = () => {
           modelUrl: basisStore.characterModelUrlsConfig?.man || '',
           moveModel,
           loadedModelMaps: loadedModelMaps.value,
-          isAutoRoaming: roamState.value === 'moving' || roamState.value === 'staying'
+          isAutoRoaming: roamState.value === 'moving' || roamState.value === 'staying' 
         })
         // 更新自动漫游
         updateAutoRoam(deltaTime)
@@ -229,7 +229,8 @@ onMounted(async () => {
     startAutoRoam,
     pauseAutoRoam,
     resumeAutoRoam,
-    stopAutoRoam
+    stopAutoRoam,
+    toRoom
   )
 
   // 6. 设置动画循环

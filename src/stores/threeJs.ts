@@ -30,6 +30,7 @@ export const useThreeJsStore = defineStore('threeJs', () => {
   const pauseAutoRoamCallback = ref<(() => void) | null>(null)
   const resumeAutoRoamCallback = ref<(() => void) | null>(null)
   const stopAutoRoamCallback = ref<(() => void) | null>(null)
+  const toRoomCallback = ref<((targetRoom: string) => void) | null>(null)
   
   // 注册回调函数
   const registerCallbacks = (
@@ -46,7 +47,8 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     startAutoRoam: () => void,
     pauseAutoRoam: () => void,
     resumeAutoRoam: () => void,
-    stopAutoRoam: () => void
+    stopAutoRoam: () => void,
+    toRoom: (targetRoom: string) => void
   ) => {
     switchToFloorCallback.value = switchToFloor
     toAddCharacterBoundingBoxCallback.value = toAddCharacterBoundingBox
@@ -61,7 +63,8 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     startAutoRoamCallback.value = startAutoRoam,
     pauseAutoRoamCallback.value = pauseAutoRoam,
     resumeAutoRoamCallback.value = resumeAutoRoam,
-    stopAutoRoamCallback.value = stopAutoRoam
+    stopAutoRoamCallback.value = stopAutoRoam,
+    toRoomCallback.value = toRoom
   }
 
   // 执行楼层切换细节
@@ -232,6 +235,11 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     if (stopAutoRoamCallback.value) stopAutoRoamCallback.value()
   }
 
+  // 快速导航到指定房间
+  const toTargetRoom = (targetRoom: string) => {
+    if (toRoomCallback.value) toRoomCallback.value(targetRoom)
+  }
+
   return {
     registerCallbacks,
     toTargetFloor,
@@ -241,6 +249,7 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     handleStartAutoRoam,
     handlePauseAutoRoam,
     handleResumeAutoRoam,
-    handleStopAutoRoam
+    handleStopAutoRoam,
+    toTargetRoom  
   }
 })
