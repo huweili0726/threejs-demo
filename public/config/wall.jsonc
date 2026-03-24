@@ -311,6 +311,12 @@
     { "name": "Cube280" },
     { "name": "Cube836" },
     { "name": "Cube2057","thickness": 0.005 },
+    { "name": "Cube1186" },
+    { "name": "Cube2581" },
+    { "name": "Cube2129" },
+    { "name": "Cube2114" },
+    { "name": "Cube2112" },
+
 
     // 有线通信室
     { "name": "Cube440_1" },
@@ -320,6 +326,10 @@
     { "name": "Cube2612_1" },
     { "name": "Cube2607_1" },
     { "name": "Cube2598_1", "thickness": 0.005 },
+    { "name": "Cube827" },
+    { "name": "Cube1178" },
+    { "name": "Cube2165" },
+    { "name": "Cube2158" },
     
     // 防化值班室
     { "name": "Cube1239" },
@@ -339,6 +349,14 @@
     { "name": "立方体038" },
     { "name": "Cube1993", "thickness": 0.005 },
     { "name": "Cube1998", "thickness": 0.005 },
+    { "name": "Cube1217" },
+    { "name": "Cube826" },
+    { "name": "Cube1218" },
+    { "name": "Cube1996" },
+
+
+
+
   
     // 通信维修室
     { "name": "Cube1196" },
@@ -349,6 +367,12 @@
     { "name": "立方体028" },
     { "name": "Cube341" },
     { "name": "Cube2020", "thickness": 0.005 },
+    { "name": "Cube1195" },
+    { "name": "Cube822" },
+    { "name": "Cube1196" },
+    { "name": "Cube2018" },
+
+    
     
     // 应急备份平台
     { "name": "Cube1984", "thickness": 0.005 },
@@ -359,19 +383,41 @@
     { "name": "Cube2023" },
     { "name": "Cube2029" },
     { "name": "Cube2031", "thickness": 0.005 },
+    { "name": "Cube821" },
+    { "name": "Cube1191" },
+    { "name": "Cube1190" },
+    { "name": "Cube2024" },
+    { "name": "Cube2025" },
+    { "name": "Cube2026" },
+    { "name": "Cube426_3" },
+
+
 
     // 数据维护室
     { "name": "Cube370_1" },
     { "name": "Cube1985", "thickness": 0.005 },
-    { "name": "Cube2032", "thickness": 0.005 },
     { "name": "Cube370_1", "thickness": 0.005 },
     { "name": "Cube320" },
     { "name": "Cube321" },
     { "name": "Cube2036", "thickness": 0.005 },
+    { "name": "Cube1176" },
+    { "name": "Cube820" },
+    { "name": "Cube2032" },
+    { "name": "Cube2035" },
 
     // 通信值班室
     { "name": "Cube2033", "thickness": 0.005 },
-    
+    { "name": "Cube819" },
+    { "name": "Cube1172" },
+    { "name": "Cube2041" },
+    { "name": "Cube1986" },
+    { "name": "Cube2037" },
+    { "name": "Cube2040" },
+    { "name": "Cube312" },
+    { "name": "Cube2046" },
+    { "name": "Cube314" },
+    { "name": "Cube2044" },
+
     // 防化器材室
     { "name": "Cube818" },
     { "name": "Cube2045", "thickness": 0.005 },
@@ -389,6 +435,12 @@
     { "name": "Cube2502_1", "thickness": 0.005 },
     { "name": "Cube2597_1", "thickness": 0.005 },
     { "name": "Cube2847_1", "thickness": 0.005 },
+
+    { "name": "Cube1182" },
+    { "name": "Cube828" },
+    { "name": "Cube336" },
+    { "name": "Cube2133" },
+    { "name": "Cube2142" },
     
 
     // 空情图标室
@@ -422,6 +474,11 @@
     { "name": "立方体045" },
     { "name": "Cube2550_1", "thickness": 0.005 },
     { "name": "Cube2548_1", "thickness": 0.005 },
+
+    { "name": "Cube2090" },
+    { "name": "Cube2101" },
+    { "name": "Cube2099" },
+
 
     // 配电室外的木头门
     { "name": "Cube1736_1" },
@@ -657,6 +714,46 @@
     { "name": "Cube1728" },
     { "name": "Cube1740" },
 
+
+
+    // 休息室（六）
+    { "name": "Cube825" },
+    { "name": "Cube1204" },
+    { "name": "Cube2004" },
+    { "name": "Cube1980" },
+    { "name": "Cube593" },
+    { "name": "Cube594" },
+    { "name": "Cube1999" },
+    { "name": "Cube2000" },
+  
+    // 休息室（七）
+    { "name": "Cube589" },
+    { "name": "Cube1201" },
+    { "name": "Cube824" },
+    { "name": "Cube1202" },
+    { "name": "Cube2005" },
+    { "name": "Cube1981" },
+    { "name": "Cube311" },
+    { "name": "Cube310" },
+    { "name": "Cube588" },
+    { "name": "Cube589" },
+    { "name": "Cube2009" },
+    { "name": "Cube2005" },
+
+    // 休息室（八）
+    { "name": "Cube823" },
+    { "name": "Cube2017" },
+    { "name": "Cube1199" },
+    { "name": "Cube1198" },
+    { "name": "Cube1982" },
+    { "name": "Cube586" },
+    { "name": "Cube587" },
+    { "name": "Cube2010" },
+    { "name": "Cube357" },
+    { "name": "Cube2012" },
+
+
+
     // 指挥长室（四）
     { "name": "Cube1274" },
     { "name": "Cube856" },
@@ -742,8 +839,7 @@
     { "name": "Cube318" },
     { "name": "Cube317" },
     { "name": "Cube2172" },
-
-
+    { "name": "Cube2159" },
 
 
 
