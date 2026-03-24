@@ -126,14 +126,17 @@ const toStart = () => {
   threeJsStore.handleStartAutoRoam()
 }
 
+// 暂停自动漫游
 const toPause = () => {
   threeJsStore.handlePauseAutoRoam()
 }
 
+// 继续自动漫游
 const toContinue = () => {
   threeJsStore.handleResumeAutoRoam()
 }
 
+// 停止自动漫游
 const toStop = () => {
   threeJsStore.handleStopAutoRoam()
 }
