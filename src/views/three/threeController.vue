@@ -78,7 +78,6 @@
 </template>
 
 <script setup lang="ts">
-
 import { ref } from 'vue'
 import { useThreeJsStore } from '@/stores/threeJs' // 3D场景 Store
 
@@ -114,8 +113,6 @@ const toggleControls = (controlType: string) => {
 
 // 定义事件
 const emit = defineEmits<{
-  (e: 'changeModel', modelUrl: string): void
-  (e: 'loadBothModels'): void
   (e: 'goToTargetRoom', targetRoom: string): void
 }>()
 
