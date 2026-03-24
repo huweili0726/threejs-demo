@@ -232,12 +232,16 @@ const toStop = () => {
 
 // 显示空调送风005模型
 const showPipelines = () => {
-  emit('showPipelines')
+  // emit('showPipelines')
+
+  threeJsStore.handleShowPipelines()
 }
 
 // 隐藏空调送风005模型
 const recoveryPipelines = () => {
-  emit('recoveryPipelines')
+  // emit('recoveryPipelines')
+
+  threeJsStore.handleRecoveryPipelines()
 }
 
 
