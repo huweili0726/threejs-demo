@@ -49,7 +49,7 @@
   },
   // 碰撞检测配置
   "collisionDetection": {
-    "showBoundingBoxes": true // 是否显示碰撞检测包围盒辅助器
+    "showBoundingBoxes": false // 是否显示碰撞检测包围盒辅助器
   },
   // 查看管路默认的视角
   "line": {

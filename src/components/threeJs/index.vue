@@ -37,7 +37,7 @@ const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadMod
 const { loadEnvironment } = useEnvironmentLoader(scene as any) // 环境贴图加载相关Hooks
 const { initDoubleClickPopup, showPopup, closePopup, updateCSS2DRenderer, handleResize } = useObjectPopup(camera as any, scene as any, threeJsContainer) // 物体弹窗相关Hooks
 const { switchToFloor, toControlCommandRoom } = useFloorSwitch(flyTo, loadModel as any, removeModel) // 楼层切换相关Hooks 
-const { initDoubleClickSelection, createBuildName, hideBuildNames, showBuildNames } = useObjectSelection(camera as any, scene as any, threeJsContainer, switchToFloor, loadModel as any)  // 物体选择相关Hooks
+const { initDoubleClickSelection, createBuildName, hideBuildNames, showBuildNames } = useObjectSelection(camera as any, scene as any, threeJsContainer, switchToFloor)  // 物体选择相关Hooks
 const { wallBoundingBoxes, checkCollision, updateBoundingBoxes, setBoundingBoxesFromLoadResult, addCharacterBoundingBox } = useCollisionDetection() // 碰撞检测相关Hooks
 const { updateProximityPopups } = useProximityPopup(showPopup, closePopup, toControlCommandRoom) // 使用接近弹窗模块（统一管理弹窗逻辑）
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes, wallBoundingBoxes, updateProximityPopups) // 人物移动控制相关Hooks

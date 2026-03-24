@@ -20,8 +20,7 @@ export function useObjectSelection(
   camera: ShallowRef<THREE.PerspectiveCamera>, 
   scene: ShallowRef<THREE.Scene>, 
   container: ShallowRef<HTMLElement | undefined>, 
-  switchToFloor: (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number, modelInitPosition: THREE.Vector3, onLookAt: THREE.Vector3) => void, 
-  loadModel: (options: { modelUrl: string, scale: number }) => void | Promise<void>
+  switchToFloor: (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number, modelInitPosition: THREE.Vector3, onLookAt: THREE.Vector3) => void
 ) {
   // 初始化基础状态
   const basisStore = useBasisStore()
