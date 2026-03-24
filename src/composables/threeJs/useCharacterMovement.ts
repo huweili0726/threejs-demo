@@ -288,6 +288,7 @@ export function useCharacterMovement(
    * @param options.modelUrl 模型URL
    * @param options.moveModel 移动模型的函数
    * @param options.loadedModelMaps 已加载的模型Map
+   * @param options.isAutoRoaming 是否正在自动漫游
    */
   const updateCharacterMovement = (options: {
     deltaTime: number
@@ -298,9 +299,13 @@ export function useCharacterMovement(
       speed: number
     }) => void
     loadedModelMaps: Map<string, THREE.Group>
+    isAutoRoaming?: boolean
   }) => {
-    const { deltaTime, modelUrl, moveModel, loadedModelMaps } = options
+    const { deltaTime, modelUrl, moveModel, loadedModelMaps, isAutoRoaming = false } = options
     if (!modelUrl) return
+    
+    // 如果正在自动漫游，禁用WASD控制
+    if (isAutoRoaming) return
     
     // 基础移动速度
     let baseSpeed = .1 * deltaTime

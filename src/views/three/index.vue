@@ -17,7 +17,6 @@ import ThreeController from '@/views/three/threeController.vue'
 
 const threeJsRef = ref<typeof ThreeJs>()
 
-
 // 快速导航到指定房间
 const handleToTargetRoom = async (targetRoom: string) => {
   await threeJsRef.value?.toRoom?.(targetRoom)

@@ -206,12 +206,6 @@ export function useAutoRoam(wallBoundingBoxes: any, updateProximityPopups?: (opt
       console.log('🔄 模型已重置到第一个点位置')
     }
     
-    // 清理键盘事件
-    if (cleanupKeyboardEvents) {
-      cleanupKeyboardEvents()
-      cleanupKeyboardEvents = null
-    }
-    
     console.log('⏹️ 停止自动漫游')
   }
 

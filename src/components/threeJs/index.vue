@@ -44,7 +44,7 @@ const { initDoubleClickSelection, createBuildName, hideBuildNames, showBuildName
 const { wallBoundingBoxes, checkCollision, updateBoundingBoxes, setBoundingBoxesFromLoadResult, addCharacterBoundingBox } = useCollisionDetection() // 碰撞检测相关Hooks
 const { updateProximityPopups } = useProximityPopup(showPopup, closePopup, toControlCommandRoom) // 使用接近弹窗模块（统一管理弹窗逻辑）
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes, wallBoundingBoxes, updateProximityPopups) // 人物移动控制相关Hooks
-const { initAutoRoam, startAutoRoam, pauseAutoRoam, resumeAutoRoam, stopAutoRoam, updateAutoRoam } = useAutoRoam(wallBoundingBoxes, updateProximityPopups) // 自动漫游相关Hooks
+const { roamState, initAutoRoam, startAutoRoam, pauseAutoRoam, resumeAutoRoam, stopAutoRoam, updateAutoRoam } = useAutoRoam(wallBoundingBoxes, updateProximityPopups) // 自动漫游相关Hooks
 const { showPipelines, recoveryPipelines } = useModelVisibility() // 模型显示控制相关Hooks
 
 // 控制变量
@@ -171,26 +171,27 @@ const loadSceneModels = async () => {
  */
 const setupAnimationLoop = () => {
   setAnimationUpdateCallback((deltaTime: number) => {
-    updateAnimations(deltaTime, modelMixers.value)
-    // 只有在当前楼层是0时才执行这些操作
-    if (basisStore.currentFloor !== '0') {
-      // 更新人物移动
-      updateCharacterMovement({
-        deltaTime,
-        modelUrl: basisStore.characterModelUrlsConfig?.man || '',
-        moveModel,
-        loadedModelMaps: loadedModelMaps.value
-      })
-      // 更新自动漫游
-      updateAutoRoam(deltaTime)
-      if (basisStore.characterModelUrlsConfig?.man && camera.value) {
-        // 更新相机位置
-        cameraFollowModel(basisStore.characterModelUrlsConfig?.man, camera.value, cameraOffset)
+      updateAnimations(deltaTime, modelMixers.value)
+      // 只有在当前楼层是0时才执行这些操作
+      if (basisStore.currentFloor !== '0') {
+        // 更新人物移动
+        updateCharacterMovement({
+          deltaTime,
+          modelUrl: basisStore.characterModelUrlsConfig?.man || '',
+          moveModel,
+          loadedModelMaps: loadedModelMaps.value,
+          isAutoRoaming: roamState.value === 'moving' || roamState.value === 'staying'
+        })
+        // 更新自动漫游
+        updateAutoRoam(deltaTime)
+        if (basisStore.characterModelUrlsConfig?.man && camera.value) {
+          // 更新相机位置
+          cameraFollowModel(basisStore.characterModelUrlsConfig?.man, camera.value, cameraOffset)
+        }
       }
-    }
-    // 更新 CSS2DRenderer 为默认值
-    updateCSS2DRenderer()
-  })
+      // 更新 CSS2DRenderer 为默认值
+      updateCSS2DRenderer()
+    })
 }
 
 // ==================== 主入口 ====================
@@ -284,6 +285,13 @@ const toRoom = async (value: any) => {
     if (model) {
       initAutoRoam(model)
       startAutoRoam(roamPoints)
+      
+      // 导航到房间后自动退出快速导航，允许WASD控制
+      // 这里使用setTimeout模拟导航完成，实际项目中可以根据漫游状态来判断
+      setTimeout(() => {
+        stopAutoRoam()
+        console.log("快速导航完成，已退出自动漫游模式，现在可以使用WASD控制人物移动")
+      }, 3000) // 假设3秒后导航完成
     } else {
       console.log("人物模型未加载，自动漫游未启动")
     }
