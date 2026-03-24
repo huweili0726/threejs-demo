@@ -2,7 +2,6 @@
   <div class="home-container">
     <!-- 控制模型 -->
     <ThreeController 
-      @toBottomfloorAndLoadcharacterModel="handleToBottomfloorAndLoadcharacterModel" 
       @toTheSurface="handleToTheSurface" 
       @toUpdateModelVisibilityByFloor="handleToUpdateModelVisibilityByFloor"
       @pauseAutoRoam="handlePauseAutoRoam" 
@@ -38,23 +37,6 @@ const handleToTheSurface = async (targetPosition: THREE.Vector3, targetTarget: T
 
   await threeJsRef.value?.removeModel(basisStore.characterModelUrlsConfig?.man || '')?.catch(console.error)
   await threeJsRef.value?.flyTo?.(targetPosition, targetTarget, 2000)?.catch(console.error)
-}
-
-// 飞行到 -1、8、9、-1层小2楼的 入口处 同时加载人物模型
-const handleToBottomfloorAndLoadcharacterModel = async (
-  targetPosition: THREE.Vector3, // 视角飞到哪里
-  targetTarget: THREE.Vector3, // 视角飞到指定地点后看向哪里
-  duration: number, // 飞行时间
-  modelInitPosition?: {x: number, y: number, z: number}, // 人物模型初始位置
-  onLookAt?: {x: number, y: number, z: number} // 人物模型看向位置
-) => {
-  // 切换楼层 
-  // threeJsStore.toTargetFloor({ 
-  //   targetPosition: targetPosition, 
-  //   targetTarget: targetTarget, 
-  //   duration: duration, 
-  //   modelInitPosition: modelInitPosition, 
-  //   onLookAt: onLookAt })
 }
 
 // 更新模型可见性

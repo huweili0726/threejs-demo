@@ -120,7 +120,6 @@ const emit = defineEmits<{
   (e: 'toTheSurface', targetPosition: THREE.Vector3, targetTarget: THREE.Vector3): void
   (e: 'changeModel', modelUrl: string): void
   (e: 'loadBothModels'): void
-  (e: 'toBottomfloorAndLoadcharacterModel', targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number, modelInitPosition?: { x: number, y: number, z: number }, onLookAt?: { x: number, y: number, z: number }): void
   (e: 'pauseAutoRoam'): void
   (e: 'continueAutoRoam'): void
   (e: 'startAutoRoam'): void
@@ -159,7 +158,6 @@ const toFloor = (floor: string) => {
     duration = floorNeg1Config?.durationTime || 2000 // 飞行时间
     modelInitPosition = floorNeg1Config?.characterModelSetPosition // 人物模型初始位置
     onLookAt = floorNeg1Config?.characterModelToLook // 人物模型看向-1楼入口处
-    emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   } else if (floor === '-1_2') {
     const neg12LayersFloorConfig = basisStore.neg12LayersFloorConfig
     const perspective = neg12LayersFloorConfig?.perspective || { x: 0, y: 0, z: 0 }
@@ -169,7 +167,6 @@ const toFloor = (floor: string) => {
     duration = neg12LayersFloorConfig?.durationTime || 2000 // 飞行时间
     modelInitPosition = neg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
     onLookAt = neg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼2层入口处
-    emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   } else if (floor === '-1_1') {
     const beforeNeg12LayersFloorConfig = basisStore.beforeNeg12LayersFloorConfig
     const perspective = beforeNeg12LayersFloorConfig?.perspective || { x: 0, y: 0, z: 0 }
@@ -179,7 +176,6 @@ const toFloor = (floor: string) => {
     duration = beforeNeg12LayersFloorConfig?.durationTime || 2000 // 飞行时间
     modelInitPosition = beforeNeg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
     onLookAt = beforeNeg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼1层入口处
-    emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   } else if (floor === '9') {
     const floor9Config = basisStore.floor9thConfig
     const perspective = floor9Config?.perspective || { x: 0, y: 0, z: 0 }
@@ -189,7 +185,6 @@ const toFloor = (floor: string) => {
     duration = floor9Config?.durationTime || 2000 // 飞行时间
     modelInitPosition = floor9Config?.characterModelSetPosition // 人物模型初始位置
     onLookAt = floor9Config?.characterModelToLook // 人物模型看向-1楼1层入口处
-    emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   } else if (floor === '8') {
     const floor8Config = basisStore.floor8thConfig
     const perspective = floor8Config?.perspective || { x: 0, y: 0, z: 0 }
@@ -199,7 +194,6 @@ const toFloor = (floor: string) => {
     duration = floor8Config?.durationTime || 2000 // 飞行时间
     modelInitPosition = floor8Config?.characterModelSetPosition // 人物模型初始位置
     onLookAt = floor8Config?.characterModelToLook // 人物模型看向-1楼1层入口处  
-    emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   }
 
   // 切换楼层
