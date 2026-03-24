@@ -81,8 +81,6 @@ const initInteractions = () => {
     onMouseEnter: (object) => {
       if (object) {
         document.body.style.cursor = 'pointer'
-        // toControlStartInspection(object.userData.id, switchToFloor)
-        // console.log('🎉 悬停了物体：', object.name, object)
       } 
     },
     onMouseLeave: (object) => {
