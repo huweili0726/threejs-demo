@@ -81,9 +81,11 @@
 import * as THREE from 'three'
 import { ref } from 'vue'
 import { useBasisStore } from '@/stores/basis' // 基础配置 Store
+import { useThreeJsStore } from '@/stores/threeJs' // 3D场景 Store
 
 // 使用基础配置 Store
 const basisStore = useBasisStore()
+const threeJsStore = useThreeJsStore()
 
 // 控制按钮组展开/折叠状态
 const isImgPointControlsOpen = ref(false)
@@ -118,7 +120,7 @@ const emit = defineEmits<{
   (e: 'toTheSurface', targetPosition: THREE.Vector3, targetTarget: THREE.Vector3): void
   (e: 'changeModel', modelUrl: string): void
   (e: 'loadBothModels'): void
-  (e: 'toBottomfloorAndLoadcharacterModel', targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration?: number, modelInitPosition?: { x: number, y: number, z: number }, onLookAt?: { x: number, y: number, z: number }): void
+  (e: 'toBottomfloorAndLoadcharacterModel', targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number, modelInitPosition?: { x: number, y: number, z: number }, onLookAt?: { x: number, y: number, z: number }): void
   (e: 'pauseAutoRoam'): void
   (e: 'continueAutoRoam'): void
   (e: 'startAutoRoam'): void
@@ -134,6 +136,12 @@ const toFloor = (floor: string) => {
   // 存储当前楼层到Pinia
   basisStore.setCurrentFloor(floor)
 
+  let targetPosition = new THREE.Vector3()
+  let targetTarget = new THREE.Vector3()
+  let duration = 0
+  let modelInitPosition = undefined
+  let onLookAt = undefined
+
   // 切换模型
   if (floor === '0') {
     const floor1Config = basisStore.floor1Config
@@ -146,53 +154,62 @@ const toFloor = (floor: string) => {
     const floorNeg1Config = basisStore.neg1FloorConfig
     const perspective = floorNeg1Config?.perspective || { x: 0, y: 0, z: 0 }
     const directionToLook = floorNeg1Config?.directionToLook || { x: 0, y: 0, z: 0 }
-    const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
-    const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
-    const duration = floorNeg1Config?.durationTime || 2000 // 飞行时间
-    const modelInitPosition = floorNeg1Config?.characterModelSetPosition // 人物模型初始位置
-    const onLookAt = floorNeg1Config?.characterModelToLook // 人物模型看向-1楼入口处
+    targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+    targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+    duration = floorNeg1Config?.durationTime || 2000 // 飞行时间
+    modelInitPosition = floorNeg1Config?.characterModelSetPosition // 人物模型初始位置
+    onLookAt = floorNeg1Config?.characterModelToLook // 人物模型看向-1楼入口处
     emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   } else if (floor === '-1_2') {
     const neg12LayersFloorConfig = basisStore.neg12LayersFloorConfig
     const perspective = neg12LayersFloorConfig?.perspective || { x: 0, y: 0, z: 0 }
     const directionToLook = neg12LayersFloorConfig?.directionToLook || { x: 0, y: 0, z: 0 }
-    const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
-    const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
-    const duration = neg12LayersFloorConfig?.durationTime || 2000 // 飞行时间
-    const modelInitPosition = neg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
-    const onLookAt = neg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼2层入口处
+    targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+    targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+    duration = neg12LayersFloorConfig?.durationTime || 2000 // 飞行时间
+    modelInitPosition = neg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
+    onLookAt = neg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼2层入口处
     emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   } else if (floor === '-1_1') {
     const beforeNeg12LayersFloorConfig = basisStore.beforeNeg12LayersFloorConfig
     const perspective = beforeNeg12LayersFloorConfig?.perspective || { x: 0, y: 0, z: 0 }
     const directionToLook = beforeNeg12LayersFloorConfig?.directionToLook || { x: 0, y: 0, z: 0 }
-    const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
-    const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
-    const duration = beforeNeg12LayersFloorConfig?.durationTime || 2000 // 飞行时间
-    const modelInitPosition = beforeNeg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
-    const onLookAt = beforeNeg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼1层入口处
+    targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+    targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+    duration = beforeNeg12LayersFloorConfig?.durationTime || 2000 // 飞行时间
+    modelInitPosition = beforeNeg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
+    onLookAt = beforeNeg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼1层入口处
     emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   } else if (floor === '9') {
     const floor9Config = basisStore.floor9thConfig
     const perspective = floor9Config?.perspective || { x: 0, y: 0, z: 0 }
     const directionToLook = floor9Config?.directionToLook || { x: 0, y: 0, z: 0 }
-    const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
-    const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
-    const duration = floor9Config?.durationTime || 2000 // 飞行时间
-    const modelInitPosition = floor9Config?.characterModelSetPosition // 人物模型初始位置
-    const onLookAt = floor9Config?.characterModelToLook // 人物模型看向-1楼1层入口处
+    targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+    targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+    duration = floor9Config?.durationTime || 2000 // 飞行时间
+    modelInitPosition = floor9Config?.characterModelSetPosition // 人物模型初始位置
+    onLookAt = floor9Config?.characterModelToLook // 人物模型看向-1楼1层入口处
     emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   } else if (floor === '8') {
     const floor8Config = basisStore.floor8thConfig
     const perspective = floor8Config?.perspective || { x: 0, y: 0, z: 0 }
     const directionToLook = floor8Config?.directionToLook || { x: 0, y: 0, z: 0 }
-    const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
-    const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
-    const duration = floor8Config?.durationTime || 2000 // 飞行时间
-    const modelInitPosition = floor8Config?.characterModelSetPosition // 人物模型初始位置
-    const onLookAt = floor8Config?.characterModelToLook // 人物模型看向-1楼1层入口处  
+    targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+    targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+    duration = floor8Config?.durationTime || 2000 // 飞行时间
+    modelInitPosition = floor8Config?.characterModelSetPosition // 人物模型初始位置
+    onLookAt = floor8Config?.characterModelToLook // 人物模型看向-1楼1层入口处  
     emit('toBottomfloorAndLoadcharacterModel', targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
   }
+
+  // 切换楼层
+  threeJsStore.toTargetFloor({
+    targetPosition: targetPosition, 
+    targetTarget: targetTarget, 
+    duration: duration, 
+    modelInitPosition: modelInitPosition, 
+    onLookAt: onLookAt
+  })
 
   emit('toUpdateModelVisibilityByFloor', floor)
 }

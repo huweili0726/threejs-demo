@@ -44,12 +44,17 @@ const handleToTheSurface = async (targetPosition: THREE.Vector3, targetTarget: T
 const handleToBottomfloorAndLoadcharacterModel = async (
   targetPosition: THREE.Vector3, // 视角飞到哪里
   targetTarget: THREE.Vector3, // 视角飞到指定地点后看向哪里
-  duration?: number, // 飞行时间
+  duration: number, // 飞行时间
   modelInitPosition?: {x: number, y: number, z: number}, // 人物模型初始位置
   onLookAt?: {x: number, y: number, z: number} // 人物模型看向位置
 ) => {
   // 切换楼层 
-  threeJsStore.toTargetFloor(targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
+  // threeJsStore.toTargetFloor({ 
+  //   targetPosition: targetPosition, 
+  //   targetTarget: targetTarget, 
+  //   duration: duration, 
+  //   modelInitPosition: modelInitPosition, 
+  //   onLookAt: onLookAt })
 }
 
 // 更新模型可见性

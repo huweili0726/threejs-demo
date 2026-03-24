@@ -29,13 +29,15 @@ export const useThreeJsStore = defineStore('threeJs', () => {
   }
 
   // 执行楼层切换
-  const toTargetFloor = (
+  const toTargetFloor = (options: {
     targetPosition: THREE.Vector3,
     targetTarget: THREE.Vector3,
-    duration: number = 2000,
+    duration: number,
     modelInitPosition?: { x: number, y: number, z: number },
     onLookAt?: { x: number, y: number, z: number }
-  ) => {
+  }) => {
+    const { targetPosition, targetTarget, duration = 2000, modelInitPosition, onLookAt } = options
+    
     // 8、9、-1楼精灵模型title隐藏
     if (hideBuildNamesCallback.value) hideBuildNamesCallback.value()
     // 飞往指定楼层 （剔除已经存在的人物模型 + 视角飞行 + 重新加载人物模型并设定初始位置和看向位置）
