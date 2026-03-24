@@ -203,8 +203,8 @@ export function useObjectSelection(
     
     // 考虑设备像素比，提高画布分辨率
     const dpr = window.devicePixelRatio || 1
-    const canvasWidth = 300 * dpr
-    const canvasHeight = 80 * dpr
+    const canvasWidth = 200 * dpr
+    const canvasHeight = 50 * dpr
     canvas.width = canvasWidth
     canvas.height = canvasHeight
     
@@ -212,27 +212,25 @@ export function useObjectSelection(
     context.scale(dpr, dpr)
     
     // 绘制背景
-    const gradient = context.createLinearGradient(0, 0, 300, 80)
-    // gradient.addColorStop(0, 'rgba(0, 20, 40, 0.8)')  155BD4
-    // gradient.addColorStop(1, 'rgba(0, 40, 80, 0.9)')
+    const gradient = context.createLinearGradient(0, 0, 200, 50)
     gradient.addColorStop(0, '#002fffff')   
     gradient.addColorStop(1, '#002fffff')
     context.fillStyle = gradient
-    context.roundRect(0, 0, 300, 80, 12)
+    context.roundRect(0, 0, 200, 50, 8)
     context.fill()
     
     // 绘制边框
     context.strokeStyle = '#64ffda'
     context.lineWidth = 2
-    context.roundRect(2, 2, 296, 76, 10)
+    context.roundRect(2, 2, 196, 46, 6)
     context.stroke()
     
     // 绘制文字
     context.fillStyle = '#64ffda'
-    context.font = 'bold 28px Arial'
+    context.font = 'bold 18px Arial'
     context.textAlign = 'center'
     context.textBaseline = 'middle'
-    context.fillText(name, 150, 40)
+    context.fillText(name, 100, 25)
     
     // 创建纹理并设置过滤方式以提高清晰度
     const texture = new THREE.CanvasTexture(canvas)
@@ -250,28 +248,14 @@ export function useObjectSelection(
     // 创建精灵
     const sprite = new THREE.Sprite(material)
     sprite.position.set(x, y, z)
-    sprite.scale.set(2.5, 0.6, 1) // 调整精灵大小
+    sprite.scale.set(1.5, 0.4, 1) // 调整精灵大小
     
     // 添加到场景
     scene.add(sprite)
     
     // 为精灵添加点击事件
     sprite.userData = { id }
-    
-    // 添加动画效果
-    // let scaleDirection = 1
-    // const animateSprite = () => {
-    //   if (sprite.scale.x > 2.7) {
-    //     scaleDirection = -1
-    //   } else if (sprite.scale.x < 2.3) {
-    //     scaleDirection = 1
-    //   }
-    //   sprite.scale.x += 0.005 * scaleDirection
-    //   sprite.scale.y += 0.0012 * scaleDirection
-    //   requestAnimationFrame(animateSprite)
-    // }
-    // animateSprite()
-    
+
     // 存储标签信息
     buildNameLabels.value.push({
       sprite,
