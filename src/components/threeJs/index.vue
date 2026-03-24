@@ -221,7 +221,12 @@ onMounted(async () => {
     recoveryPipelines,
     flyTo,
     updateModelVisibilityByFloor,
-    removeModel
+    removeModel,
+    loadCharacterModelAndStartRoam,
+    startAutoRoam,
+    pauseAutoRoam,
+    resumeAutoRoam,
+    stopAutoRoam
   )
 
   // 6. 设置动画循环

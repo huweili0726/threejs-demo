@@ -116,10 +116,6 @@ const toggleControls = (controlType: string) => {
 const emit = defineEmits<{
   (e: 'changeModel', modelUrl: string): void
   (e: 'loadBothModels'): void
-  (e: 'pauseAutoRoam'): void
-  (e: 'continueAutoRoam'): void
-  (e: 'startAutoRoam'): void
-  (e: 'stopAutoRoam'): void
   (e: 'goToTargetRoom', targetRoom: string): void
 }>()
 
@@ -135,19 +131,19 @@ const toTargetRoom = (targetRoom: string) => {
 
 // 开始自动漫游
 const toStart = () => {
-  emit('startAutoRoam')
+  threeJsStore.handleStartAutoRoam()
 }
 
 const toPause = () => {
-  emit('pauseAutoRoam')
+  threeJsStore.handlePauseAutoRoam()
 }
 
 const toContinue = () => {
-  emit('continueAutoRoam')
+  threeJsStore.handleResumeAutoRoam()
 }
 
 const toStop = () => {
-  emit('stopAutoRoam')
+  threeJsStore.handleStopAutoRoam()
 }
 
 // 显示管路模型

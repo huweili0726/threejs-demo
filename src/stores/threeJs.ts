@@ -25,6 +25,11 @@ export const useThreeJsStore = defineStore('threeJs', () => {
   const flyToCallback = ref<((targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number) => void) | null>(null)
   const updateModelVisibilityByFloorCallback = ref<((floor: string) => void) | null>(null)
   const removeModelCallback = ref<((model: string) => void) | null>(null)
+  const loadCharacterModelAndStartRoamCallback = ref<(() => void) | null>(null)
+  const startAutoRoamCallback = ref<(() => void) | null>(null)
+  const pauseAutoRoamCallback = ref<(() => void) | null>(null)
+  const resumeAutoRoamCallback = ref<(() => void) | null>(null)
+  const stopAutoRoamCallback = ref<(() => void) | null>(null)
   
   // 注册回调函数
   const registerCallbacks = (
@@ -36,7 +41,12 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     recoveryPipelines: () => void,
     flyTo: (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number) => void,
     updateModelVisibilityByFloor: (floor: string) => void,
-    removeModel: (model: string) => void
+    removeModel: (model: string) => void,
+    loadCharacterModelAndStartRoam: () => void,
+    startAutoRoam: () => void,
+    pauseAutoRoam: () => void,
+    resumeAutoRoam: () => void,
+    stopAutoRoam: () => void
   ) => {
     switchToFloorCallback.value = switchToFloor
     toAddCharacterBoundingBoxCallback.value = toAddCharacterBoundingBox
@@ -46,7 +56,12 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     recoveryPipelinesCallback.value = recoveryPipelines
     flyToCallback.value = flyTo
     updateModelVisibilityByFloorCallback.value = updateModelVisibilityByFloor,
-    removeModelCallback.value = removeModel
+    removeModelCallback.value = removeModel,
+    loadCharacterModelAndStartRoamCallback.value = loadCharacterModelAndStartRoam,
+    startAutoRoamCallback.value = startAutoRoam,
+    pauseAutoRoamCallback.value = pauseAutoRoam,
+    resumeAutoRoamCallback.value = resumeAutoRoam,
+    stopAutoRoamCallback.value = stopAutoRoam
   }
 
   // 执行楼层切换细节
@@ -196,11 +211,36 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     if (flyToCallback.value) flyToCallback.value(targetPosition, targetTarget, durationTime)
   }
 
+  // 开始漫游
+  const handleStartAutoRoam = () => {
+    if (loadCharacterModelAndStartRoamCallback.value) loadCharacterModelAndStartRoamCallback.value()
+    if (startAutoRoamCallback.value) startAutoRoamCallback.value()
+  }
+
+  // 暂停漫游
+  const handlePauseAutoRoam = () => {
+    if (pauseAutoRoamCallback.value) pauseAutoRoamCallback.value()
+  }
+
+  // 继续漫游
+  const handleResumeAutoRoam = () => {
+    if (resumeAutoRoamCallback.value) resumeAutoRoamCallback.value()
+  }
+
+  // 停止漫游
+  const handleStopAutoRoam = () => {
+    if (stopAutoRoamCallback.value) stopAutoRoamCallback.value()
+  }
+
   return {
     registerCallbacks,
     toTargetFloor,
     handleShowPipelines,
     handleRecoveryPipelines,
-    toFloor
+    toFloor,
+    handleStartAutoRoam,
+    handlePauseAutoRoam,
+    handleResumeAutoRoam,
+    handleStopAutoRoam
   }
 })
