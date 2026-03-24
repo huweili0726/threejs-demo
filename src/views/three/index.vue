@@ -25,9 +25,11 @@ import { ref } from 'vue'
 import ThreeJs from '@/components/threeJs/index.vue'
 import ThreeController from '@/views/three/threeController.vue'
 import { useBasisStore } from '@/stores/basis'
+import { useFloorStore } from '@/stores/floor'
 
 const threeJsRef = ref<typeof ThreeJs>()
 const basisStore = useBasisStore()
+const floorStore = useFloorStore()
 
 // 飞行到地面大楼初始视角位置
 const handleToTheSurface = async (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3) => {
@@ -45,12 +47,8 @@ const handleToBottomfloorAndLoadcharacterModel = async (
   modelInitPosition?: {x: number, y: number, z: number}, // 人物模型初始位置
   onLookAt?: {x: number, y: number, z: number} // 人物模型看向位置
 ) => {
-  threeJsRef.value?.hideBuildNames()
-
-  // 切换楼层
-  await threeJsRef.value?.switchToFloor(targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
-  // 为人物模型添加碰撞检测包围盒
-  threeJsRef.value?.toAddCharacterBoundingBox()
+  // 切换楼层 
+  floorStore.toTargetFloor(targetPosition, targetTarget, duration, modelInitPosition, onLookAt)
 }
 
 // 更新模型可见性
