@@ -78,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-import * as THREE from 'three'
+
 import { ref } from 'vue'
 import { useThreeJsStore } from '@/stores/threeJs' // 3D场景 Store
 
@@ -114,7 +114,6 @@ const toggleControls = (controlType: string) => {
 
 // 定义事件
 const emit = defineEmits<{
-  (e: 'toTheSurface', targetPosition: THREE.Vector3, targetTarget: THREE.Vector3): void
   (e: 'changeModel', modelUrl: string): void
   (e: 'loadBothModels'): void
   (e: 'pauseAutoRoam'): void
@@ -122,7 +121,6 @@ const emit = defineEmits<{
   (e: 'startAutoRoam'): void
   (e: 'stopAutoRoam'): void
   (e: 'goToTargetRoom', targetRoom: string): void
-  (e: 'toUpdateModelVisibilityByFloor', floor: string): void
 }>()
 
 // 切换楼层

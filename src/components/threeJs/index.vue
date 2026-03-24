@@ -220,7 +220,8 @@ onMounted(async () => {
     showBuildNames,
     recoveryPipelines,
     flyTo,
-    updateModelVisibilityByFloor
+    updateModelVisibilityByFloor,
+    removeModel
   )
 
   // 6. 设置动画循环

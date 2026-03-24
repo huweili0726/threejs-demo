@@ -24,8 +24,9 @@ export const useThreeJsStore = defineStore('threeJs', () => {
   const recoveryPipelinesCallback = ref<(() => void) | null>(null)
   const flyToCallback = ref<((targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number) => void) | null>(null)
   const updateModelVisibilityByFloorCallback = ref<((floor: string) => void) | null>(null)
-
-   // 注册回调函数
+  const removeModelCallback = ref<((model: string) => void) | null>(null)
+  
+  // 注册回调函数
   const registerCallbacks = (
     switchToFloor: (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number, modelInitPosition: THREE.Vector3, onLookAt: THREE.Vector3) => void,
     toAddCharacterBoundingBox: () => void,
@@ -34,7 +35,8 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     showBuildNames: () => void,
     recoveryPipelines: () => void,
     flyTo: (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number) => void,
-    updateModelVisibilityByFloor: (floor: string) => void
+    updateModelVisibilityByFloor: (floor: string) => void,
+    removeModel: (model: string) => void
   ) => {
     switchToFloorCallback.value = switchToFloor
     toAddCharacterBoundingBoxCallback.value = toAddCharacterBoundingBox
@@ -43,7 +45,8 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     showBuildNamesCallback.value = showBuildNames
     recoveryPipelinesCallback.value = recoveryPipelines
     flyToCallback.value = flyTo
-    updateModelVisibilityByFloorCallback.value = updateModelVisibilityByFloor
+    updateModelVisibilityByFloorCallback.value = updateModelVisibilityByFloor,
+    removeModelCallback.value = removeModel
   }
 
   // 执行楼层切换细节
@@ -90,62 +93,68 @@ export const useThreeJsStore = defineStore('threeJs', () => {
       const directionToLook = floor1Config?.directionToLook || { x: 0, y: 0, z: 0 }
       const targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
       const targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
-      // emit('toTheSurface', targetPosition, targetTarget)
-    } else if (floor === '-1') {
-      const floorNeg1Config = basisStore.neg1FloorConfig
-      const perspective = floorNeg1Config?.perspective || { x: 0, y: 0, z: 0 }
-      const directionToLook = floorNeg1Config?.directionToLook || { x: 0, y: 0, z: 0 }
-      targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
-      targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
-      duration = floorNeg1Config?.durationTime || 2000 // 飞行时间
-      modelInitPosition = floorNeg1Config?.characterModelSetPosition // 人物模型初始位置
-      onLookAt = floorNeg1Config?.characterModelToLook // 人物模型看向-1楼入口处
-    } else if (floor === '-1_2') {
-      const neg12LayersFloorConfig = basisStore.neg12LayersFloorConfig
-      const perspective = neg12LayersFloorConfig?.perspective || { x: 0, y: 0, z: 0 }
-      const directionToLook = neg12LayersFloorConfig?.directionToLook || { x: 0, y: 0, z: 0 }
-      targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
-      targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
-      duration = neg12LayersFloorConfig?.durationTime || 2000 // 飞行时间
-      modelInitPosition = neg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
-      onLookAt = neg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼2层入口处
-    } else if (floor === '-1_1') {
-      const beforeNeg12LayersFloorConfig = basisStore.beforeNeg12LayersFloorConfig
-      const perspective = beforeNeg12LayersFloorConfig?.perspective || { x: 0, y: 0, z: 0 }
-      const directionToLook = beforeNeg12LayersFloorConfig?.directionToLook || { x: 0, y: 0, z: 0 }
-      targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
-      targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
-      duration = beforeNeg12LayersFloorConfig?.durationTime || 2000 // 飞行时间
-      modelInitPosition = beforeNeg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
-      onLookAt = beforeNeg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼1层入口处
-    } else if (floor === '9') {
-      const floor9Config = basisStore.floor9thConfig
-      const perspective = floor9Config?.perspective || { x: 0, y: 0, z: 0 }
-      const directionToLook = floor9Config?.directionToLook || { x: 0, y: 0, z: 0 }
-      targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
-      targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
-      duration = floor9Config?.durationTime || 2000 // 飞行时间
-      modelInitPosition = floor9Config?.characterModelSetPosition // 人物模型初始位置
-      onLookAt = floor9Config?.characterModelToLook // 人物模型看向-1楼1层入口处
-    } else if (floor === '8') {
-      const floor8Config = basisStore.floor8thConfig
-      const perspective = floor8Config?.perspective || { x: 0, y: 0, z: 0 }
-      const directionToLook = floor8Config?.directionToLook || { x: 0, y: 0, z: 0 }
-      targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
-      targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
-      duration = floor8Config?.durationTime || 2000 // 飞行时间
-      modelInitPosition = floor8Config?.characterModelSetPosition // 人物模型初始位置
-      onLookAt = floor8Config?.characterModelToLook // 人物模型看向-1楼1层入口处  
-    }
+      const duration = floor1Config?.durationTime || 2000 // 飞行时间
+      if (showBuildNamesCallback.value) showBuildNamesCallback.value()
+      // 移除上一个楼层的人物模型
+      if (removeModelCallback.value) removeModelCallback.value(basisStore.characterModelUrlsConfig?.man || '')
+      if (flyToCallback.value) flyToCallback.value(targetPosition, targetTarget, duration)
+    } else {
+      if (floor === '-1') {
+        const floorNeg1Config = basisStore.neg1FloorConfig
+        const perspective = floorNeg1Config?.perspective || { x: 0, y: 0, z: 0 }
+        const directionToLook = floorNeg1Config?.directionToLook || { x: 0, y: 0, z: 0 }
+        targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+        targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+        duration = floorNeg1Config?.durationTime || 2000 // 飞行时间
+        modelInitPosition = floorNeg1Config?.characterModelSetPosition // 人物模型初始位置
+        onLookAt = floorNeg1Config?.characterModelToLook // 人物模型看向-1楼入口处
+      } else if (floor === '-1_2') {
+        const neg12LayersFloorConfig = basisStore.neg12LayersFloorConfig
+        const perspective = neg12LayersFloorConfig?.perspective || { x: 0, y: 0, z: 0 }
+        const directionToLook = neg12LayersFloorConfig?.directionToLook || { x: 0, y: 0, z: 0 }
+        targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+        targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+        duration = neg12LayersFloorConfig?.durationTime || 2000 // 飞行时间
+        modelInitPosition = neg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
+        onLookAt = neg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼2层入口处
+      } else if (floor === '-1_1') {
+        const beforeNeg12LayersFloorConfig = basisStore.beforeNeg12LayersFloorConfig
+        const perspective = beforeNeg12LayersFloorConfig?.perspective || { x: 0, y: 0, z: 0 }
+        const directionToLook = beforeNeg12LayersFloorConfig?.directionToLook || { x: 0, y: 0, z: 0 }
+        targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+        targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+        duration = beforeNeg12LayersFloorConfig?.durationTime || 2000 // 飞行时间
+        modelInitPosition = beforeNeg12LayersFloorConfig?.characterModelSetPosition // 人物模型初始位置
+        onLookAt = beforeNeg12LayersFloorConfig?.characterModelToLook // 人物模型看向-1楼1层入口处
+      } else if (floor === '9') {
+        const floor9Config = basisStore.floor9thConfig
+        const perspective = floor9Config?.perspective || { x: 0, y: 0, z: 0 }
+        const directionToLook = floor9Config?.directionToLook || { x: 0, y: 0, z: 0 }
+        targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+        targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+        duration = floor9Config?.durationTime || 2000 // 飞行时间
+        modelInitPosition = floor9Config?.characterModelSetPosition // 人物模型初始位置
+        onLookAt = floor9Config?.characterModelToLook // 人物模型看向-1楼1层入口处
+      } else if (floor === '8') {
+        const floor8Config = basisStore.floor8thConfig
+        const perspective = floor8Config?.perspective || { x: 0, y: 0, z: 0 }
+        const directionToLook = floor8Config?.directionToLook || { x: 0, y: 0, z: 0 }
+        targetPosition = new THREE.Vector3(perspective?.x || 0, perspective?.y || 0, perspective?.z || 0)
+        targetTarget = new THREE.Vector3(directionToLook?.x || 0, directionToLook?.y || 0, directionToLook?.z || 0)
+        duration = floor8Config?.durationTime || 2000 // 飞行时间
+        modelInitPosition = floor8Config?.characterModelSetPosition // 人物模型初始位置
+        onLookAt = floor8Config?.characterModelToLook // 人物模型看向-1楼1层入口处  
+      }
 
-    // 切换楼层
-    toTargetFloor({
-      targetPosition: targetPosition, 
-      targetTarget: targetTarget, 
-      duration: duration, 
-      modelInitPosition: modelInitPosition, 
-      onLookAt: onLookAt
-    })
+      // 切换楼层
+      toTargetFloor({
+        targetPosition: targetPosition, 
+        targetTarget: targetTarget, 
+        duration: duration, 
+        modelInitPosition: modelInitPosition, 
+        onLookAt: onLookAt
+      })
+    }
 
     // 更新模型可见性
     if (updateModelVisibilityByFloorCallback.value) updateModelVisibilityByFloorCallback.value(floor)
