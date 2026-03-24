@@ -841,6 +841,27 @@
     { "name": "Cube2172" },
     { "name": "Cube2159" },
 
+    // 医务室
+    { "name": "Cube1164" },
+    { "name": "Cube811" },
+    { "name": "Cube814" },
+    { "name": "Cube223" },
+    { "name": "Cube224" },
+    { "name": "Cube2053" },
+    { "name": "Cube2193" },
+    { "name": "Cube2190" },
+    { "name": "Cube1100_1" },
+    { "name": "Cube2192" },
+
+    // 厨房
+    { "name": "Cube1166" },
+    { "name": "Cube2179" },
+    { "name": "Cube2054" },
+    { "name": "Cube226" },
+    { "name": "Cube815" },
+    { "name": "Cube2184" },
+    { "name": "Cube227" },
+
 
 
 
@@ -954,10 +975,6 @@
     { "name": "双开门018" },
     { "name": "双开门003" },
     
-
-
-    
-
 
     // -1层小2楼
     { "name": "立方体031" },
