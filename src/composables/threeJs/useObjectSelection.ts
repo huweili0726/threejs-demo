@@ -33,7 +33,11 @@ export function useObjectSelection(
   const highlightColor: any = new THREE.Color(0x00a0c6)
 
   // 存储所有创建的楼名标签
-  const buildNameLabels = ref<THREE.Object3D[]>([])
+  interface BuildNameLabel {
+    sprite: THREE.Sprite
+    position: THREE.Vector3
+  }
+  const buildNameLabels = ref<BuildNameLabel[]>([])
 
   // 复用对象，避免每次双击创建新对象提升性能
   const worldPos = new THREE.Vector3()
@@ -70,6 +74,12 @@ export function useObjectSelection(
           let intersectedObject = filteredIntersects[0].object
           let targetObject: THREE.Object3D | null = intersectedObject
           console.log('🎯 选中子物体：', intersectedObject.name, '类型：', intersectedObject.type)
+
+          // 处理精灵模型点击
+          if (targetObject instanceof THREE.Sprite && targetObject.userData.id) {
+            // toControlStartInspection(targetObject.userData.id)
+            return
+          }
 
           if (targetObject && targetObject instanceof THREE.Mesh) {
             // 判断：如果点击的是已经高亮的模型，则取消高亮
@@ -186,18 +196,54 @@ export function useObjectSelection(
    * @param type 类型（可选）
    */
   const createBuildName = (x: number, y: number, z: number, name: string, scene: THREE.Scene, id: number, type?: string) => {
-    const div = document.createElement('div')
-    if(type === 'col'){
-      div.innerHTML = `<div class="buildName col" onclick="toControlStartInspection(${id})">${name}</div>`
-    }
-    else{
-      div.innerHTML = `<div class="buildName" onclick="toControlStartInspection(${id})">${name}</div>`
-    }
-
-    const label = new CSS2DObject(div)
-    label.position.set(x, y, z)
-    scene.add(label)
-    buildNameLabels.value.push(label)
+    // 创建画布来生成精灵纹理
+    const canvas = document.createElement('canvas')
+    const context = canvas.getContext('2d')
+    if (!context) return
+    
+    // 设置画布大小
+    canvas.width = 256
+    canvas.height = 64
+    
+    // 绘制背景
+    context.fillStyle = 'rgba(0, 0, 0, 0.7)'
+    context.roundRect(0, 0, canvas.width, canvas.height, 8)
+    context.fill()
+    
+    // 绘制文字
+    context.fillStyle = '#64ffda'
+    context.font = '24px Arial'
+    context.textAlign = 'center'
+    context.textBaseline = 'middle'
+    context.fillText(name, canvas.width / 2, canvas.height / 2)
+    
+    // 创建纹理
+    const texture = new THREE.CanvasTexture(canvas)
+    texture.needsUpdate = true
+    
+    // 创建精灵材质
+    const material = new THREE.SpriteMaterial({ 
+      map: texture,
+      transparent: true,
+      alphaTest: 0.1
+    })
+    
+    // 创建精灵
+    const sprite = new THREE.Sprite(material)
+    sprite.position.set(x, y, z)
+    sprite.scale.set(2, 0.5, 1) // 调整精灵大小
+    
+    // 添加到场景
+    scene.add(sprite)
+    
+    // 为精灵添加点击事件
+    sprite.userData = { id }
+    
+    // 存储标签信息
+    buildNameLabels.value.push({
+      sprite,
+      position: new THREE.Vector3(x, y, z)
+    })
   }
   // 将 toControlStartInspection 函数添加到全局作用域
   if (typeof window !== 'undefined') {
@@ -250,7 +296,7 @@ export function useObjectSelection(
   const showBuildNames = () => {
     buildNameLabels.value.forEach(label => {
       if (label) {
-        label.visible = true
+        label.sprite.visible = true
       }
     })
   }
@@ -261,7 +307,7 @@ export function useObjectSelection(
   const hideBuildNames = () => {
     buildNameLabels.value.forEach(label => {
       if (label) {
-        label.visible = false
+        label.sprite.visible = false
       }
     })
   }
