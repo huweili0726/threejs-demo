@@ -21,7 +21,7 @@ import { useObjectPopup } from '@/composables/threeJs/useObjectPopup' // 物体�
 import { useAutoRoam } from '@/composables/threeJs/useAutoRoam' // 自动漫游相关Hooks
 import { useProximityPopup } from '@/composables/threeJs/useProximityPopup' // 接近弹窗相关Hooks
 import { useBasisStore } from '@/stores/basis' // 基础配置 Store
-import { useFloorStore } from '@/stores/floor' // 楼层管理 Store
+import { useThreeJsStore } from '@/stores/threeJs' // threeJs管理 Store
 import { useFloorSwitch } from '@/composables/threeJs/useFloorSwitch' // 楼层切换相关Hooks
 import { useModelVisibility } from '@/composables/threeJs/useModelVisibility' // 模型显示控制相关Hooks
 import '@/assets/css/object-popup.css' // 弹窗样式
@@ -32,8 +32,8 @@ const { width, height } = useWindowSize()
 
 // 使用基础配置 Store
 const basisStore = useBasisStore()
-// 使用楼层管理 Store
-const floorStore = useFloorStore()
+// 使用楼层threeJs管理 Store
+const threeJsStore = useThreeJsStore()
 
 const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize, setCameraPosition } = useThreeScene() // 场景相关Hooks
 const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel, removeModel, updateModelVisibilityByFloor } = useModelLoader(scene as any, render) // 模型加载相关Hooks
@@ -209,7 +209,7 @@ onMounted(async () => {
   initInteractions()
 
   // 4. 注册楼层切换回调到 Store
-  floorStore.registerCallbacks(
+  threeJsStore.registerCallbacks(
     hideBuildNames,
     switchToFloor,
     toAddCharacterBoundingBox

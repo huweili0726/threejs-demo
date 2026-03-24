@@ -1,17 +1,17 @@
 /**
- * 楼层管理 Store
+ * threeJs管理 Store
  *
  * @author huweili
  * @email czxyhuweili@163.com
  * @version 1.0.0
  * @date 2026-03-24
- * @description 管理楼层切换相关的状态和方法
+ * @description 管理threeJs相关状态和方法
  */
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import * as THREE from 'three'
 
-export const useFloorStore = defineStore('floor', () => {
+export const useThreeJsStore = defineStore('threeJs', () => {
   // 回调函数引用
   const hideBuildNamesCallback = ref<(() => void) | null>(null)
   const switchToFloorCallback = ref<((targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number, modelInitPosition: THREE.Vector3, onLookAt: THREE.Vector3) => void) | null>(null)
