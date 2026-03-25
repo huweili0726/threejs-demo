@@ -146,7 +146,7 @@ const initInteractions = () => {
         if(object.userData?.type === 'buildName') {
           threeJsStore.toFloor(object.userData.id) // 双击精灵模型后，切换到指定楼层
         }else if(object.userData?.type === 'button'){
-          threeJsStore.showCustomPopup('柜子信息', [
+          threeJsStore.showCustomPopup(object.userData?.name + ' 机柜信息', [
             { id: '1', name: '名称' },
             { id: '2', name: '型号' },
             { id: '3', name: '状态' },

@@ -292,6 +292,7 @@ export function useObjectSelection(
     y: number,
     z: number,
     text: string,
+    name: string,
     id: string,
     width: number = 0.5,
     height: number = 0.25
@@ -341,7 +342,7 @@ export function useObjectSelection(
     sprite.scale.set(width/100, height/100, 1);
 
     currentScene.add(sprite);
-    sprite.userData = { id, type: 'button' };
+    sprite.userData = { id: id, type: 'button', name: name };
     buttonSprites.value.push({ sprite, position: new THREE.Vector3(x,y,z) });
   };
   

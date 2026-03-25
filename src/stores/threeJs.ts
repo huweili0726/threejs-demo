@@ -30,7 +30,7 @@ export const useThreeJsStore = defineStore('threeJs', () => {
   const resumeAutoRoamCallback = ref<(() => void) | null>(null)
   const stopAutoRoamCallback = ref<(() => void) | null>(null)
   const toRoomCallback = ref<((targetRoom: string) => void) | null>(null)
-  const createButtonSpriteCallback = ref<((x: number, y: number, z: number, text: string, id: string, width: number, height: number) => void) | null>(null)
+  const createButtonSpriteCallback = ref<((x: number, y: number, z: number, text: string, name: string, id: string, width: number, height: number) => void) | null>(null)
 
   // 注册回调函数
   const registerCallbacks = (
@@ -48,7 +48,7 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     resumeAutoRoam: () => void,
     stopAutoRoam: () => void,
     toRoom: (targetRoom: string) => void,
-    createButtonSprite: (x: number, y: number, z: number, text: string, id: string, width: number, height: number) => void
+    createButtonSprite: (x: number, y: number, z: number, text: string, name: string, id: string, width: number, height: number) => void
   ) => {
     switchToFloorCallback.value = switchToFloor
     showPipelinesCallback.value = showPipelines
@@ -143,22 +143,22 @@ export const useThreeJsStore = defineStore('threeJs', () => {
         // 9楼的6个机柜
         if (createButtonSpriteCallback.value){
           // 第一排右边
-          createButtonSpriteCallback.value( -0.315, 3.738, -4.08, '1#查看', 'cabinet_1', 1.5, .75 )
+          createButtonSpriteCallback.value( -0.315, 3.738, -4.08, '1#查看', '1#', 'cabinet_1', 1.5, .75 )
           
           // 第一排中间
-          createButtonSpriteCallback.value( -0.26, 3.738, -4.08, '2#查看', 'cabinet_2', 1.5, .75 )
+          createButtonSpriteCallback.value( -0.26, 3.738, -4.08, '2#查看', '2#', 'cabinet_2', 1.5, .75 )
 
           // 第一排左边
-          createButtonSpriteCallback.value( -0.205, 3.738, -4.08, '3#查看', 'cabinet_3', 1.5, .75 )
+          createButtonSpriteCallback.value( -0.205, 3.738, -4.08, '3#查看', '3#', 'cabinet_3', 1.5, .75 )
 
           // 第二排右边
-          createButtonSpriteCallback.value( -0.315, 3.738, -3.95, '4#查看', 'cabinet_4', 1.5, .75 )
+          createButtonSpriteCallback.value( -0.315, 3.738, -3.95, '4#查看', '4#', 'cabinet_4', 1.5, .75 )
 
           // 第二排中间
-          createButtonSpriteCallback.value( -0.26, 3.738, -3.95, '5#查看', 'cabinet_5', 1.5, .75 )
+          createButtonSpriteCallback.value( -0.26, 3.738, -3.95, '5#查看', '5#', 'cabinet_5', 1.5, .75 )
 
           // 第二排左边
-          createButtonSpriteCallback.value( -0.205, 3.738, -3.95, '6#查看', 'cabinet_6', 1.5, .75 )
+          createButtonSpriteCallback.value( -0.205, 3.738, -3.95, '6#查看', '6#', 'cabinet_6', 1.5, .75 )
         }
       } else if (floor === '8') {
         const floor8Config = basisStore.floor8thConfig
