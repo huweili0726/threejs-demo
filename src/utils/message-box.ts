@@ -13,19 +13,21 @@ export const messageBoxUtils = {
           <div class="scifi-popup-table-column scifi-popup-table-column-thumbnail">缩略图</div>
           <div class="scifi-popup-table-column scifi-popup-table-column-action">操作</div>
         </div>
-        ${content.map(item => `
-          <div class="scifi-popup-table-row" data-id="${item.id}">
-            <div class="scifi-popup-table-column scifi-popup-table-column-name">
-              <span class="scifi-popup-label">${item.name}</span>
+        <div class="scifi-popup-table-body">
+          ${content.map(item => `
+            <div class="scifi-popup-table-row" data-id="${item.id}">
+              <div class="scifi-popup-table-column scifi-popup-table-column-name">
+                <span class="scifi-popup-label">${item.name}</span>
+              </div>
+              <div class="scifi-popup-table-column scifi-popup-table-column-thumbnail">
+                ${item.thumbnail ? `<img src="${item.thumbnail}" class="scifi-popup-thumbnail" alt="缩略图" />` : '<span class="scifi-popup-thumbnail-placeholder">无缩略图</span>'}
+              </div>
+              <div class="scifi-popup-table-column scifi-popup-table-column-action">
+                <button class="scifi-popup-delete-btn" data-id="${item.id}">删除</button>
+              </div>
             </div>
-            <div class="scifi-popup-table-column scifi-popup-table-column-thumbnail">
-              ${item.thumbnail ? `<img src="${item.thumbnail}" class="scifi-popup-thumbnail" alt="缩略图" />` : '<span class="scifi-popup-thumbnail-placeholder">无缩略图</span>'}
-            </div>
-            <div class="scifi-popup-table-column scifi-popup-table-column-action">
-              <button class="scifi-popup-delete-btn" data-id="${item.id}">删除</button>
-            </div>
-          </div>
-        `).join('')}
+          `).join('')}
+        </div>
       </div>
     `
 
