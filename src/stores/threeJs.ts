@@ -143,13 +143,22 @@ export const useThreeJsStore = defineStore('threeJs', () => {
         // 9楼的6个机柜
         if (createButtonSpriteCallback.value){
           // 第一排右边
-          createButtonSpriteCallback.value( -0.315, 3.738, -4.08, '查看', 'cabinet_1', 1.5, .75 )
+          createButtonSpriteCallback.value( -0.315, 3.738, -4.08, '1#查看', 'cabinet_1', 1.5, .75 )
           
           // 第一排中间
-          createButtonSpriteCallback.value( -0.26, 3.738, -4.08, '查看', 'cabinet_2', 1.5, .75 )
+          createButtonSpriteCallback.value( -0.26, 3.738, -4.08, '2#查看', 'cabinet_2', 1.5, .75 )
 
           // 第一排左边
-          createButtonSpriteCallback.value( -0.205, 3.738, -4.08, '查看', 'cabinet_3', 1.5, .75 )
+          createButtonSpriteCallback.value( -0.205, 3.738, -4.08, '3#查看', 'cabinet_3', 1.5, .75 )
+
+          // 第二排右边
+          createButtonSpriteCallback.value( -0.315, 3.738, -3.95, '4#查看', 'cabinet_4', 1.5, .75 )
+
+          // 第二排中间
+          createButtonSpriteCallback.value( -0.26, 3.738, -3.95, '5#查看', 'cabinet_5', 1.5, .75 )
+
+          // 第二排左边
+          createButtonSpriteCallback.value( -0.205, 3.738, -3.95, '6#查看', 'cabinet_6', 1.5, .75 )
         }
       } else if (floor === '8') {
         const floor8Config = basisStore.floor8thConfig
