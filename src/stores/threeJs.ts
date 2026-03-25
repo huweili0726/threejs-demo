@@ -138,7 +138,7 @@ export const useThreeJsStore = defineStore('threeJs', () => {
             console.log(11)
           },
           3,
-          1
+          1.5
         )
       } else if (floor === '8') {
         const floor8Config = basisStore.floor8thConfig

@@ -319,21 +319,21 @@ export function useObjectSelection(
     gradient.addColorStop(0, '#003366ff')   
     gradient.addColorStop(1, '#001a33ff')
     context.fillStyle = gradient
-    context.roundRect(0, 0, width, height, 8)
+    context.roundRect(0, 0, width, height, 2)
     context.fill()
     
     // 绘制按钮边框 - 深蓝色边框
-    // context.strokeStyle = '#0066cc'
-    // context.lineWidth = 2
-    // context.roundRect(2, 2, width - 4, height - 4, 6)
-    // context.stroke()
+    context.strokeStyle = '#0066cc'
+    context.lineWidth = 2
+    context.roundRect(2, 2, width - 4, height - 4, 6)
+    context.stroke()
     
     // 绘制按钮文字
-    context.fillStyle = '#ffffff'
-    context.font = 'bold 14px Arial'
-    context.textAlign = 'center'
-    context.textBaseline = 'middle'
-    context.fillText(text, width / 2, height / 2)
+    // context.fillStyle = '#ffffff'
+    // context.font = 'bold 14px Arial'
+    // context.textAlign = 'center'
+    // context.textBaseline = 'middle'
+    // context.fillText(text, width / 2, height / 2)
     
     // 创建纹理并设置过滤方式以提高清晰度
     const texture = new THREE.CanvasTexture(canvas)
@@ -351,7 +351,7 @@ export function useObjectSelection(
     // 创建精灵
     const sprite = new THREE.Sprite(material)
     sprite.position.set(x, y, z)
-    sprite.scale.set(0.1, 0.1, 0.1)
+    sprite.scale.set(width / 100, height / 100, 1) // 调整精灵大小
     
     // 添加到场景
     currentScene.add(sprite)
