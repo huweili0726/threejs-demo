@@ -146,10 +146,10 @@ export const useThreeJsStore = defineStore('threeJs', () => {
           'cabinet_1',
           () => { // 点击回调
             showCustomPopup('柜子信息', [
-              { name: '名称', value: '服务器机柜' },
-              { name: '型号', value: 'SR-2000' },
-              { name: '状态', value: '运行中' },
-              { name: '温度', value: '32°C' }
+              { id: '1', name: '名称', value: '服务器机柜' },
+              { id: '2', name: '型号', value: 'SR-2000' },
+              { id: '3', name: '状态', value: '运行中' },
+              { id: '4', name: '温度', value: '32°C' }
             ], (id) => {
               console.log("需要删除的行：", id)
             })
