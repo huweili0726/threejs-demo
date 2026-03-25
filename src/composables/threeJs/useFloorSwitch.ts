@@ -11,9 +11,12 @@ import * as THREE from 'three'
 import { useBasisStore } from '@/stores/basis'
 
 export function useFloorSwitch(
+  scene: () => THREE.Scene | null | undefined,
+  loadedModelMaps: () => Map<string, THREE.Object3D>,
   flyTo: (position: THREE.Vector3, target: THREE.Vector3, duration: number) => Promise<void>,
   loadModel: (options: any) => Promise<THREE.Object3D | undefined>,
-  removeModel: (modelUrl: string) => void
+  removeModel: (modelUrl: string) => void,
+  addCharacterBoundingBox: (options: { scene: THREE.Scene; modelUrl: string; loadedModelMaps: Map<string, THREE.Object3D> }) => void
 ) {
   const basisStore = useBasisStore()
   /**
@@ -49,6 +52,21 @@ export function useFloorSwitch(
         frontAxis: new THREE.Vector3(0, 0, 1),
       })?.catch(console.error)
     ])
+    
+    // 获取最新的 scene 和 loadedModelMaps
+    const currentScene = scene()
+    const currentLoadedModelMaps = loadedModelMaps()
+    
+    // 添加人物包围盒
+    if (currentScene) {
+      addCharacterBoundingBox({
+        scene: currentScene,
+        modelUrl: basisStore.characterModelUrlsConfig?.man || '',
+        loadedModelMaps: currentLoadedModelMaps
+      })
+    } else {
+      console.error('场景未初始化，无法添加人物包围盒')
+    }
   }
 
   /**

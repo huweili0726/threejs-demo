@@ -14,10 +14,8 @@ import { useBasisStore } from '@/stores/basis'
 
 export const useThreeJsStore = defineStore('threeJs', () => {
   const basisStore = useBasisStore()
-
   // 回调函数引用
   const switchToFloorCallback = ref<((targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number, modelInitPosition: THREE.Vector3, onLookAt: THREE.Vector3) => void) | null>(null)
-  const toAddCharacterBoundingBoxCallback = ref<(() => void) | null>(null)
   const showPipelinesCallback = ref<(() => void) | null>(null)
   const hideBuildNamesCallback = ref<(() => void) | null>(null)
   const showBuildNamesCallback = ref<(() => void) | null>(null)
@@ -35,7 +33,6 @@ export const useThreeJsStore = defineStore('threeJs', () => {
   // 注册回调函数
   const registerCallbacks = (
     switchToFloor: (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number, modelInitPosition: THREE.Vector3, onLookAt: THREE.Vector3) => void,
-    toAddCharacterBoundingBox: () => void,
     showPipelines: () => void,
     hideBuildNames: () => void,
     showBuildNames: () => void,
@@ -51,7 +48,6 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     toRoom: (targetRoom: string) => void
   ) => {
     switchToFloorCallback.value = switchToFloor
-    toAddCharacterBoundingBoxCallback.value = toAddCharacterBoundingBox
     showPipelinesCallback.value = showPipelines
     hideBuildNamesCallback.value = hideBuildNames
     showBuildNamesCallback.value = showBuildNames
@@ -66,33 +62,7 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     stopAutoRoamCallback.value = stopAutoRoam,
     toRoomCallback.value = toRoom
   }
-
-  // 执行楼层切换细节
-  const toTargetFloor = (options: {
-    targetPosition: THREE.Vector3,
-    targetTarget: THREE.Vector3,
-    duration: number,
-    modelInitPosition?: { x: number, y: number, z: number },
-    onLookAt?: { x: number, y: number, z: number }
-  }) => {
-    const { targetPosition, targetTarget, duration = 2000, modelInitPosition, onLookAt } = options
-    
-    // 8、9、-1楼精灵模型title隐藏
-    if (hideBuildNamesCallback.value) hideBuildNamesCallback.value()
-    // 飞往指定楼层 （剔除已经存在的人物模型 + 视角飞行 + 重新加载人物模型并设定初始位置和看向位置）
-    if (switchToFloorCallback.value) {
-      switchToFloorCallback.value(
-        targetPosition,
-        targetTarget,
-        duration,
-        modelInitPosition ? new THREE.Vector3(modelInitPosition.x, modelInitPosition.y, modelInitPosition.z) : new THREE.Vector3(),
-        onLookAt ? new THREE.Vector3(onLookAt.x, onLookAt.y, onLookAt.z) : new THREE.Vector3()
-      )
-    }
-    // 添加包围盒
-    if (toAddCharacterBoundingBoxCallback.value) toAddCharacterBoundingBoxCallback.value()
-  }
-
+  
   /**
    * 切换楼层 + 更新模型可见性
    * @param floor 目标楼层
@@ -167,14 +137,18 @@ export const useThreeJsStore = defineStore('threeJs', () => {
         onLookAt = floor8Config?.characterModelToLook // 人物模型看向-1楼1层入口处  
       }
 
-      // 切换楼层
-      toTargetFloor({
-        targetPosition: targetPosition, 
-        targetTarget: targetTarget, 
-        duration: duration, 
-        modelInitPosition: modelInitPosition, 
-        onLookAt: onLookAt
-      })
+      // 8、9、-1楼精灵模型title隐藏
+      if (hideBuildNamesCallback.value) hideBuildNamesCallback.value()
+      // 飞往指定楼层 （剔除已经存在的人物模型 + 视角飞行 + 重新加载人物模型并设定初始位置和看向位置 + 添加人物包围盒
+      if (switchToFloorCallback.value) {
+        switchToFloorCallback.value(
+          targetPosition,
+          targetTarget,
+          duration,
+          modelInitPosition ? new THREE.Vector3(modelInitPosition.x, modelInitPosition.y, modelInitPosition.z) : new THREE.Vector3(),
+          onLookAt ? new THREE.Vector3(onLookAt.x, onLookAt.y, onLookAt.z) : new THREE.Vector3()
+        )
+      }
     }
 
     // 更新模型可见性
@@ -260,7 +234,6 @@ export const useThreeJsStore = defineStore('threeJs', () => {
 
   return {
     registerCallbacks,
-    toTargetFloor,
     handleShowPipelines,
     handleRecoveryPipelines,
     toFloor,

@@ -39,9 +39,9 @@ const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, sta
 const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel, removeModel, updateModelVisibilityByFloor } = useModelLoader(scene as any, render) // 模型加载相关Hooks
 const { loadEnvironment } = useEnvironmentLoader(scene as any) // 环境贴图加载相关Hooks
 const { initDoubleClickPopup, showPopup, closePopup, updateCSS2DRenderer, handleResize } = useObjectPopup(camera as any, scene as any, threeJsContainer) // 物体弹窗相关Hooks
-const { switchToFloor, toControlCommandRoom } = useFloorSwitch(flyTo, loadModel as any, removeModel) // 楼层切换相关Hooks 
-const { initDoubleClickSelection, createBuildName, hideBuildNames, showBuildNames, initHoverEvent } = useObjectSelection(camera as any, scene as any, threeJsContainer, switchToFloor)  // 物体选择相关Hooks
 const { wallBoundingBoxes, checkCollision, updateBoundingBoxes, setBoundingBoxesFromLoadResult, addCharacterBoundingBox } = useCollisionDetection() // 碰撞检测相关Hooks
+const { switchToFloor, toControlCommandRoom } = useFloorSwitch(() => scene.value, () => loadedModelMaps.value, flyTo, loadModel as any, removeModel, addCharacterBoundingBox) // 楼层切换相关Hooks 
+const { initDoubleClickSelection, createBuildName, hideBuildNames, showBuildNames, initHoverEvent } = useObjectSelection(camera as any, scene as any, threeJsContainer, switchToFloor)  // 物体选择相关Hooks
 const { updateProximityPopups } = useProximityPopup(showPopup, closePopup, toControlCommandRoom) // 使用接近弹窗模块（统一管理弹窗逻辑）
 const { initKeyboardEvents, updateCharacterMovement } = useCharacterMovement( checkCollision, updateBoundingBoxes, wallBoundingBoxes, updateProximityPopups) // 人物移动控制相关Hooks
 const { roamState, initAutoRoam, startAutoRoam, pauseAutoRoam, resumeAutoRoam, stopAutoRoam, updateAutoRoam } = useAutoRoam(wallBoundingBoxes, updateProximityPopups) // 自动漫游相关Hooks
@@ -201,12 +201,11 @@ onMounted(async () => {
   initSceneAndEnvironment()
 
   // 2. 添加楼名显示
-  if (scene.value) {
-    // 添加几个楼名显示，根据实际场景坐标调整
-    createBuildName(-3.2, 4, -4.1, '应急指挥中心', scene.value, '9') // 9楼
-    createBuildName(-3.2, 3.3, -4.1, '网络机房', scene.value, '8') // 8楼
-    createBuildName(-1.3, 1.6, 1.3, '基本指挥所', scene.value, '-1') // -1楼地面入口
-  }
+  if (!scene.value) return
+  // 添加几个楼名显示，根据实际场景坐标调整
+  createBuildName(-3.2, 4, -4.1, '应急指挥中心', scene.value, '9') // 9楼
+  createBuildName(-3.2, 3.3, -4.1, '网络机房', scene.value, '8') // 8楼
+  createBuildName(-1.3, 1.6, 1.3, '基本指挥所', scene.value, '-1') // -1楼地面入口
 
   // 3. 初始化交互功能 【键盘 wasd 控制人物移动 + 双击选中功能 + 双击弹窗功能】
   initInteractions()
@@ -217,7 +216,6 @@ onMounted(async () => {
   // 5. 注册需要的函数回调到 Store
   threeJsStore.registerCallbacks(
     switchToFloor,
-    toAddCharacterBoundingBox,
     showPipelines,
     hideBuildNames,
     showBuildNames,

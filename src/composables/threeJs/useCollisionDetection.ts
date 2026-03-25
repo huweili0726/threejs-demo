@@ -43,7 +43,7 @@ export function useCollisionDetection() {
   const addCharacterBoundingBox = (options: {
     scene: THREE.Scene
     modelUrl: string
-    loadedModelMaps: Map<string, THREE.Group>
+    loadedModelMaps: Map<string, THREE.Object3D>
   }) => {
     const { scene, modelUrl, loadedModelMaps } = options
     
