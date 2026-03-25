@@ -119,7 +119,11 @@ const initInteractions = () => {
           object
         })
 
-        threeJsStore.toFloor(object.userData.id) // 双击精灵模型后，切换到指定楼层
+        if(object.userData?.type !== 'button') {
+          threeJsStore.toFloor(object.userData.id) // 双击精灵模型后，切换到指定楼层
+        }else{
+          console.log('出弹窗')
+        }
       }
     },
     highlightEnabled: true
