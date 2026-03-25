@@ -284,74 +284,74 @@ export function useObjectSelection(
     })
   }
   
-/**
- * 创建按钮样式的精灵
- * @param x X坐标
- * @param y Y坐标
- * @param z Z坐标
- * @param text 按钮文字
- * @param id 按钮ID
- * @param onClick 点击回调函数
- * @param width 按钮宽度
- * @param height 按钮高度
- */
-const createButtonSprite = (
-  x: number,
-  y: number,
-  z: number,
-  text: string,
-  id: string,
-  onClick: () => void,
-  width: number = 0.5,
-  height: number = 0.25
-) => {
-  const currentScene = scene();
-  if (!currentScene) return;
+  /**
+   * 创建按钮样式的精灵
+   * @param x X坐标
+   * @param y Y坐标
+   * @param z Z坐标
+   * @param text 按钮文字
+   * @param id 按钮ID
+   * @param onClick 点击回调函数
+   * @param width 按钮宽度
+   * @param height 按钮高度
+   */
+  const createButtonSprite = (
+    x: number,
+    y: number,
+    z: number,
+    text: string,
+    id: string,
+    onClick: () => void,
+    width: number = 0.5,
+    height: number = 0.25
+  ) => {
+    const currentScene = scene();
+    if (!currentScene) return;
 
-  const canvas = document.createElement('canvas');
-  const context = canvas.getContext('2d');
-  if (!context) return;
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    if (!context) return;
 
-  // 极小高清画布
-  canvas.width = 128;
-  canvas.height = 64;
+    // 极小高清画布
+    canvas.width = 128;
+    canvas.height = 64;
 
-  // 超小按钮样式
-  context.clearRect(0, 0, 128, 64);
-  context.fillStyle = '#003366';
-  context.beginPath();
-  context.roundRect(0, 0, 128, 64, 8);
-  context.fill();
+    // 超小按钮样式
+    context.clearRect(0, 0, 128, 64);
+    context.fillStyle = '#003366';
+    context.beginPath();
+    context.roundRect(0, 0, 128, 64, 8);
+    context.fill();
 
-  // 文字（极小画布 + 合适字体）
-  context.fillStyle = '#ffffff';
-  context.font = 'bold 40px Arial';
-  context.textAlign = 'center';
-  context.textBaseline = 'middle';
-  context.fillText(text, 64, 32);
+    // 文字（极小画布 + 合适字体）
+    context.fillStyle = '#ffffff';
+    context.font = 'bold 40px Arial';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillText(text, 64, 32);
 
-  // 纹理
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.minFilter = THREE.LinearFilter;
-  texture.magFilter = THREE.LinearFilter;
-  texture.needsUpdate = true;
+    // 纹理
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.needsUpdate = true;
 
-  const material = new THREE.SpriteMaterial({
-    map: texture,
-    transparent: true,
-  });
+    const material = new THREE.SpriteMaterial({
+      map: texture,
+      transparent: true,
+    });
 
-  const sprite = new THREE.Sprite(material);
-  sprite.position.set(x, y, z);
-  // ✅ 核心：你传多少尺寸，就显示多少！完全不放大
-  sprite.scale.set(width/100, height/100, 1);
+    const sprite = new THREE.Sprite(material);
+    sprite.position.set(x, y, z);
+    // ✅ 核心：你传多少尺寸，就显示多少！完全不放大
+    sprite.scale.set(width/100, height/100, 1);
 
-  currentScene.add(sprite);
-  sprite.userData = { id, type: 'button', onClick };
-  buttonSprites.value.push({ sprite, position: new THREE.Vector3(x,y,z), onClick });
+    currentScene.add(sprite);
+    sprite.userData = { id, type: 'button', onClick };
+    buttonSprites.value.push({ sprite, position: new THREE.Vector3(x,y,z), onClick });
 
-  return sprite;
-};
+    return sprite;
+  };
   
   /**
    * 隐藏所有按钮
