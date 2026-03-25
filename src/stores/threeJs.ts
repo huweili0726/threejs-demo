@@ -67,12 +67,6 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     createButtonSpriteCallback.value = createButtonSprite
   }
 
-  // 弹窗内容项接口
-  interface PopupContentItem {
-    name: string
-    value: string
-  }
-
   /**
    * 显示自定义弹出框
    * @param title 弹窗标题
