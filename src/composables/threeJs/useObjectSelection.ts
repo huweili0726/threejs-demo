@@ -10,7 +10,6 @@
 import * as THREE from 'three'
 import { ref, ShallowRef } from 'vue'
 import { useRaycastUtils } from '@/composables/threeJs/useRaycastUtils'
-import { useBasisStore } from '@/stores/basis'
 
 // 初始化工具函数
 const { performRaycast, filterIntersects } = useRaycastUtils()
@@ -18,11 +17,8 @@ const { performRaycast, filterIntersects } = useRaycastUtils()
 export function useObjectSelection(
   camera: ShallowRef<THREE.PerspectiveCamera>, 
   scene: ShallowRef<THREE.Scene>, 
-  container: ShallowRef<HTMLElement | undefined>, 
-  switchToFloor: (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number, modelInitPosition: THREE.Vector3, onLookAt: THREE.Vector3) => void
+  container: ShallowRef<HTMLElement | undefined>
 ) {
-  // 初始化基础状态
-  const basisStore = useBasisStore()
 
   // 当前选中的物体
   const selectedObject = ref<THREE.Object3D | null>(null)
