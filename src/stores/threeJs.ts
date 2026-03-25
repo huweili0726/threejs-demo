@@ -11,6 +11,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import * as THREE from 'three'
 import { useBasisStore } from '@/stores/basis'
+import { messageBoxUtils } from '@/utils/message-box'
 
 export const useThreeJsStore = defineStore('threeJs', () => {
   const basisStore = useBasisStore()
@@ -78,26 +79,7 @@ export const useThreeJsStore = defineStore('threeJs', () => {
    * @param content 弹窗内容
    */
   const showCustomPopup = (title: string, content: PopupContentItem[]) => {
-    // 使用 Element Plus 的 ElMessageBox 组件
-    import('element-plus').then(({ ElMessageBox }) => {
-      // 构建消息内容
-      let messageContent = ''
-      content.forEach((item) => {
-        messageContent += `<div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-          <span style="font-weight: 500; color: #409eff;">${item.name}:</span>
-          <span>${item.value}</span>
-        </div>`
-      })
-
-      // 显示对话框
-      ElMessageBox.alert(messageContent, title, {
-        confirmButtonText: '确定',
-        type: 'info',
-        customClass: 'custom-popup',
-        dangerouslyUseHTMLString: true,
-        center: true
-      })
-    })
+    messageBoxUtils.showCustomPopup(title, content)
   }
 
   /**
