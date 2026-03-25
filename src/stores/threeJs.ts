@@ -72,8 +72,8 @@ export const useThreeJsStore = defineStore('threeJs', () => {
    * @param title 弹窗标题
    * @param content 弹窗内容
    */
-  const showCustomPopup = (title: string, content: any[]) => {
-    messageBoxUtils.showCustomPopup(title, content)
+  const showCustomPopup = (title: string, content: any[], onDelete?: (id: string) => void) => {
+    return messageBoxUtils.showCustomPopup(title, content, onDelete)
   }
 
   /**
@@ -150,7 +150,9 @@ export const useThreeJsStore = defineStore('threeJs', () => {
               { name: '型号', value: 'SR-2000' },
               { name: '状态', value: '运行中' },
               { name: '温度', value: '32°C' }
-            ])
+            ], (id) => {
+              console.log("需要删除的行：", id)
+            })
           },
           3,
           1.5
