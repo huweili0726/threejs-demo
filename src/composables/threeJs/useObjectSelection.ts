@@ -16,7 +16,7 @@ const { performRaycast, filterIntersects } = useRaycastUtils()
 
 export function useObjectSelection(
   camera: ShallowRef<THREE.PerspectiveCamera>, 
-  scene: ShallowRef<THREE.Scene>, 
+  scene: () => THREE.Scene | null | undefined,
   container: ShallowRef<HTMLElement | undefined>
 ) {
 
@@ -33,6 +33,14 @@ export function useObjectSelection(
     position: THREE.Vector3
   }
   const buildNameLabels = ref<BuildNameLabel[]>([])
+  
+  // 存储所有创建的按钮精灵
+  interface ButtonSprite {
+    sprite: THREE.Sprite
+    position: THREE.Vector3
+    onClick: () => void
+  }
+  const buttonSprites = ref<ButtonSprite[]>([])
 
   // 复用对象，避免每次双击创建新对象提升性能
   const worldPos = new THREE.Vector3()
@@ -55,11 +63,12 @@ export function useObjectSelection(
 
     // 双击事件处理函数
     const handleDoubleClick = (event: MouseEvent) => {
+      const currentScene = scene()
       // 校验依赖项：确保scene、camera已初始化
-      if (!camera.value || !scene.value) return
+      if (!camera.value || !currentScene) return
 
       // 使用工具函数进行射线检测
-      const intersects = performRaycast(camera, scene, container, event)
+      const intersects = performRaycast(camera, currentScene, container, event)
 
       if (intersects && intersects.length > 0) {
         // 使用工具函数过滤射线检测结果（默认过滤 BoxHelper、Box3Helper 和 CSS2DObject）
@@ -129,6 +138,11 @@ export function useObjectSelection(
           }
 
           if (targetObject && targetObject instanceof THREE.Sprite) {
+            // 检查是否是按钮精灵
+            if (targetObject.userData.type === 'button' && targetObject.userData.onClick) {
+              // 调用按钮的点击回调
+              targetObject.userData.onClick()
+            }
             if (onSpriteSelect) {
               onSpriteSelect(targetObject)
             }
@@ -269,6 +283,130 @@ export function useObjectSelection(
       }
     })
   }
+  
+  /**
+   * 创建按钮样式的精灵
+   * @param x X坐标
+   * @param y Y坐标
+   * @param z Z坐标
+   * @param text 按钮文字
+   * @param id 按钮ID
+   * @param onClick 点击回调函数
+   * @param width 按钮宽度（默认120）
+   * @param height 按钮高度（默认40）
+   */
+  const createButtonSprite = (x: number, y: number, z: number, text: string, id: string, onClick: () => void, width: number = 120, height: number = 40) => {
+    const currentScene = scene()
+    if (!currentScene) return
+
+    // 创建画布来生成精灵纹理
+    const canvas = document.createElement('canvas')
+    const context = canvas.getContext('2d')
+    if (!context) return
+    
+    // 考虑设备像素比，提高画布分辨率
+    const dpr = window.devicePixelRatio || 1
+    const canvasWidth = width * dpr
+    const canvasHeight = height * dpr
+    canvas.width = canvasWidth
+    canvas.height = canvasHeight
+    
+    // 缩放上下文以适应高DPI屏幕
+    context.scale(dpr, dpr)
+    
+    // 绘制按钮背景
+    const gradient = context.createLinearGradient(0, 0, width, height)
+    gradient.addColorStop(0, '#004080ff')   
+    gradient.addColorStop(1, '#0066ccff')
+    context.fillStyle = gradient
+    context.roundRect(0, 0, width, height, 8)
+    context.fill()
+    
+    // 绘制按钮边框
+    context.strokeStyle = '#64ffda'
+    context.lineWidth = 2
+    context.roundRect(2, 2, width - 4, height - 4, 6)
+    context.stroke()
+    
+    // 绘制按钮文字
+    context.fillStyle = '#ffffff'
+    context.font = 'bold 14px Arial'
+    context.textAlign = 'center'
+    context.textBaseline = 'middle'
+    context.fillText(text, width / 2, height / 2)
+    
+    // 创建纹理并设置过滤方式以提高清晰度
+    const texture = new THREE.CanvasTexture(canvas)
+    texture.minFilter = THREE.LinearFilter
+    texture.magFilter = THREE.LinearFilter
+    texture.needsUpdate = true
+    
+    // 创建精灵材质
+    const material = new THREE.SpriteMaterial({ 
+      map: texture,
+      transparent: true,
+      alphaTest: 0.1
+    })
+    
+    // 创建精灵
+    const sprite = new THREE.Sprite(material)
+    sprite.position.set(x, y, z)
+    sprite.scale.set(width / 100, height / 100, 1) // 调整精灵大小
+    
+    // 添加到场景
+    currentScene.add(sprite)
+    
+    // 为精灵添加点击事件和用户数据
+    sprite.userData = { 
+      id,
+      type: 'button',
+      onClick
+    }
+
+    // 存储按钮信息
+    buttonSprites.value.push({
+      sprite,
+      position: new THREE.Vector3(x, y, z),
+      onClick
+    })
+    
+    return sprite
+  }
+  
+  /**
+   * 隐藏所有按钮
+   */
+  const hideButtons = () => {
+    buttonSprites.value.forEach(button => {
+      if (button) {
+        button.sprite.visible = false
+      }
+    })
+  }
+  
+  /**
+   * 显示所有按钮
+   */
+  const showButtons = () => {
+    buttonSprites.value.forEach(button => {
+      if (button) {
+        button.sprite.visible = true
+      }
+    })
+  }
+  
+  /**
+   * 清理所有按钮
+   * @param scene 场景对象
+   */
+  const cleanupButtons = (scene: THREE.Scene) => {
+    buttonSprites.value.forEach(button => {
+      if (button) {
+        scene.remove(button.sprite)
+      }
+    })
+    buttonSprites.value = []
+  }
 
   /**
    * 初始化鼠标悬停事件，实现鼠标移动到精灵上时变成小手
@@ -280,14 +418,16 @@ export function useObjectSelection(
     }
   ) => {
     const { onMouseEnter, onMouseLeave } = options
+    const currentScene = scene()
+    if (!currentScene) return
 
     // 鼠标移动事件处理函数
     const handleMouseMove = (event: MouseEvent) => {
       // 校验依赖项：确保scene、camera已初始化
-      if (!camera.value || !scene.value) return
+      if (!camera.value || !currentScene) return
 
       // 使用工具函数进行射线检测
-      const intersects = performRaycast(camera, scene, container, event)
+      const intersects = performRaycast(camera, currentScene, container, event)
 
       if (intersects && intersects.length > 0) {
         // 使用工具函数过滤射线检测结果（默认过滤 BoxHelper、Box3Helper 和 CSS2DObject）
@@ -327,6 +467,10 @@ export function useObjectSelection(
     createBuildName,
     showBuildNames,
     hideBuildNames,
+    createButtonSprite,
+    showButtons,
+    hideButtons,
+    cleanupButtons,
     initHoverEvent
   }
 }

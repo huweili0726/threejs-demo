@@ -25,12 +25,12 @@ export function useRaycastUtils() {
    */
   const performRaycast = (
     camera: ShallowRef<THREE.PerspectiveCamera>,
-    scene: ShallowRef<THREE.Scene>,
+    scene: THREE.Scene | null | undefined,
     container: ShallowRef<HTMLElement | undefined>,
     event: MouseEvent
   ): THREE.Intersection[] => {
     // 校验依赖项
-    if (!camera.value || !scene.value) {
+    if (!camera.value || !scene) {
       return []
     }
 
@@ -40,7 +40,7 @@ export function useRaycastUtils() {
 
     // 关键：更新相机和场景的世界矩阵（漫游后必加）
     camera.value.updateMatrixWorld(true)
-    scene.value.updateMatrixWorld(true)
+    scene.updateMatrixWorld(true)
 
     // 计算鼠标在画布内的相对位置（排除容器偏移）
     const canvas = container.value?.querySelector('canvas') || document.querySelector('canvas')
@@ -52,7 +52,7 @@ export function useRaycastUtils() {
     raycaster.setFromCamera(mouse, camera.value)
 
     // 检测射线与场景中模型的交点，递归检测子物体
-    const intersects = raycaster.intersectObjects(scene.value.children, true)
+    const intersects = raycaster.intersectObjects(scene.children, true)
 
     return intersects
   }

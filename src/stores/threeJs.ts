@@ -29,6 +29,7 @@ export const useThreeJsStore = defineStore('threeJs', () => {
   const resumeAutoRoamCallback = ref<(() => void) | null>(null)
   const stopAutoRoamCallback = ref<(() => void) | null>(null)
   const toRoomCallback = ref<((targetRoom: string) => void) | null>(null)
+  const createButtonSpriteCallback = ref<((x: number, y: number, z: number, text: string, id: string, onClick: () => void, width: number, height: number) => void) | null>(null)
   
   // 注册回调函数
   const registerCallbacks = (
@@ -45,7 +46,8 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     pauseAutoRoam: () => void,
     resumeAutoRoam: () => void,
     stopAutoRoam: () => void,
-    toRoom: (targetRoom: string) => void
+    toRoom: (targetRoom: string) => void,
+    createButtonSprite: (x: number, y: number, z: number, text: string, id: string, onClick: () => void, width: number, height: number) => void
   ) => {
     switchToFloorCallback.value = switchToFloor
     showPipelinesCallback.value = showPipelines
@@ -60,9 +62,10 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     pauseAutoRoamCallback.value = pauseAutoRoam,
     resumeAutoRoamCallback.value = resumeAutoRoam,
     stopAutoRoamCallback.value = stopAutoRoam,
-    toRoomCallback.value = toRoom
+    toRoomCallback.value = toRoom,
+    createButtonSpriteCallback.value = createButtonSprite
   }
-  
+
   /**
    * 切换楼层 + 更新模型可见性
    * @param floor 目标楼层
@@ -126,6 +129,19 @@ export const useThreeJsStore = defineStore('threeJs', () => {
         duration = floor9Config?.durationTime || 2000 // 飞行时间
         modelInitPosition = floor9Config?.characterModelSetPosition // 人物模型初始位置
         onLookAt = floor9Config?.characterModelToLook // 人物模型看向-1楼1层入口处
+
+        if (createButtonSpriteCallback.value) createButtonSpriteCallback.value(
+          0.88,
+          3.60,
+          -3.93,
+          '9',
+          '9',
+          () => {
+            console.log(11)
+          },
+          10,
+          5
+        )
       } else if (floor === '8') {
         const floor8Config = basisStore.floor8thConfig
         const perspective = floor8Config?.perspective || { x: 0, y: 0, z: 0 }

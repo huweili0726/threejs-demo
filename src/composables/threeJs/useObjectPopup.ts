@@ -236,7 +236,7 @@ export function useObjectPopup(
       if (!camera.value || !scene.value) return
 
       // 使用工具函数进行射线检测
-      const intersects = performRaycast(camera, scene, container, event)
+      const intersects = performRaycast(camera, scene.value, container, event)
 
       if (intersects && intersects.length > 0) {
         // 使用工具函数过滤射线检测结果
