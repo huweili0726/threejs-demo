@@ -253,7 +253,7 @@ export function useObjectSelection(
     scene.add(sprite)
     
     // 为精灵添加点击事件
-    sprite.userData = { id }
+    sprite.userData = { id, type: 'buildName' }
 
     // 存储标签信息
     buildNameLabels.value.push({
@@ -314,19 +314,19 @@ export function useObjectSelection(
     // 缩放上下文以适应高DPI屏幕
     context.scale(dpr, dpr)
     
-    // 绘制按钮背景
+    // 绘制按钮背景 - 深蓝色圆角矩形
     const gradient = context.createLinearGradient(0, 0, width, height)
-    gradient.addColorStop(0, '#004080ff')   
-    gradient.addColorStop(1, '#0066ccff')
+    gradient.addColorStop(0, '#003366ff')   
+    gradient.addColorStop(1, '#001a33ff')
     context.fillStyle = gradient
     context.roundRect(0, 0, width, height, 8)
     context.fill()
     
-    // 绘制按钮边框
-    context.strokeStyle = '#64ffda'
-    context.lineWidth = 2
-    context.roundRect(2, 2, width - 4, height - 4, 6)
-    context.stroke()
+    // 绘制按钮边框 - 深蓝色边框
+    // context.strokeStyle = '#0066cc'
+    // context.lineWidth = 2
+    // context.roundRect(2, 2, width - 4, height - 4, 6)
+    // context.stroke()
     
     // 绘制按钮文字
     context.fillStyle = '#ffffff'
@@ -351,7 +351,7 @@ export function useObjectSelection(
     // 创建精灵
     const sprite = new THREE.Sprite(material)
     sprite.position.set(x, y, z)
-    sprite.scale.set(width / 100, height / 100, 1) // 调整精灵大小
+    sprite.scale.set(0.1, 0.1, 0.1)
     
     // 添加到场景
     currentScene.add(sprite)
