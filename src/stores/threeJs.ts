@@ -30,6 +30,63 @@ export const useThreeJsStore = defineStore('threeJs', () => {
   const stopAutoRoamCallback = ref<(() => void) | null>(null)
   const toRoomCallback = ref<((targetRoom: string) => void) | null>(null)
   const createButtonSpriteCallback = ref<((x: number, y: number, z: number, text: string, id: string, onClick: () => void, width: number, height: number) => void) | null>(null)
+
+  // 弹窗内容项接口
+  interface PopupContentItem {
+    name: string
+    value: string
+  }
+
+  /**
+   * 显示自定义弹出框
+   * @param title 弹窗标题
+   * @param content 弹窗内容
+   */
+  const showCustomPopup = (title: string, content: PopupContentItem[]) => {
+    // 创建弹窗容器
+    const popupContainer = document.createElement('div')
+    popupContainer.id = `popup-${Date.now()}`
+    popupContainer.className = 'custom-popup-overlay'
+    
+    // 构建弹窗 HTML 内容
+    let htmlContent = `
+      <div class="dev-info-div">
+        <div class="dev-title">${title}<button class="devPop-close-btn" onclick="document.getElementById('${popupContainer.id}').remove()"></button></div>
+        <div class="dev-content">
+    `
+
+    // 添加内容项
+    content.forEach((item) => {
+      htmlContent += `<div class="dev-params"><span>${item.name}:</span><span title="${item.value}">${item.value}</span></div>`
+    })
+
+    htmlContent += `</div><div class="dev-bottom"></div></div>`
+    
+    // 设置弹窗内容
+    popupContainer.innerHTML = htmlContent
+    
+    // 添加到页面
+    document.body.appendChild(popupContainer)
+    
+    // 添加样式
+    const style = document.createElement('style')
+    style.textContent = `
+      .custom-popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        pointer-events: auto;
+      }
+    `
+    document.head.appendChild(style)
+  }
   
   // 注册回调函数
   const registerCallbacks = (
@@ -135,7 +192,12 @@ export const useThreeJsStore = defineStore('threeJs', () => {
           '查看', // 按钮文字
           'cabinet_1',
           () => { // 点击回调
-            console.log(11)
+            showCustomPopup('柜子信息', [
+              { name: '名称', value: '服务器机柜' },
+              { name: '型号', value: 'SR-2000' },
+              { name: '状态', value: '运行中' },
+              { name: '温度', value: '32°C' }
+            ])
           },
           3,
           1.5
