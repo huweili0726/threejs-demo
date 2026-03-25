@@ -86,4 +86,125 @@ body {
 	transform: rotate(90deg);
 }
 
+/* 科幻风格弹窗样式 */
+.scifi-popup {
+  background: linear-gradient(135deg, #0a192f 0%, #172a45 100%);
+  border: 1px solid #00a0c6;
+  border-radius: 8px;
+  box-shadow: 0 0 30px rgba(0, 160, 198, 0.3), inset 0 0 20px rgba(0, 160, 198, 0.1);
+  backdrop-filter: blur(10px);
+  min-width: 360px;
+}
 
+.scifi-popup .el-message-box__header {
+  border-bottom: 1px solid rgba(0, 160, 198, 0.3);
+  padding: 20px;
+  position: relative;
+  background: rgba(10, 25, 47, 0.8);
+}
+
+.scifi-popup .el-message-box__title {
+  color: #00a0c6;
+  font-size: 16px;
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(0, 160, 198, 0.5);
+  letter-spacing: 1px;
+}
+
+.scifi-popup .el-message-box__headerbtn .el-message-box__close {
+  color: #00a0c6;
+  font-size: 18px;
+  transition: all 0.3s ease;
+}
+
+.scifi-popup .el-message-box__headerbtn .el-message-box__close:hover {
+  color: #00d4ff;
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+}
+
+.scifi-popup .el-message-box__content {
+  padding: 24px;
+  color: #e6f1ff;
+  background: transparent;
+}
+
+.scifi-popup-content {
+  background: rgba(23, 42, 69, 0.6);
+  border: 1px solid rgba(0, 160, 198, 0.2);
+  border-radius: 6px;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.scifi-popup-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #00a0c6, transparent);
+  box-shadow: 0 0 10px rgba(0, 160, 198, 0.6);
+}
+
+.scifi-popup-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0, 160, 198, 0.1);
+  position: relative;
+}
+
+.scifi-popup-row:last-child {
+  border-bottom: none;
+}
+
+.scifi-popup-label {
+  color: #00a0c6;
+  font-weight: 500;
+  flex-shrink: 0;
+  margin-right: 20px;
+  text-shadow: 0 0 5px rgba(0, 160, 198, 0.3);
+}
+
+.scifi-popup-value {
+  color: #e6f1ff;
+  text-align: right;
+  font-family: 'Courier New', monospace;
+  text-shadow: 0 0 5px rgba(230, 241, 255, 0.2);
+  background: rgba(0, 160, 198, 0.05);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 160, 198, 0.2);
+}
+
+.scifi-popup .el-message-box__btns {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(0, 160, 198, 0.3);
+  background: rgba(10, 25, 47, 0.8);
+  justify-content: center;
+}
+
+.scifi-popup .el-button--primary {
+  background: linear-gradient(135deg, #00a0c6 0%, #007b9c 100%);
+  border: 1px solid #00a0c6;
+  border-radius: 6px;
+  padding: 8px 24px;
+  font-weight: 500;
+  color: #0a192f;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 15px rgba(0, 160, 198, 0.4);
+  transition: all 0.3s ease;
+}
+
+.scifi-popup .el-button--primary:hover {
+  background: linear-gradient(135deg, #00d4ff 0%, #00a0c6 100%);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+  transform: translateY(-1px);
+}
+
+.scifi-popup .el-button--primary:active {
+  transform: translateY(0);
+}
