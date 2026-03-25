@@ -78,7 +78,7 @@ export const useThreeJsStore = defineStore('threeJs', () => {
    * @param title 弹窗标题
    * @param content 弹窗内容
    */
-  const showCustomPopup = (title: string, content: PopupContentItem[]) => {
+  const showCustomPopup = (title: string, content: any[]) => {
     messageBoxUtils.showCustomPopup(title, content)
   }
 

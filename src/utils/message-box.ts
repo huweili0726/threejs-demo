@@ -1,15 +1,8 @@
 import { ElMessageBox } from 'element-plus'
 import type { MessageBoxData } from 'element-plus'
 
-export interface PopupContentItem {
-  name: string
-  value: string
-  thumbnail?: string // 缩略图URL
-  id: string // 用于删除按钮的标识
-}
-
 export const messageBoxUtils = {
-  showCustomPopup: (title: string, content: PopupContentItem[], onDelete?: (id: string) => void): Promise<MessageBoxData> => {
+  showCustomPopup: (title: string, content: any[], onDelete?: (id: string) => void): Promise<MessageBoxData> => {
     let messageContent = `
       <div class="scifi-popup-table">
         <div class="scifi-popup-table-header">

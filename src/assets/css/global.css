@@ -299,3 +299,8 @@ body {
 .scifi-popup .el-button--primary:active {
   transform: translateY(0);
 }
+
+.scifi-popup .el-message-box__message {
+  width: 100%;
+}
+ 
