@@ -2,7 +2,7 @@ import { ElMessageBox } from 'element-plus'
 import type { MessageBoxData } from 'element-plus'
 
 export const messageBoxUtils = {
-  showCustomPopup: (title: string, content: any[], onDelete?: (id: string) => void): Promise<MessageBoxData> => {
+  showCustomPopup: (title: string, content: any[], onDelete?: (id: string) => void): Promise<MessageBoxData | void> => {
     let messageContent = `
       <div class="scifi-popup-table">
         <div class="scifi-popup-table-header">
@@ -34,6 +34,8 @@ export const messageBoxUtils = {
       center: true,
       showConfirmButton: false,
       showClose: true
+    }).catch(() => {
+      // 捕获关闭按钮的取消事件
     })
 
     // 添加删除按钮事件监听
