@@ -179,6 +179,7 @@ body {
   padding: 12px;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .scifi-popup-table-column-name {
