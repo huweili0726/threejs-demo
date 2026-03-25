@@ -2,8 +2,11 @@ import { ElMessageBox } from 'element-plus'
 import type { MessageBoxData } from 'element-plus'
 
 export const messageBoxUtils = {
-  showCustomPopup: (title: string, content: any[], onDelete?: (id: string) => void): Promise<MessageBoxData | void> => {
+  showCustomPopup: (title: string, content: any[], onDelete?: (id: string) => void, onAdd?: () => void): Promise<MessageBoxData | void> => {
     let messageContent = `
+      <div class="scifi-popup-actions">
+        <button class="scifi-popup-add-btn">新增</button>
+      </div>
       <div class="scifi-popup-table">
         <div class="scifi-popup-table-header">
           <div class="scifi-popup-table-column scifi-popup-table-column-name">名称</div>
@@ -50,6 +53,19 @@ export const messageBoxUtils = {
             }
           })
         })
+      }, 100)
+    }
+
+    // 添加新增按钮事件监听
+    if (onAdd) {
+      setTimeout(() => {
+        const addButton = document.querySelector('.scifi-popup-add-btn')
+        if (addButton) {
+          addButton.addEventListener('click', (e) => {
+            e.stopPropagation()
+            onAdd()
+          })
+        }
       }, 100)
     }
 

@@ -124,10 +124,13 @@ body {
 
 .scifi-popup .el-message-box__content {
   padding: 24px;
+  padding-top: 0px;
   color: #e6f1ff;
   background: transparent;
   max-height: 400px;
-  overflow-y: auto;
+  overflow-y: initial;
+  box-sizing: border-box;
+  position: relative;
 }
 
 /* 表格样式 */
@@ -196,7 +199,7 @@ body {
 
 .scifi-popup-table-column-action {
   flex: 1;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .scifi-popup-label {
@@ -253,7 +256,7 @@ body {
   background: linear-gradient(135deg, #ff4d4f 0%, #c53737 100%);
   border: 1px solid #ff4d4f;
   border-radius: 4px;
-  padding: 6px 16px;
+  padding: 2px 16px;
   color: #ffffff;
   font-size: 12px;
   font-weight: 500;
@@ -272,13 +275,40 @@ body {
   transform: translateY(0);
 }
 
-.scifi-popup .el-message-box__btns {
-  display: none !important;
+.scifi-popup-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(0, 160, 198, 0.3);
 }
 
+.scifi-popup-add-btn {
+  background: linear-gradient(135deg, #00c689 0%, #00a86b 100%);
+  border: 1px solid #00c689;
+  border-radius: 6px;
+  padding: 8px 20px;
+  padding-top: 0px;
+  padding-bottom: 2px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #0a192f;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 15px rgba(0, 198, 137, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
 
+.scifi-popup-add-btn:hover {
+  background: linear-gradient(135deg, #00ffaa 0%, #00c689 100%);
+  box-shadow: 0 0 20px rgba(0, 255, 170, 0.6);
+  transform: translateY(-1px);
+}
 
+.scifi-popup-add-btn:active {
+  transform: translateY(0);
+}
+ 
 .scifi-popup .el-message-box__message {
   width: 100%;
 }
- 

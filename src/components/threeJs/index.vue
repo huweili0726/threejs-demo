@@ -151,8 +151,14 @@ const initInteractions = () => {
             { id: '2', name: '型号' },
             { id: '3', name: '状态' },
             { id: '4', name: '温度' }
-          ], (id) => {
+          ], 
+          //删除行
+          (id) => {
             console.log("需要删除的行：", id)
+          },
+          //新增行
+          () => {
+            console.log("新增行")
           })
         }
       }

@@ -71,9 +71,11 @@ export const useThreeJsStore = defineStore('threeJs', () => {
    * 显示自定义弹出框
    * @param title 弹窗标题
    * @param content 弹窗内容
+   * @param onDelete 删除回调
+   * @param onAdd 新增回调
    */
-  const showCustomPopup = (title: string, content: any[], onDelete?: (id: string) => void) => {
-    return messageBoxUtils.showCustomPopup(title, content, onDelete)
+  const showCustomPopup = (title: string, content: any[], onDelete?: (id: string) => void, onAdd?: () => void) => {
+    return messageBoxUtils.showCustomPopup(title, content, onDelete, onAdd)
   }
 
   /**
