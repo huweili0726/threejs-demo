@@ -28,7 +28,7 @@ export const messageBoxUtils = {
     `
 
     const promise = ElMessageBox.alert(messageContent, title, {
-      type: 'info',
+      type: '',
       customClass: 'scifi-popup',
       dangerouslyUseHTMLString: true,
       center: true,
