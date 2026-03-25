@@ -31,63 +31,6 @@ export const useThreeJsStore = defineStore('threeJs', () => {
   const toRoomCallback = ref<((targetRoom: string) => void) | null>(null)
   const createButtonSpriteCallback = ref<((x: number, y: number, z: number, text: string, id: string, onClick: () => void, width: number, height: number) => void) | null>(null)
 
-  // 弹窗内容项接口
-  interface PopupContentItem {
-    name: string
-    value: string
-  }
-
-  /**
-   * 显示自定义弹出框
-   * @param title 弹窗标题
-   * @param content 弹窗内容
-   */
-  const showCustomPopup = (title: string, content: PopupContentItem[]) => {
-    // 创建弹窗容器
-    const popupContainer = document.createElement('div')
-    popupContainer.id = `popup-${Date.now()}`
-    popupContainer.className = 'custom-popup-overlay'
-    
-    // 构建弹窗 HTML 内容
-    let htmlContent = `
-      <div class="dev-info-div">
-        <div class="dev-title">${title}<button class="devPop-close-btn" onclick="document.getElementById('${popupContainer.id}').remove()"></button></div>
-        <div class="dev-content">
-    `
-
-    // 添加内容项
-    content.forEach((item) => {
-      htmlContent += `<div class="dev-params"><span>${item.name}:</span><span title="${item.value}">${item.value}</span></div>`
-    })
-
-    htmlContent += `</div><div class="dev-bottom"></div></div>`
-    
-    // 设置弹窗内容
-    popupContainer.innerHTML = htmlContent
-    
-    // 添加到页面
-    document.body.appendChild(popupContainer)
-    
-    // 添加样式
-    const style = document.createElement('style')
-    style.textContent = `
-      .custom-popup-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-        pointer-events: auto;
-      }
-    `
-    document.head.appendChild(style)
-  }
-  
   // 注册回调函数
   const registerCallbacks = (
     switchToFloor: (targetPosition: THREE.Vector3, targetTarget: THREE.Vector3, duration: number, modelInitPosition: THREE.Vector3, onLookAt: THREE.Vector3) => void,
@@ -121,6 +64,40 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     stopAutoRoamCallback.value = stopAutoRoam,
     toRoomCallback.value = toRoom,
     createButtonSpriteCallback.value = createButtonSprite
+  }
+
+  // 弹窗内容项接口
+  interface PopupContentItem {
+    name: string
+    value: string
+  }
+
+  /**
+   * 显示自定义弹出框
+   * @param title 弹窗标题
+   * @param content 弹窗内容
+   */
+  const showCustomPopup = (title: string, content: PopupContentItem[]) => {
+    // 使用 Element Plus 的 ElMessageBox 组件
+    import('element-plus').then(({ ElMessageBox }) => {
+      // 构建消息内容
+      let messageContent = ''
+      content.forEach((item) => {
+        messageContent += `<div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+          <span style="font-weight: 500; color: #409eff;">${item.name}:</span>
+          <span>${item.value}</span>
+        </div>`
+      })
+
+      // 显示对话框
+      ElMessageBox.alert(messageContent, title, {
+        confirmButtonText: '确定',
+        type: 'info',
+        customClass: 'custom-popup',
+        dangerouslyUseHTMLString: true,
+        center: true
+      })
+    })
   }
 
   /**
