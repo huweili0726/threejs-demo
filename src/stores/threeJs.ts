@@ -140,13 +140,17 @@ export const useThreeJsStore = defineStore('threeJs', () => {
         modelInitPosition = floor9Config?.characterModelSetPosition // 人物模型初始位置
         onLookAt = floor9Config?.characterModelToLook // 人物模型看向-1楼1层入口处
 
-        if (createButtonSpriteCallback.value) createButtonSpriteCallback.value(
-          -0.33, 3.73, -4.10, // 按钮指向位置
-          '查看', // 按钮文字
-          'cabinet_1',
-          3,
-          1.5
-        )
+        // 9楼的6个机柜
+        if (createButtonSpriteCallback.value){
+          // 第一排右边
+          createButtonSpriteCallback.value( -0.315, 3.738, -4.08, '查看', 'cabinet_1', 1.5, .75 )
+          
+          // 第一排中间
+          createButtonSpriteCallback.value( -0.26, 3.738, -4.08, '查看', 'cabinet_2', 1.5, .75 )
+
+          // 第一排左边
+          createButtonSpriteCallback.value( -0.205, 3.738, -4.08, '查看', 'cabinet_3', 1.5, .75 )
+        }
       } else if (floor === '8') {
         const floor8Config = basisStore.floor8thConfig
         const perspective = floor8Config?.perspective || { x: 0, y: 0, z: 0 }
