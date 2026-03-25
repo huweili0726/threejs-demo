@@ -30,7 +30,7 @@ export const useThreeJsStore = defineStore('threeJs', () => {
   const resumeAutoRoamCallback = ref<(() => void) | null>(null)
   const stopAutoRoamCallback = ref<(() => void) | null>(null)
   const toRoomCallback = ref<((targetRoom: string) => void) | null>(null)
-  const createButtonSpriteCallback = ref<((x: number, y: number, z: number, text: string, id: string, onClick: () => void, width: number, height: number) => void) | null>(null)
+  const createButtonSpriteCallback = ref<((x: number, y: number, z: number, text: string, id: string, width: number, height: number) => void) | null>(null)
 
   // 注册回调函数
   const registerCallbacks = (
@@ -48,7 +48,7 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     resumeAutoRoam: () => void,
     stopAutoRoam: () => void,
     toRoom: (targetRoom: string) => void,
-    createButtonSprite: (x: number, y: number, z: number, text: string, id: string, onClick: () => void, width: number, height: number) => void
+    createButtonSprite: (x: number, y: number, z: number, text: string, id: string, width: number, height: number) => void
   ) => {
     switchToFloorCallback.value = switchToFloor
     showPipelinesCallback.value = showPipelines
@@ -141,19 +141,9 @@ export const useThreeJsStore = defineStore('threeJs', () => {
         onLookAt = floor9Config?.characterModelToLook // 人物模型看向-1楼1层入口处
 
         if (createButtonSpriteCallback.value) createButtonSpriteCallback.value(
-          0.88, 3.73, -3.93, // 按钮位置
+          -0.33, 3.73, -4.10, // 按钮指向位置
           '查看', // 按钮文字
           'cabinet_1',
-          () => { // 点击回调
-            showCustomPopup('柜子信息', [
-              { id: '1', name: '名称' },
-              { id: '2', name: '型号' },
-              { id: '3', name: '状态' },
-              { id: '4', name: '温度' }
-            ], (id) => {
-              console.log("需要删除的行：", id)
-            })
-          },
           3,
           1.5
         )
@@ -272,6 +262,7 @@ export const useThreeJsStore = defineStore('threeJs', () => {
     handlePauseAutoRoam,
     handleResumeAutoRoam,
     handleStopAutoRoam,
-    toTargetRoom  
+    toTargetRoom,
+    showCustomPopup
   }
 })

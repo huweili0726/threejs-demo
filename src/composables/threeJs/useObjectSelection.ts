@@ -38,7 +38,6 @@ export function useObjectSelection(
   interface ButtonSprite {
     sprite: THREE.Sprite
     position: THREE.Vector3
-    onClick: () => void
   }
   const buttonSprites = ref<ButtonSprite[]>([])
 
@@ -75,11 +74,29 @@ export function useObjectSelection(
         const filteredIntersects = filterIntersects(intersects)
 
         if (filteredIntersects.length > 0) {
-          // 获取第一个交点的物体（最接近相机的最细分子物体）
-          let intersectedObject = filteredIntersects[0].object
-          let targetObject: THREE.Object3D | null = intersectedObject
+          //✅ 优先检查是否有精灵
+          const spriteIntersects = filteredIntersects.filter(intersect => intersect.object instanceof THREE.Sprite)
+          if (spriteIntersects.length > 0) {
+            // 获取第一个精灵交点
+            const spriteIntersect = spriteIntersects[0]
+            const targetObject = spriteIntersect.object
+            // 检查是否是按钮精灵
+            if (targetObject.userData.type === 'button' || targetObject.userData.type === 'buildName') {
+              // 调用按钮的点击回调
+              if (onSpriteSelect) {
+                onSpriteSelect(targetObject)
+              }
+            }
 
-          if (targetObject && targetObject instanceof THREE.Mesh) {
+            return 
+          }
+          
+          //✅ 如果没有精灵，检查 Mesh
+          const meshIntersects = filteredIntersects.filter(intersect => intersect.object instanceof THREE.Mesh)
+          if (meshIntersects.length > 0) {
+            const meshIntersect = meshIntersects[0]
+            const targetObject = meshIntersect.object
+            
             // 判断：如果点击的是已经高亮的模型，则取消高亮
             if (selectedObject.value === targetObject) {
               // 恢复原始材质
@@ -101,23 +118,23 @@ export function useObjectSelection(
               // 只有开启高亮时才修改材质
               if (highlightEnabled) {
                 // 记录当前模型的原始材质，并设置高亮材质
-                originalMaterial.value = targetObject.material.clone()
+                originalMaterial.value = (targetObject as any).material.clone()
                 
                 // 设置高亮材质
-                if (targetObject.material instanceof THREE.MeshStandardMaterial) {
-                  targetObject.material = new THREE.MeshStandardMaterial({
-                    ...targetObject.material,
+                if ((targetObject as any).material as any instanceof THREE.MeshStandardMaterial) {
+                  (targetObject as any).material = new THREE.MeshStandardMaterial({
+                    ...(targetObject as any).material,
                     emissive: highlightColor,
                     emissiveIntensity: 0.6,
-                    metalness: Math.max(targetObject.material.metalness || 0, 0.6),
-                    roughness: Math.min(targetObject.material.roughness || 1, 0.4)
+                    metalness: Math.max((targetObject as any).material.metalness || 0, 0.6),
+                    roughness: Math.min((targetObject as any).material.roughness || 1, 0.4)
                   })
                 } else {
                   // 对于其他材质类型，只修改自发光
-                  targetObject.material = targetObject.material.clone()
-                  if ('emissive' in targetObject.material) {
-                    (targetObject.material as any).emissive = highlightColor
-                    (targetObject.material as any).emissiveIntensity = 0.6
+                  (targetObject as any).material = (targetObject as any).material.clone()
+                  if ('emissive' in (targetObject as any).material) {
+                    ((targetObject as any).material as any).emissive = highlightColor
+                    ((targetObject as any).material as any).emissiveIntensity = 0.6
                   }
                 }
               }
@@ -136,30 +153,6 @@ export function useObjectSelection(
 
             return
           }
-
-          if (targetObject && targetObject instanceof THREE.Sprite) {
-            // 检查是否是按钮精灵
-            if (targetObject.userData.type === 'button' && targetObject.userData.onClick) {
-              // 调用按钮的点击回调
-              targetObject.userData.onClick()
-            }
-            if (onSpriteSelect) {
-              onSpriteSelect(targetObject)
-            }
-          }
-        }
-      }
-
-      // 点击空白处取消选中
-      if (selectedObject.value && originalMaterial.value && (selectedObject.value as THREE.Mesh).isMesh) {
-        (selectedObject.value as THREE.Mesh).material = originalMaterial.value
-        selectedObject.value = null
-        originalMaterial.value = null
-        if (onMeshSelect) {
-          onMeshSelect(null)
-        }
-        if (onSpriteSelect) {
-          onSpriteSelect(null)
         }
       }
     }
@@ -291,7 +284,6 @@ export function useObjectSelection(
    * @param z Z坐标
    * @param text 按钮文字
    * @param id 按钮ID
-   * @param onClick 点击回调函数
    * @param width 按钮宽度
    * @param height 按钮高度
    */
@@ -301,7 +293,6 @@ export function useObjectSelection(
     z: number,
     text: string,
     id: string,
-    onClick: () => void,
     width: number = 0.5,
     height: number = 0.25
   ) => {
@@ -339,6 +330,9 @@ export function useObjectSelection(
     const material = new THREE.SpriteMaterial({
       map: texture,
       transparent: true,
+      alphaTest: 0.1,
+      depthTest: false,
+      depthWrite: false
     });
 
     const sprite = new THREE.Sprite(material);
@@ -347,10 +341,8 @@ export function useObjectSelection(
     sprite.scale.set(width/100, height/100, 1);
 
     currentScene.add(sprite);
-    sprite.userData = { id, type: 'button', onClick };
-    buttonSprites.value.push({ sprite, position: new THREE.Vector3(x,y,z), onClick });
-
-    return sprite;
+    sprite.userData = { id, type: 'button' };
+    buttonSprites.value.push({ sprite, position: new THREE.Vector3(x,y,z) });
   };
   
   /**

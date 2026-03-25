@@ -10,11 +10,7 @@
 import * as THREE from 'three'
 import { ref, ShallowRef } from 'vue'
 import { CSS2DRenderer, CSS2DObject } from 'three-stdlib'
-import { useRaycastUtils } from '@/composables/threeJs/useRaycastUtils'
 import { getModelCenter } from '@/utils/threejs'
-
-// 初始化工具函数
-const { performRaycast, filterIntersects } = useRaycastUtils()
 
 // 弹窗内容项接口
 interface PopupContentItem {
@@ -217,78 +213,6 @@ export function useObjectPopup(
   }
 
   /**
-   * 初始化双击弹窗事件
-   * @param options 配置项
-   * @param options.getPopupData 根据选中物体获取弹窗数据的回调函数
-   * @returns 清理函数
-   */
-  const initDoubleClickPopup = (options: {
-    getPopupData?: (object: THREE.Object3D) => PopupData | null
-  }) => {
-    const { getPopupData } = options
-
-    // 初始化 CSS2DRenderer
-    initCSS2DRenderer()
-
-    // 双击事件处理函数
-    const handleDoubleClick = (event: MouseEvent) => {
-      // 校验依赖项：确保 scene、camera 已初始化
-      if (!camera.value || !scene.value) return
-
-      // 使用工具函数进行射线检测
-      const intersects = performRaycast(camera, scene.value, container, event)
-
-      if (intersects && intersects.length > 0) {
-        // 使用工具函数过滤射线检测结果
-        const filteredIntersects = filterIntersects(intersects)
-
-        if (filteredIntersects.length > 0) {
-          // 获取第一个交点的物体
-          const intersectedObject = filteredIntersects[0].object
-
-          // 获取弹窗数据
-          if (getPopupData) {
-            const popupData = getPopupData(intersectedObject)
-            if (popupData) {
-              showPopup(popupData, intersectedObject)
-            }
-          } else {
-            // 默认弹窗数据
-            const defaultData: PopupData = {
-              id: `popup-${Date.now()}`,
-              title: intersectedObject.name || '未命名物体',
-              content: [
-                { name: '类型', value: intersectedObject.type },
-                { name: 'UUID', value: intersectedObject.uuid.slice(0, 8) + '...' }
-              ]
-            }
-            showPopup(defaultData, intersectedObject)
-          }
-        }
-      }
-    }
-
-    // 添加双击事件监听
-    const canvas = container.value?.querySelector('canvas')
-    if (canvas) {
-      canvas.addEventListener('dblclick', handleDoubleClick)
-      console.log('✅ 双击弹窗事件监听已添加')
-    }
-
-    // 返回清理函数
-    return () => {
-      if (canvas) {
-        canvas.removeEventListener('dblclick', handleDoubleClick)
-      }
-      closePopup()
-      if (labelRenderer && container.value) {
-        container.value.removeChild(labelRenderer.domElement)
-        labelRenderer = null
-      }
-    }
-  }
-
-  /**
    * 更新 CSS2DRenderer（需要在动画循环中调用）
    */
   const updateCSS2DRenderer = () => {
@@ -308,10 +232,10 @@ export function useObjectPopup(
 
   return {
     popups,
-    initDoubleClickPopup,
     showPopup,
     closePopup,
     updateCSS2DRenderer,
-    handleResize
+    handleResize,
+    initCSS2DRenderer
   }
 }

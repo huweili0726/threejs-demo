@@ -38,7 +38,7 @@ const threeJsStore = useThreeJsStore()
 const { scene, camera, initScene, render, flyTo, setAnimationUpdateCallback, startAnimationLoop, updateAnimations, stopAnimationLoop, onWindowResize, setCameraPosition } = useThreeScene() // 场景相关Hooks
 const { isLoading, loadingText, loadedModelMaps, modelMixers, loadModel, loadModels, moveModel, cameraFollowModel, removeModel, updateModelVisibilityByFloor } = useModelLoader(scene as any, render) // 模型加载相关Hooks
 const { loadEnvironment } = useEnvironmentLoader(scene as any) // 环境贴图加载相关Hooks
-const { initDoubleClickPopup, showPopup, closePopup, updateCSS2DRenderer, handleResize } = useObjectPopup(camera as any, scene as any, threeJsContainer) // 物体弹窗相关Hooks
+const { showPopup, closePopup, updateCSS2DRenderer, handleResize, initCSS2DRenderer } = useObjectPopup(camera as any, scene as any, threeJsContainer) // 物体弹窗相关Hooks
 const { wallBoundingBoxes, checkCollision, updateBoundingBoxes, setBoundingBoxesFromLoadResult, addCharacterBoundingBox } = useCollisionDetection() // 碰撞检测相关Hooks
 const { switchToFloor, toControlCommandRoom } = useFloorSwitch(() => scene.value, () => loadedModelMaps.value, flyTo, loadModel as any, removeModel, addCharacterBoundingBox) // 楼层切换相关Hooks 
 const { initDoubleClickSelection, createBuildName, hideBuildNames, showBuildNames, createButtonSprite, showButtons, hideButtons, cleanupButtons, initHoverEvent } = useObjectSelection(camera as any, () => scene.value, threeJsContainer)  // 物体选择相关Hooks
@@ -52,7 +52,6 @@ const cameraOffset = new THREE.Vector3(0, 0.1, -0.12) // 相机偏移量（在�
 let cleanHoverEvent: (() => void) | undefined // 初始化悬停事件的函数
 let cleanupKeyboardEvents: (() => void) | null = null // 清理键盘事件的函数
 let cleanupSelection: (() => void) | null = null // 清理双击选中事件的函数
-let cleanupPopup: (() => void) | null = null // 清理双击弹窗事件的函数
 
 // 监听窗口大小变化
 watchEffect(() => {
@@ -80,22 +79,24 @@ const initSceneAndEnvironment = () => {
  */
 const initInteractions = () => {
   // 初始化悬停悬停事件(实现鼠标移动到精灵上时变成小手)
-  cleanHoverEvent = initHoverEvent({
-    onMouseEnter: (object) => {
-      if (object) {
-        document.body.style.cursor = 'pointer'
-      } 
-    },
-    onMouseLeave: (object) => {
-      if (object) {
-        document.body.style.cursor = 'default'
-      } 
-    }
-  })
+  // cleanHoverEvent = initHoverEvent({
+  //   onMouseEnter: (object) => {
+  //     if (object) {
+  //       document.body.style.cursor = 'pointer'
+  //     } 
+  //   },
+  //   onMouseLeave: (object) => {
+  //     if (object) {
+  //       document.body.style.cursor = 'default'
+  //     } 
+  //   }
+  // })
+
   // 键盘 wasd 控制人物移动
   cleanupKeyboardEvents = initKeyboardEvents()
   // 初始化双击选中功能
   cleanupSelection = initDoubleClickSelection({
+    // 处理双击选中的物体
     onMeshSelect: (object) => {
       if (object) {
         // 打印物体信息
@@ -106,8 +107,31 @@ const initInteractions = () => {
           userData: object.userData,
           object
         })
+
+        if (object.name) {
+          const devItem = basisStore.threeDevConfig?.threeDevs?.find((item: any) => item.meshName === object.name)
+          if (devItem && devItem.popInfo) {
+            // threeDimensionalDev.jsonc 里配置好的模型才有弹窗信息
+            showPopup({
+              id: `popup-${Date.now()}`,
+              title: devItem.popInfo.title,
+              content: devItem.popInfo.content
+            }, object)
+            return
+          }
+          // 其他模型的弹窗信息在这里展示（显示基本的uuid等信息）
+          // showPopup({
+          //   id: `popup-${Date.now()}`,
+          //   title: object.name,
+          //   content: [
+          //     { name: '类型', value: object.type },
+          //     { name: 'UUID', value: object.uuid.slice(0, 8) + '...' }
+          //   ]
+          // }, object)
+        }
       }
     },
+    // 处理双击选中的精灵
     onSpriteSelect: (object) => {
       if (object) {
         // 打印物体信息
@@ -119,38 +143,21 @@ const initInteractions = () => {
           object
         })
 
-        if(object.userData?.type !== 'button') {
+        if(object.userData?.type === 'buildName') {
           threeJsStore.toFloor(object.userData.id) // 双击精灵模型后，切换到指定楼层
-        }else{
-          console.log('出弹窗')
+        }else if(object.userData?.type === 'button'){
+          threeJsStore.showCustomPopup('柜子信息', [
+            { id: '1', name: '名称' },
+            { id: '2', name: '型号' },
+            { id: '3', name: '状态' },
+            { id: '4', name: '温度' }
+          ], (id) => {
+            console.log("需要删除的行：", id)
+          })
         }
       }
     },
     highlightEnabled: true
-  })
-  // 初始化双击弹窗功能
-  cleanupPopup = initDoubleClickPopup({
-    getPopupData: (object: THREE.Object3D) => {
-      if (object.name) {
-        const devItem = basisStore.threeDevConfig?.threeDevs?.find((item: any) => item.meshName === object.name)
-        if (devItem && devItem.popInfo) {
-          return {
-            id: `popup-${Date.now()}`,
-            title: devItem.popInfo.title,
-            content: devItem.popInfo.content
-          }
-        }
-        return {
-          id: `popup-${Date.now()}`,
-          title: object.name,
-          content: [
-            { name: '类型', value: object.type },
-            { name: 'UUID', value: object.uuid.slice(0, 8) + '...' }
-          ]
-        }
-      }
-      return null
-    }
   })
 }
 
@@ -213,6 +220,9 @@ onMounted(async () => {
 
   // 3. 初始化交互功能 【键盘 wasd 控制人物移动 + 双击选中功能 + 双击弹窗功能】
   initInteractions()
+
+  // 初始化 CSS2DRenderer
+  initCSS2DRenderer()
 
   // 4. 加载模型和碰撞包围盒
   await loadSceneModels()
@@ -318,10 +328,6 @@ onBeforeUnmount(() => {
   // 清理双击选中功能
   if (cleanupSelection) {
     cleanupSelection()
-  }
-  // 清理双击弹窗功能
-  if (cleanupPopup) {
-    cleanupPopup()
   }
 })
 
