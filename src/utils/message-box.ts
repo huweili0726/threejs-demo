@@ -28,11 +28,12 @@ export const messageBoxUtils = {
     `
 
     const promise = ElMessageBox.alert(messageContent, title, {
-      confirmButtonText: '确认',
       type: 'info',
       customClass: 'scifi-popup',
       dangerouslyUseHTMLString: true,
-      center: true
+      center: true,
+      showConfirmButton: false,
+      showClose: true
     })
 
     // 添加删除按钮事件监听

@@ -272,33 +272,10 @@ body {
 }
 
 .scifi-popup .el-message-box__btns {
-  padding: 16px 20px;
-  border-top: 1px solid rgba(0, 160, 198, 0.3);
-  background: rgba(10, 25, 47, 0.8);
-  justify-content: center;
+  display: none !important;
 }
 
-.scifi-popup .el-button--primary {
-  background: linear-gradient(135deg, #00a0c6 0%, #007b9c 100%);
-  border: 1px solid #00a0c6;
-  border-radius: 6px;
-  padding: 8px 24px;
-  font-weight: 500;
-  color: #0a192f;
-  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-  box-shadow: 0 0 15px rgba(0, 160, 198, 0.4);
-  transition: all 0.3s ease;
-}
 
-.scifi-popup .el-button--primary:hover {
-  background: linear-gradient(135deg, #00d4ff 0%, #00a0c6 100%);
-  box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
-  transform: translateY(-1px);
-}
-
-.scifi-popup .el-button--primary:active {
-  transform: translateY(0);
-}
 
 .scifi-popup .el-message-box__message {
   width: 100%;
