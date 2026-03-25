@@ -131,8 +131,8 @@ export const useThreeJsStore = defineStore('threeJs', () => {
         onLookAt = floor9Config?.characterModelToLook // 人物模型看向-1楼1层入口处
 
         if (createButtonSpriteCallback.value) createButtonSpriteCallback.value(
-          0.88, 3.60, -3.93, // 按钮位置
-          '9', // 按钮文字
+          0.88, 3.73, -3.93, // 按钮位置
+          '查看', // 按钮文字
           'cabinet_1',
           () => { // 点击回调
             console.log(11)
