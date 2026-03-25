@@ -284,94 +284,74 @@ export function useObjectSelection(
     })
   }
   
-  /**
-   * 创建按钮样式的精灵
-   * @param x X坐标
-   * @param y Y坐标
-   * @param z Z坐标
-   * @param text 按钮文字
-   * @param id 按钮ID
-   * @param onClick 点击回调函数
-   * @param width 按钮宽度（默认120）
-   * @param height 按钮高度（默认40）
-   */
-  const createButtonSprite = (x: number, y: number, z: number, text: string, id: string, onClick: () => void, width: number = 120, height: number = 40) => {
-    const currentScene = scene()
-    if (!currentScene) return
+/**
+ * 创建按钮样式的精灵
+ * @param x X坐标
+ * @param y Y坐标
+ * @param z Z坐标
+ * @param text 按钮文字
+ * @param id 按钮ID
+ * @param onClick 点击回调函数
+ * @param width 按钮宽度
+ * @param height 按钮高度
+ */
+const createButtonSprite = (
+  x: number,
+  y: number,
+  z: number,
+  text: string,
+  id: string,
+  onClick: () => void,
+  width: number = 0.5,
+  height: number = 0.25
+) => {
+  const currentScene = scene();
+  if (!currentScene) return;
 
-    // 创建画布来生成精灵纹理
-    const canvas = document.createElement('canvas')
-    const context = canvas.getContext('2d')
-    if (!context) return
-    
-    // 考虑设备像素比，提高画布分辨率
-    const dpr = window.devicePixelRatio || 1
-    const canvasWidth = width * dpr
-    const canvasHeight = height * dpr
-    canvas.width = canvasWidth
-    canvas.height = canvasHeight
-    
-    // 缩放上下文以适应高DPI屏幕
-    context.scale(dpr, dpr)
-    
-    // 绘制按钮背景 - 深蓝色圆角矩形
-    const gradient = context.createLinearGradient(0, 0, width, height)
-    gradient.addColorStop(0, '#003366ff')   
-    gradient.addColorStop(1, '#001a33ff')
-    context.fillStyle = gradient
-    context.roundRect(0, 0, width, height, 2)
-    context.fill()
-    
-    // 绘制按钮边框 - 深蓝色边框
-    context.strokeStyle = '#0066cc'
-    context.lineWidth = 2
-    context.roundRect(2, 2, width - 4, height - 4, 6)
-    context.stroke()
-    
-    // 绘制按钮文字
-    // context.fillStyle = '#ffffff'
-    // context.font = 'bold 14px Arial'
-    // context.textAlign = 'center'
-    // context.textBaseline = 'middle'
-    // context.fillText(text, width / 2, height / 2)
-    
-    // 创建纹理并设置过滤方式以提高清晰度
-    const texture = new THREE.CanvasTexture(canvas)
-    texture.minFilter = THREE.LinearFilter
-    texture.magFilter = THREE.LinearFilter
-    texture.needsUpdate = true
-    
-    // 创建精灵材质
-    const material = new THREE.SpriteMaterial({ 
-      map: texture,
-      transparent: true,
-      alphaTest: 0.1
-    })
-    
-    // 创建精灵
-    const sprite = new THREE.Sprite(material)
-    sprite.position.set(x, y, z)
-    sprite.scale.set(width / 100, height / 100, 1) // 调整精灵大小
-    
-    // 添加到场景
-    currentScene.add(sprite)
-    
-    // 为精灵添加点击事件和用户数据
-    sprite.userData = { 
-      id,
-      type: 'button',
-      onClick
-    }
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  if (!context) return;
 
-    // 存储按钮信息
-    buttonSprites.value.push({
-      sprite,
-      position: new THREE.Vector3(x, y, z),
-      onClick
-    })
-    
-    return sprite
-  }
+  // 极小高清画布
+  canvas.width = 128;
+  canvas.height = 64;
+
+  // 超小按钮样式
+  context.clearRect(0, 0, 128, 64);
+  context.fillStyle = '#003366';
+  context.beginPath();
+  context.roundRect(0, 0, 128, 64, 8);
+  context.fill();
+
+  // 文字（极小画布 + 合适字体）
+  context.fillStyle = '#ffffff';
+  context.font = 'bold 40px Arial';
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  context.fillText(text, 64, 32);
+
+  // 纹理
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  texture.needsUpdate = true;
+
+  const material = new THREE.SpriteMaterial({
+    map: texture,
+    transparent: true,
+  });
+
+  const sprite = new THREE.Sprite(material);
+  sprite.position.set(x, y, z);
+  // ✅ 核心：你传多少尺寸，就显示多少！完全不放大
+  sprite.scale.set(width/100, height/100, 1);
+
+  currentScene.add(sprite);
+  sprite.userData = { id, type: 'button', onClick };
+  buttonSprites.value.push({ sprite, position: new THREE.Vector3(x,y,z), onClick });
+
+  return sprite;
+};
   
   /**
    * 隐藏所有按钮
