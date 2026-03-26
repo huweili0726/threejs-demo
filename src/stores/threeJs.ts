@@ -114,6 +114,29 @@ export const useThreeJsStore = defineStore('threeJs', () => {
         duration = floorNeg1Config?.durationTime || 2000 // 飞行时间
         modelInitPosition = floorNeg1Config?.characterModelSetPosition // 人物模型初始位置
         onLookAt = floorNeg1Config?.characterModelToLook // 人物模型看向-1楼入口处
+
+        // -1 层的机柜
+        if (createButtonSpriteCallback.value){
+          // 有线通信室 从右边数第1个
+          createButtonSpriteCallback.value( 0.76, -1.63, 1.07, '1#查看', '1#', 'cabinet_7', 1.5, .75 )
+          // 有线通信室 从右边数第2个
+          createButtonSpriteCallback.value( 0.70, -1.63, 1.07, '2#查看', '2#', 'cabinet_8', 1.5, .75 )
+          // 有线通信室 从右边数第3个
+          createButtonSpriteCallback.value( 0.64, -1.63, 1.07, '3#查看', '3#', 'cabinet_9', 1.5, .75 )
+          // 有线通信室 从右边数第4个
+          createButtonSpriteCallback.value( 0.58, -1.63, 1.07, '4#查看', '4#', 'cabinet_10', 1.5, .75 )
+
+
+          // 防化值班室 1#
+          createButtonSpriteCallback.value( 3.625, -1.63, 2.87, '1#查看', '1#', 'cabinet_11', 1.5, .75 )
+          // 防化值班室 2#
+          createButtonSpriteCallback.value( 3.69, -1.63, 2.87, '2#查看', '2#', 'cabinet_11', 1.5, .75 )
+
+          // 政治工作部
+          createButtonSpriteCallback.value( 2.7, -1.67, 5.16, '1#查看', '1#', 'cabinet_12', 1.5, .75 )
+        }
+
+
       } else if (floor === '-1_2') {
         const neg12LayersFloorConfig = basisStore.neg12LayersFloorConfig
         const perspective = neg12LayersFloorConfig?.perspective || { x: 0, y: 0, z: 0 }

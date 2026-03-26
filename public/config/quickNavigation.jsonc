@@ -127,6 +127,12 @@
       { "position": { "x": 0.43, "y": -1.78, "z": 3.63 }, "rotation": { "y": "3*Math.PI/4" }, "duration": 0, "stayTime": 0, "sta": "作战指挥大厅入口" }
     ]
   },
+  // 政治工作部
+  "politicalWorkRoom": { 
+    "points": [ 
+      { "position": { "x": 2.74, "y": -1.78, "z": 4.47 }, "rotation": { "y": "7.84" }, "duration": 0, "stayTime": 0, "sta": "政治工作部入口" }
+    ]
+  },
 
 
   "initLocation": { 

@@ -69,6 +69,8 @@
           <button @click="toTargetRoom('emptyStatusIconRoom')" class="control-btn">空情图标室</button>  
           <button @click="toTargetRoom('emptyStatusAlertRoom')" class="control-btn">空情警报控制室</button>  
           <button @click="toTargetRoom('warehouseComputingArea')" class="control-btn">储存计算区</button>  
+          <button @click="toTargetRoom('politicalWorkRoom')" class="control-btn">政治工作部</button>  
+
         </div>
       </div>
 
