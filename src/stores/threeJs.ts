@@ -136,6 +136,31 @@ export const useThreeJsStore = defineStore('threeJs', () => {
 
           // 综合保障部
           createButtonSpriteCallback.value( 1.93, -1.67, 5.16, '1#查看', '1#', 'cabinet_14', 1.5, .75 )
+
+          // 情报通信部
+          createButtonSpriteCallback.value( 1.13, -1.67, 5.16, '1#查看', '1#', 'cabinet_15', 1.5, .75 )
+
+          // 指挥控制中心
+          createButtonSpriteCallback.value( 0.33, -1.67, 5.17, '1#查看', '1#', 'cabinet_16', 1.5, .75 )
+
+          // 综合管理区
+          createButtonSpriteCallback.value( 2.78, -1.63, 2.19, '1#查看', '1#', 'cabinet_17', 1.5, .75 )
+
+          // 存储计算区
+          createButtonSpriteCallback.value( 2.87, -1.63, 1.03, '1#查看', '1#', 'cabinet_18', 1.5, .75 )
+          createButtonSpriteCallback.value( 2.86, -1.63, 1.09, '2#查看', '2#', 'cabinet_19', 1.5, .75 )
+          createButtonSpriteCallback.value( 2.86, -1.63, 1.15, '3#查看', '3#', 'cabinet_20', 1.5, .75 )  
+          createButtonSpriteCallback.value( 2.84, -1.625, 1.2, '4#查看', '4#', 'cabinet_21', 1.5, .75 )
+          createButtonSpriteCallback.value( 2.87, -1.63, 1.26, '5#查看', '5#', 'cabinet_22', 1.5, .75 )
+
+          //空情警报控制室
+          createButtonSpriteCallback.value( 2.24, -1.63, 1.10, '1#查看', '1#', 'cabinet_23', 1.5, .75 )
+          createButtonSpriteCallback.value( 2.32, -1.63, 1.09, '2#查看', '2#', 'cabinet_24', 1.5, .75 )
+
+          // 应急备份平台
+          createButtonSpriteCallback.value( 0.83, -1.63, 2.27, '1#查看', '1#', 'cabinet_25', 1.5, .75 )
+          createButtonSpriteCallback.value( 0.82, -1.63, 2.21, '2#查看', '2#', 'cabinet_26', 1.5, .75 )
+          createButtonSpriteCallback.value( 0.82, -1.63, 2.13, '3#查看', '3#', 'cabinet_27', 1.5, .75 )
         }
 
 
