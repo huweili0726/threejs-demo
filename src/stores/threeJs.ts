@@ -126,14 +126,16 @@ export const useThreeJsStore = defineStore('threeJs', () => {
           // 有线通信室 从右边数第4个
           createButtonSpriteCallback.value( 0.58, -1.63, 1.07, '4#查看', '4#', 'cabinet_10', 1.5, .75 )
 
-
           // 防化值班室 1#
           createButtonSpriteCallback.value( 3.625, -1.63, 2.87, '1#查看', '1#', 'cabinet_11', 1.5, .75 )
           // 防化值班室 2#
-          createButtonSpriteCallback.value( 3.69, -1.63, 2.87, '2#查看', '2#', 'cabinet_11', 1.5, .75 )
+          createButtonSpriteCallback.value( 3.69, -1.63, 2.87, '2#查看', '2#', 'cabinet_12', 1.5, .75 )
 
           // 政治工作部
-          createButtonSpriteCallback.value( 2.7, -1.67, 5.16, '1#查看', '1#', 'cabinet_12', 1.5, .75 )
+          createButtonSpriteCallback.value( 2.7, -1.67, 5.16, '1#查看', '1#', 'cabinet_13', 1.5, .75 )
+
+          // 综合保障部
+          createButtonSpriteCallback.value( 1.93, -1.67, 5.16, '1#查看', '1#', 'cabinet_14', 1.5, .75 )
         }
 
 
